@@ -25,7 +25,7 @@ func (h *Hab) loadImages(ctx *utils.ScopeContext) error {
 }
 
 func (h *Hab) getImage(ctx *utils.ScopeContext, name string) *HabImage {
-	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "getImage", func(ctx *utils.ScopeContext) *HabImage {
+	return utils.ScopingWithReturn(ctx, h.scopeBase, "getImage", func(ctx *utils.ScopeContext) *HabImage {
 		ctx.Must(h.loadImages(ctx))
 		for _, image := range h.images {
 			if image.name == name {
@@ -38,7 +38,7 @@ func (h *Hab) getImage(ctx *utils.ScopeContext, name string) *HabImage {
 }
 
 func (h *Hab) imagePresent(ctx *utils.ScopeContext, name string) bool {
-	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "imagePresent", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, h.scopeBase, "imagePresent", func(ctx *utils.ScopeContext) bool {
 		ctx.Must(h.loadImages(ctx))
 		image := h.getImage(ctx, name)
 		return image.present(ctx)

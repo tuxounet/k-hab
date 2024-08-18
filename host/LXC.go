@@ -29,13 +29,13 @@ func NewLXC(name string, habConfig map[string]interface{}, containerConfig map[s
 }
 
 func (l *LXC) withLxcCmd(ctx *utils.ScopeContext, args ...string) *utils.CmdCall {
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
 		return utils.WithCmdCallBuilder(ctx, l.habConfig, "lxd.lxc.command.prefix", "lxd.lxc.command.name", args...)
 	})
 }
 
 func (l *LXC) Present(ctx *utils.ScopeContext) bool {
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) bool {
 		out := utils.CommandSyncJsonArrayOutput(ctx, l.withLxcCmd(ctx, "list", "--format", "json"))
 		for _, container := range out {
 			if container["name"] == l.name {
@@ -47,7 +47,7 @@ func (l *LXC) Present(ctx *utils.ScopeContext) bool {
 }
 
 func (l *LXC) Status(ctx *utils.ScopeContext) string {
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "Status", func(ctx *utils.ScopeContext) string {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "Status", func(ctx *utils.ScopeContext) string {
 
 		out := utils.CommandSyncJsonArrayOutput(ctx, l.withLxcCmd(ctx, "list", "--format", "json"))
 

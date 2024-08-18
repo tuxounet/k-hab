@@ -15,6 +15,14 @@ type CmdCall struct {
 	Cwd     *string
 }
 
+func NewCmdCall(command string, args ...string) *CmdCall {
+	return &CmdCall{
+		Command: command,
+		Args:    args,
+		Cwd:     nil,
+	}
+}
+
 func (c *CmdCall) String() string {
 
 	out := c.Command + " "
@@ -26,17 +34,9 @@ func (c *CmdCall) String() string {
 	return out
 }
 
-func NewCmdCall(command string, args ...string) *CmdCall {
-	return &CmdCall{
-		Command: command,
-		Args:    args,
-		Cwd:     nil,
-	}
-}
-
 func WithCmdCallBuilder(ctx *ScopeContext, habConfig map[string]interface{}, cmdPrefixKey string, cmdNameKey string, args ...string) *CmdCall {
 
-	return ScopingWithReturnOnly(ctx, "utils", "WithCmdCallBuilder", func(ctx *ScopeContext) *CmdCall {
+	return ScopingWithReturn(ctx, "utils", "WithCmdCallBuilder", func(ctx *ScopeContext) *CmdCall {
 
 		cmd_prefix := GetMapValue(ctx, habConfig, cmdPrefixKey).(string)
 		cmd := GetMapValue(ctx, habConfig, cmdNameKey).(string)
@@ -89,7 +89,7 @@ func ExecSyncOutput(ctx *ScopeContext, query *CmdCall) error {
 }
 
 func ExecSyncOutputMayFail(ctx *ScopeContext, query *CmdCall) int {
-	return ScopingWithReturnOnly(ctx, "utils", "ExecSyncOutputMayFail", func(ctx *ScopeContext) int {
+	return ScopingWithReturn(ctx, "utils", "ExecSyncOutputMayFail", func(ctx *ScopeContext) int {
 		ctx.Log.DebugF("Executing command: %s", query.String())
 		cmd := exec.Command(query.Command, query.Args...)
 		cmd.Stdout = os.Stdout
@@ -109,7 +109,7 @@ func ExecSyncOutputMayFail(ctx *ScopeContext, query *CmdCall) int {
 }
 
 func CommandSyncOutput(ctx *ScopeContext, query *CmdCall) string {
-	return ScopingWithReturnOnly(ctx, "utils", "CommandSyncOutput", func(ctx *ScopeContext) string {
+	return ScopingWithReturn(ctx, "utils", "CommandSyncOutput", func(ctx *ScopeContext) string {
 		ctx.Log.DebugF("Executing command: %s", query.String())
 		cmd := exec.Command(query.Command, query.Args...)
 		if query.Cwd != nil {
@@ -122,7 +122,7 @@ func CommandSyncOutput(ctx *ScopeContext, query *CmdCall) string {
 }
 
 func CommandSyncJsonOutput(ctx *ScopeContext, query *CmdCall) map[string]interface{} {
-	return ScopingWithReturnOnly(ctx, "utils", "CommandSyncJsonOutput", func(ctx *ScopeContext) map[string]interface{} {
+	return ScopingWithReturn(ctx, "utils", "CommandSyncJsonOutput", func(ctx *ScopeContext) map[string]interface{} {
 		ctx.Log.DebugF("Executing command: %s", query.String())
 		cmd := exec.Command(query.Command, query.Args...)
 		if query.Cwd != nil {
@@ -140,7 +140,7 @@ func CommandSyncJsonOutput(ctx *ScopeContext, query *CmdCall) map[string]interfa
 }
 
 func CommandSyncJsonArrayOutput(ctx *ScopeContext, query *CmdCall) []map[string]interface{} {
-	return ScopingWithReturnOnly(ctx, "utils", "CommandSyncJsonArrayOutput", func(ctx *ScopeContext) []map[string]interface{} {
+	return ScopingWithReturn(ctx, "utils", "CommandSyncJsonArrayOutput", func(ctx *ScopeContext) []map[string]interface{} {
 		ctx.Log.DebugF("Executing command: %s", query.String())
 		cmd := exec.Command(query.Command, query.Args...)
 		if query.Cwd != nil {

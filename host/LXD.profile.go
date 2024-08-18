@@ -43,7 +43,7 @@ func (l *LXD) UnprovisionProfile(ctx *utils.ScopeContext) error {
 
 func (l *LXD) existsProfile(ctx *utils.ScopeContext, name string) bool {
 
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "existsProfile", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "existsProfile", func(ctx *utils.ScopeContext) bool {
 
 		arr := utils.CommandSyncJsonArrayOutput(ctx, l.withLxcCmd(ctx, "profile", "ls", "--format", "json"))
 
@@ -70,7 +70,7 @@ func (l *LXD) deleteProfile(ctx *utils.ScopeContext, name string) error {
 
 func (l *LXD) existsDeviceProfile(ctx *utils.ScopeContext, profileName string, deviceName string) bool {
 
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "existsDeviceProfile", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "existsDeviceProfile", func(ctx *utils.ScopeContext) bool {
 
 		out := utils.CommandSyncOutput(ctx, l.withLxcCmd(ctx, "profile", "device", "list", profileName))
 

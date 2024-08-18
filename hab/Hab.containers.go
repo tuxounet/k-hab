@@ -24,7 +24,7 @@ func (h *Hab) loadContainers(ctx *utils.ScopeContext) error {
 	})
 }
 func (h *Hab) getContainer(ctx *utils.ScopeContext, name string) *HabContainer {
-	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "getContainer", func(ctx *utils.ScopeContext) *HabContainer {
+	return utils.ScopingWithReturn(ctx, h.scopeBase, "getContainer", func(ctx *utils.ScopeContext) *HabContainer {
 		ctx.Must(h.loadContainers(ctx))
 		for _, container := range h.containers {
 			if container.name == name {

@@ -18,19 +18,19 @@ func NewLXD(habConfig map[string]interface{}) *LXD {
 }
 
 func (l *LXD) withLxdCmd(ctx *utils.ScopeContext, args ...string) *utils.CmdCall {
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
 		return utils.WithCmdCallBuilder(ctx, l.habConfig, "lxd.command.prefix", "lxd.command.name", args...)
 	})
 }
 
 func (l *LXD) withLxcCmd(ctx *utils.ScopeContext, args ...string) *utils.CmdCall {
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
 		return utils.WithCmdCallBuilder(ctx, l.habConfig, "lxd.lxc.command.prefix", "lxd.lxc.command.name", args...)
 	})
 }
 
 func (l *LXD) Present(ctx *utils.ScopeContext) bool {
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) bool {
 		snaps := NewSnapPackages(l.habConfig)
 
 		snapName := utils.GetMapValue(ctx, l.habConfig, "lxd.snap").(string)

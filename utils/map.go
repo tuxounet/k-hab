@@ -8,7 +8,7 @@ import (
 )
 
 func LoadYamlFromString[R any](ctx *ScopeContext, yamlStr string) R {
-	return ScopingWithReturnOnly(ctx, "utils", "LoadYamlFromString", func(ctx *ScopeContext) R {
+	return ScopingWithReturn(ctx, "utils", "LoadYamlFromString", func(ctx *ScopeContext) R {
 		var anyJson R
 
 		ctx.Must(yaml.Unmarshal([]byte(yamlStr), &anyJson))
@@ -18,7 +18,7 @@ func LoadYamlFromString[R any](ctx *ScopeContext, yamlStr string) R {
 }
 
 func LoadJSONFromString[R any](ctx *ScopeContext, yamlStr string) R {
-	return ScopingWithReturnOnly(ctx, "utils", "LoadJSONFromString", func(ctx *ScopeContext) R {
+	return ScopingWithReturn(ctx, "utils", "LoadJSONFromString", func(ctx *ScopeContext) R {
 		var anyJson R
 
 		ctx.Must(json.Unmarshal([]byte(yamlStr), &anyJson))
@@ -28,7 +28,7 @@ func LoadJSONFromString[R any](ctx *ScopeContext, yamlStr string) R {
 }
 
 func GetMapValue(ctx *ScopeContext, m map[string]interface{}, path string) any {
-	return ScopingWithReturnOnly(ctx, "utils", "GetMapValue", func(ctx *ScopeContext) any {
+	return ScopingWithReturn(ctx, "utils", "GetMapValue", func(ctx *ScopeContext) any {
 		ctx.Log.DebugF("GetMapValue:  %v", path)
 		keys := strings.Split(path, ".")
 		var value interface{}

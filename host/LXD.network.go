@@ -26,7 +26,7 @@ func (l *LXD) ProvisionNetwork(ctx *utils.ScopeContext) error {
 
 func (l *LXD) existsNetwork(ctx *utils.ScopeContext, name string) bool {
 
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "existsNetwork", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "existsNetwork", func(ctx *utils.ScopeContext) bool {
 
 		arr := utils.CommandSyncJsonArrayOutput(ctx, l.withLxcCmd(ctx, "network", "ls", "--format", "json"))
 		for _, profile := range arr {

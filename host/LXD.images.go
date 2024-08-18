@@ -5,7 +5,7 @@ import (
 )
 
 func (l *LXD) PresentImage(ctx *utils.ScopeContext, name string) bool {
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "PresentImage", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "PresentImage", func(ctx *utils.ScopeContext) bool {
 
 		out := utils.CommandSyncJsonArrayOutput(ctx, l.withLxcCmd(ctx, "image", "list", "--format", "json"))
 

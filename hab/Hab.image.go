@@ -24,7 +24,7 @@ func newHabImage(name string, hab *Hab, config *config.HabImageConfig) *HabImage
 }
 
 func (hi *HabImage) present(ctx *utils.ScopeContext) bool {
-	return utils.ScopingWithReturnOnly(ctx, hi.scopeBase, "present", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, hi.scopeBase, "present", func(ctx *utils.ScopeContext) bool {
 		return hi.hab.lxd.PresentImage(ctx, hi.name)
 
 	})

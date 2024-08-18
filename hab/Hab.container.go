@@ -23,7 +23,7 @@ func newHabContainer(name string, hab *Hab) *HabContainer {
 	}
 }
 func (hc *HabContainer) getLxc(ctx *utils.ScopeContext) *host.LXC {
-	return utils.ScopingWithReturnOnly(ctx, hc.scopeBase, "getLxc", func(ctx *utils.ScopeContext) *host.LXC {
+	return utils.ScopingWithReturn(ctx, hc.scopeBase, "getLxc", func(ctx *utils.ScopeContext) *host.LXC {
 
 		return host.NewLXC(hc.name, hc.hab.config.HabConfig, hc.hab.config.GetContainerConfig(ctx, hc.name))
 

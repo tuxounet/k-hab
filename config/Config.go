@@ -38,7 +38,7 @@ func (c *Config) Load(ctx *utils.ScopeContext) error {
 }
 
 func (c *Config) GetContainerConfig(ctx *utils.ScopeContext, containerName string) map[string]interface{} {
-	return utils.ScopingWithReturnOnly(ctx, c.scopeBase, "GetContainerConfig", func(ctx *utils.ScopeContext) map[string]interface{} {
+	return utils.ScopingWithReturn(ctx, c.scopeBase, "GetContainerConfig", func(ctx *utils.ScopeContext) map[string]interface{} {
 
 		for _, container := range c.ContainersConfig {
 			if container.(map[string]interface{})["name"] == containerName {

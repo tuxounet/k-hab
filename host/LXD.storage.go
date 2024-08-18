@@ -10,7 +10,7 @@ import (
 
 func (l *LXD) getStoragePath(ctx *utils.ScopeContext) string {
 
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "getStoragePath", func(ctx *utils.ScopeContext) string {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "getStoragePath", func(ctx *utils.ScopeContext) string {
 
 		storagePathDefinition := utils.GetMapValue(ctx, l.habConfig, "lxd.lxc.storage.path").(string)
 		var storagePath string
@@ -66,7 +66,7 @@ func (l *LXD) NukeStorage(ctx *utils.ScopeContext) error {
 
 func (l *LXD) existsStorage(ctx *utils.ScopeContext, name string) bool {
 
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "existsStorage", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "existsStorage", func(ctx *utils.ScopeContext) bool {
 
 		arr := utils.CommandSyncJsonArrayOutput(ctx, l.withLxcCmd(ctx, "storage", "ls", "--format", "json"))
 

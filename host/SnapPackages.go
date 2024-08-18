@@ -25,14 +25,14 @@ type snapCmd struct {
 
 func (h *SnapPackages) withSnapCmd(ctx *utils.ScopeContext, args ...string) *utils.CmdCall {
 
-	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
+	return utils.ScopingWithReturn(ctx, h.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
 		return utils.WithCmdCallBuilder(ctx, h.habConfig, "snap.command.prefix", "snap.command.name", args...)
 
 	})
 }
 
 func (h *SnapPackages) InstalledSnap(ctx *utils.ScopeContext, name string) bool {
-	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "InstalledSnap", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, h.scopeBase, "InstalledSnap", func(ctx *utils.ScopeContext) bool {
 		out := utils.CommandSyncOutput(ctx, h.withSnapCmd(ctx, "list"))
 
 		//parse out to array of strings for each line
@@ -76,7 +76,7 @@ func (h *SnapPackages) RemoveSnapSnapshots(ctx *utils.ScopeContext, name string)
 }
 
 func (h *SnapPackages) ListSnapshots(ctx *utils.ScopeContext, name string) []string {
-	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "ListSnapshots", func(ctx *utils.ScopeContext) []string {
+	return utils.ScopingWithReturn(ctx, h.scopeBase, "ListSnapshots", func(ctx *utils.ScopeContext) []string {
 		out := utils.CommandSyncOutput(ctx, h.withSnapCmd(ctx, "saved"))
 
 		if !strings.HasPrefix(out, "Set") {
