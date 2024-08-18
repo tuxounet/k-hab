@@ -14,14 +14,14 @@ import (
 func main() {
 	cmd := &cli.Command{
 		EnableShellCompletion: true,
-		Name:                  "k-hab",
-		Usage:                 "k-hab cli",
-		Version:               "24.8.1",
+		Name:                  "hab",
+		Usage:                 "personal hab cli",
+		Version:               "24.8.0",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:  "quiet",
 				Value: false,
-				Usage: "be quiet",
+				Usage: "be queit",
 			},
 		},
 		Commands: []*cli.Command{
@@ -29,48 +29,55 @@ func main() {
 				Name:  "provision",
 				Usage: "provision the hab",
 				Action: func(_ context.Context, ocmd *cli.Command) error {
-					return cmd.ProvisionCmd(hab.NewHab(ocmd.Bool("quiet")))
+					hab := hab.NewHab(ocmd.Bool("quiet"))
+					return cmd.ProvisionCmd(hab)
 				},
 			},
 			{
 				Name:  "up",
 				Usage: "create and/or launch the hab",
 				Action: func(_ context.Context, ocmd *cli.Command) error {
-					return cmd.UpCmd(hab.NewHab(ocmd.Bool("quiet")))
+					hab := hab.NewHab(ocmd.Bool("quiet"))
+					return cmd.UpCmd(hab)
 				},
 			},
 			{
 				Name:  "shell",
 				Usage: "create and/or launch the hab",
 				Action: func(_ context.Context, ocmd *cli.Command) error {
-					return cmd.ShellCmd(hab.NewHab(ocmd.Bool("quiet")))
+					hab := hab.NewHab(ocmd.Bool("quiet"))
+					return cmd.ShellCmd(hab)
 				},
 			},
 			{
 				Name:  "down",
 				Usage: "stop the hab",
 				Action: func(_ context.Context, ocmd *cli.Command) error {
-					return cmd.DownCmd(hab.NewHab(ocmd.Bool("quiet")))
+					hab := hab.NewHab(ocmd.Bool("quiet"))
+					return cmd.DownCmd(hab)
 				},
 			}, {
 				Name:  "rm",
 				Usage: "rm the hab",
 				Action: func(_ context.Context, ocmd *cli.Command) error {
-					return cmd.RmCmd(hab.NewHab(ocmd.Bool("quiet")))
+					hab := hab.NewHab(ocmd.Bool("quiet"))
+					return cmd.RmCmd(hab)
 				},
 			},
 			{
 				Name:  "unprovision",
 				Usage: "unprovision the hab",
 				Action: func(_ context.Context, ocmd *cli.Command) error {
-					return cmd.UnprovisionCmd(hab.NewHab(ocmd.Bool("quiet")))
+					hab := hab.NewHab(ocmd.Bool("quiet"))
+					return cmd.UnprovisionCmd(hab)
 				},
 			},
 			{
 				Name:  "nuke",
 				Usage: "destroy the hab",
 				Action: func(_ context.Context, ocmd *cli.Command) error {
-					return cmd.NukeCmd(hab.NewHab(ocmd.Bool("quiet")))
+					hab := hab.NewHab(ocmd.Bool("quiet"))
+					return cmd.NukeCmd(hab)
 				},
 			},
 		},

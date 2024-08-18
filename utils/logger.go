@@ -38,6 +38,13 @@ func (l *Logger) CreateScopeLogger(name string, fields map[string]interface{}) *
 
 }
 
+func (l *Logger) WithFields(fields map[string]interface{}) *Logger {
+
+	return &Logger{
+		log: l.log.WithFields(fields),
+	}
+
+}
 func (l *Logger) TraceF(format string, args ...interface{}) {
 
 	l.log.Tracef(format, args...)

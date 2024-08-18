@@ -6,17 +6,16 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/tuxounet/k-hab/config"
 	"github.com/tuxounet/k-hab/utils"
 )
 
 type HttpIngress struct {
 	scopeBase string
-	habConfig config.HabConfig
+	habConfig map[string]interface{}
 	server    *http.Server
 }
 
-func NewHttpIngress(habConfig config.HabConfig) *HttpIngress {
+func NewHttpIngress(habConfig map[string]interface{}) *HttpIngress {
 	return &HttpIngress{
 		scopeBase: "HttpIngress",
 		habConfig: habConfig,

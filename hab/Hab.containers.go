@@ -8,35 +8,23 @@ func (h *Hab) loadContainers(ctx *utils.ScopeContext) error {
 	return ctx.Scope(h.scopeBase, "loadContainers", func(ctx *utils.ScopeContext) {
 		for _, confContainer := range h.config.ContainersConfig {
 
+			name := confContainer.(map[string]interface{})["name"].(string)
 			found := false
 			for _, localContainer := range h.containers {
-				if localContainer.name == confContainer.Name {
+				if localContainer.name == name {
 					found = true
 					break
 				}
 			}
 			if !found {
-				container := newHabContainer(confContainer.Name, h)
+				container := newHabContainer(name, h)
 				h.containers = append(h.containers, container)
 			}
 		}
 	})
 }
-
-func (h *Hab) getEntryContainer(ctx *utils.ScopeContext) *HabContainer {
-	return utils.ScopingWithReturn(ctx, h.scopeBase, "getEntryContainer", func(ctx *utils.ScopeContext) *HabContainer {
-
-		entrypoint := utils.GetMapValue(ctx, h.config.HabConfig, "entry.container").(string)
-		container := h.getContainer(ctx, entrypoint)
-		if container == nil {
-			ctx.Must(ctx.Error("Container not found"))
-		}
-		return container
-	})
-}
-
 func (h *Hab) getContainer(ctx *utils.ScopeContext, name string) *HabContainer {
-	return utils.ScopingWithReturn(ctx, h.scopeBase, "getContainer", func(ctx *utils.ScopeContext) *HabContainer {
+	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "getContainer", func(ctx *utils.ScopeContext) *HabContainer {
 		ctx.Must(h.loadContainers(ctx))
 		for _, container := range h.containers {
 			if container.name == name {
@@ -48,14 +36,14 @@ func (h *Hab) getContainer(ctx *utils.ScopeContext, name string) *HabContainer {
 	})
 }
 
-func (h *Hab) upContainers(ctx *utils.ScopeContext) error {
-	return ctx.Scope(h.scopeBase, "upContainers", func(ctx *utils.ScopeContext) {
-
+func (h *Hab) provisionContainers(ctx *utils.ScopeContext) error {
+	return ctx.Scope(h.scopeBase, "provisionContainers", func(ctx *utils.ScopeContext) {
+		ctx.Must(h.lxd.Provision(ctx))
 		ctx.Must(h.loadContainers(ctx))
 		for _, container := range h.containers {
 			ctx.Must(container.provision(ctx))
 		}
-		ctx.Log.InfoF("Uped %d containers", len(h.containers))
+		ctx.Log.InfoF("Provisioned %d containers", len(h.containers))
 	})
 }
 
@@ -75,11 +63,12 @@ func (h *Hab) stopContainers(ctx *utils.ScopeContext) error {
 		for _, container := range h.containers {
 			ctx.Must(container.down(ctx))
 		}
+		ctx.Must(h.lxd.Down(ctx))
 	})
 }
 
-func (h *Hab) downContainers(ctx *utils.ScopeContext) error {
-	return ctx.Scope(h.scopeBase, "downContainers", func(ctx *utils.ScopeContext) {
+func (h *Hab) unprovisionContainers(ctx *utils.ScopeContext) error {
+	return ctx.Scope(h.scopeBase, "unprovisionContainers", func(ctx *utils.ScopeContext) {
 		ctx.Must(h.loadContainers(ctx))
 		for _, container := range h.containers {
 			ctx.Must(container.unprovision(ctx))

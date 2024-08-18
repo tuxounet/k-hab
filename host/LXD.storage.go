@@ -10,7 +10,7 @@ import (
 
 func (l *LXD) getStoragePath(ctx *utils.ScopeContext) string {
 
-	return utils.ScopingWithReturn(ctx, l.scopeBase, "getStoragePath", func(ctx *utils.ScopeContext) string {
+	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "getStoragePath", func(ctx *utils.ScopeContext) string {
 
 		storagePathDefinition := utils.GetMapValue(ctx, l.habConfig, "lxd.lxc.storage.path").(string)
 		var storagePath string
@@ -60,15 +60,15 @@ func (l *LXD) UnprovisionStorage(ctx *utils.ScopeContext) error {
 func (l *LXD) NukeStorage(ctx *utils.ScopeContext) error {
 	return ctx.Scope(l.scopeBase, "NukeStorage", func(ctx *utils.ScopeContext) {
 		storage_path := l.getStoragePath(ctx)
-		ctx.Must(utils.OsExec(ctx, utils.NewCmdCall("sudo", "rm", "-rvf", storage_path)))
+		ctx.Must(utils.ExecSyncOutput(ctx, utils.NewCmdCall("sudo", "rm", "-rvf", storage_path)))
 	})
 }
 
 func (l *LXD) existsStorage(ctx *utils.ScopeContext, name string) bool {
 
-	return utils.ScopingWithReturn(ctx, l.scopeBase, "existsStorage", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "existsStorage", func(ctx *utils.ScopeContext) bool {
 
-		arr := utils.JsonCommandOutput[[]map[string]interface{}](ctx, l.withLxcCmd(ctx, "storage", "ls", "--format", "json"))
+		arr := utils.CommandSyncJsonArrayOutput(ctx, l.withLxcCmd(ctx, "storage", "ls", "--format", "json"))
 
 		for _, profile := range arr {
 			if profile["name"] == name {
@@ -88,13 +88,13 @@ func (l *LXD) createStorage(ctx *utils.ScopeContext, name string, driver string,
 		cmd := l.withLxcCmd(ctx, "storage", "create", name, driver)
 		cmd.Args = append(cmd.Args, options...)
 
-		ctx.Must(utils.OsExec(ctx, cmd))
+		ctx.Must(utils.ExecSyncOutput(ctx, cmd))
 	})
 }
 
 func (l *LXD) removeStorage(ctx *utils.ScopeContext, name string) error {
 	return ctx.Scope(l.scopeBase, "removeStorage", func(ctx *utils.ScopeContext) {
 
-		ctx.Must(utils.OsExec(ctx, l.withLxcCmd(ctx, "storage", "delete", name)))
+		ctx.Must(utils.ExecSyncOutput(ctx, l.withLxcCmd(ctx, "storage", "delete", name)))
 	})
 }

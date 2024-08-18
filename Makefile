@@ -1,14 +1,7 @@
-test: 
-	go test -v -coverpkg=./... -coverprofile=profile.coverage ./...
-
 build:
 	mkdir -p ./out
-	go build -o ./out/k-hab main.go
+	go build -o ./out/hab main.go
 
-
-release:
-	mkdir -p ./out
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./out/k-hab-linux-amd64 ./main.go
 
 provision:
 	go run ./main.go provision 

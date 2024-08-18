@@ -22,14 +22,14 @@ func NewDistroBuilder(habConfig config.HabConfig) *DistroBuilder {
 	}
 }
 func (l *DistroBuilder) withDistroBuilderCmd(ctx *utils.ScopeContext, args ...string) *utils.CmdCall {
-	return utils.ScopingWithReturn(ctx, l.scopeBase, "withDistroBuilderCmd", func(ctx *utils.ScopeContext) *utils.CmdCall {
-		return utils.WithCmdCall(ctx, l.habConfig, "distrobuilder.command.prefix", "distrobuilder.command.name", args...)
+	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "withDistroBuilderCmd", func(ctx *utils.ScopeContext) *utils.CmdCall {
+		return utils.WithCmdCallBuilder(ctx, l.habConfig, "distrobuilder.command.prefix", "distrobuilder.command.name", args...)
 	})
 }
 
 func (l *DistroBuilder) getImageBuildPath(ctx *utils.ScopeContext) string {
 
-	return utils.ScopingWithReturn(ctx, l.scopeBase, "getImageBuildPath", func(ctx *utils.ScopeContext) string {
+	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "getImageBuildPath", func(ctx *utils.ScopeContext) string {
 
 		buildPathDefinition := utils.GetMapValue(ctx, l.habConfig, "distrobuilder.build.path").(string)
 		var buildPath string
@@ -49,7 +49,7 @@ func (l *DistroBuilder) getImageBuildPath(ctx *utils.ScopeContext) string {
 }
 
 func (l *DistroBuilder) Present(ctx *utils.ScopeContext) bool {
-	return utils.ScopingWithReturn(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) bool {
 		snaps := NewSnapPackages(l.habConfig)
 
 		snapName := utils.GetMapValue(ctx, l.habConfig, "distrobuilder.snap").(string)
@@ -74,20 +74,15 @@ func (l *DistroBuilder) Provision(ctx *utils.ScopeContext) error {
 
 	})
 }
-func (l *DistroBuilder) Unprovision(ctx *utils.ScopeContext) error {
-	return ctx.Scope(l.scopeBase, "Build", func(ctx *utils.ScopeContext) {
+
+func (l *DistroBuilder) Nuke(ctx *utils.ScopeContext) error {
+	return ctx.Scope(l.scopeBase, "Nuke", func(ctx *utils.ScopeContext) {
 
 		snaps := NewSnapPackages(l.habConfig)
 		snapName := utils.GetMapValue(ctx, l.habConfig, "distrobuilder.snap").(string)
 		ctx.Must(snaps.RemoveSnap(ctx, snapName))
 		ctx.Must(snaps.RemoveSnapSnapshots(ctx, snapName))
-	})
-}
-
-func (l *DistroBuilder) Nuke(ctx *utils.ScopeContext) error {
-	return ctx.Scope(l.scopeBase, "Nuke", func(ctx *utils.ScopeContext) {
-
 		buildPath := l.getImageBuildPath(ctx)
-		ctx.Must(utils.OsExec(ctx, utils.NewCmdCall("sudo", "rm", "-rf", buildPath)))
+		ctx.Must(utils.ExecSyncOutput(ctx, utils.NewCmdCall("sudo", "rm", "-rf", buildPath)))
 	})
 }

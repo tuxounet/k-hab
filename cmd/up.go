@@ -6,5 +6,5 @@ import (
 
 func UpCmd(hab *hab.Hab) error {
 
-	return hab.Up()
+	return hab.Start()
 }

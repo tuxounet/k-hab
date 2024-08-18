@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -12,14 +13,6 @@ type CmdCall struct {
 	Command string
 	Args    []string
 	Cwd     *string
-}
-
-func NewCmdCall(command string, args ...string) *CmdCall {
-	return &CmdCall{
-		Command: command,
-		Args:    args,
-		Cwd:     nil,
-	}
 }
 
 func (c *CmdCall) String() string {
@@ -33,12 +26,20 @@ func (c *CmdCall) String() string {
 	return out
 }
 
-func WithCmdCall(ctx *ScopeContext, anyMap any, cmdPrefixKey string, cmdNameKey string, args ...string) *CmdCall {
+func NewCmdCall(command string, args ...string) *CmdCall {
+	return &CmdCall{
+		Command: command,
+		Args:    args,
+		Cwd:     nil,
+	}
+}
 
-	return ScopingWithReturn(ctx, "utils", "WithCmdCallBuilder", func(ctx *ScopeContext) *CmdCall {
+func WithCmdCallBuilder(ctx *ScopeContext, habConfig map[string]interface{}, cmdPrefixKey string, cmdNameKey string, args ...string) *CmdCall {
 
-		cmd_prefix := GetMapValue(ctx, anyMap, cmdPrefixKey).(string)
-		cmd := GetMapValue(ctx, anyMap, cmdNameKey).(string)
+	return ScopingWithReturnOnly(ctx, "utils", "WithCmdCallBuilder", func(ctx *ScopeContext) *CmdCall {
+
+		cmd_prefix := GetMapValue(ctx, habConfig, cmdPrefixKey).(string)
+		cmd := GetMapValue(ctx, habConfig, cmdNameKey).(string)
 
 		full := strings.TrimSpace(fmt.Sprintf("%s %s", cmd_prefix, cmd))
 
@@ -63,19 +64,9 @@ func WithCmdCall(ctx *ScopeContext, anyMap any, cmdPrefixKey string, cmdNameKey 
 	})
 }
 
-func OsExec(ctx *ScopeContext, query *CmdCall) error {
+func ExecSyncOutput(ctx *ScopeContext, query *CmdCall) error {
 
-	return ScopingWithReturn(ctx, "utils", "OsExec", func(ctx *ScopeContext) error {
-		code := OsExecWithExitCode(ctx, query)
-		if code != 0 {
-			return ctx.Error("command failed with exit code " + fmt.Sprint(code))
-		}
-		return nil
-	})
-}
-
-func OsExecWithExitCode(ctx *ScopeContext, query *CmdCall) int {
-	return ScopingWithReturn(ctx, "utils", "OsExecWithExitCode", func(ctx *ScopeContext) int {
+	return ctx.Scope("utils", "ExecSyncOutput", func(ctx *ScopeContext) {
 		ctx.Log.DebugF("Executing command: %s", query.String())
 		cmd := exec.Command(query.Command, query.Args...)
 		cmd.Stdout = os.Stdout
@@ -87,37 +78,81 @@ func OsExecWithExitCode(ctx *ScopeContext, query *CmdCall) int {
 		}
 
 		err := cmd.Start()
-		if err != nil {
-			ctx.Log.WarnF("Error starting command: %s", err)
-			return -1
-		}
+		ctx.Must(err)
 
 		cmd.Wait()
-		return cmd.ProcessState.ExitCode()
-
-	})
-
-}
-
-func JsonCommandOutput[R any](ctx *ScopeContext, query *CmdCall) R {
-	return ScopingWithReturn(ctx, "utils", "JsonCommandOutput", func(ctx *ScopeContext) R {
-		out := RawCommandOutput(ctx, query)
-
-		var result R
-		ctx.Must(json.Unmarshal([]byte(out), &result))
-		return result
+		code := cmd.ProcessState.ExitCode()
+		if code != 0 {
+			ctx.Must(errors.New("command failed with exit code " + fmt.Sprint(code)))
+		}
 	})
 }
 
-func RawCommandOutput(ctx *ScopeContext, query *CmdCall) string {
-	return ScopingWithReturn(ctx, "utils", "RawCommandOutput", func(ctx *ScopeContext) string {
+func ExecSyncOutputMayFail(ctx *ScopeContext, query *CmdCall) int {
+	return ScopingWithReturnOnly(ctx, "utils", "ExecSyncOutputMayFail", func(ctx *ScopeContext) int {
+		ctx.Log.DebugF("Executing command: %s", query.String())
+		cmd := exec.Command(query.Command, query.Args...)
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
+		cmd.Stdin = os.Stdin
+		if query.Cwd != nil {
+			cmd.Dir = *query.Cwd
+		}
+		err := cmd.Start()
+		ctx.Must(err)
+
+		cmd.Wait()
+		code := cmd.ProcessState.ExitCode()
+		return code
+
+	})
+}
+
+func CommandSyncOutput(ctx *ScopeContext, query *CmdCall) string {
+	return ScopingWithReturnOnly(ctx, "utils", "CommandSyncOutput", func(ctx *ScopeContext) string {
 		ctx.Log.DebugF("Executing command: %s", query.String())
 		cmd := exec.Command(query.Command, query.Args...)
 		if query.Cwd != nil {
 			cmd.Dir = *query.Cwd
 		}
-		ret, err := cmd.Output()
+		out, err := cmd.Output()
 		ctx.Must(err)
-		return string(ret)
+		return string(out)
 	})
+}
+
+func CommandSyncJsonOutput(ctx *ScopeContext, query *CmdCall) map[string]interface{} {
+	return ScopingWithReturnOnly(ctx, "utils", "CommandSyncJsonOutput", func(ctx *ScopeContext) map[string]interface{} {
+		ctx.Log.DebugF("Executing command: %s", query.String())
+		cmd := exec.Command(query.Command, query.Args...)
+		if query.Cwd != nil {
+			cmd.Dir = *query.Cwd
+		}
+		out, err := cmd.Output()
+		ctx.Must(err)
+
+		var result map[string]interface{}
+		ctx.Must(json.Unmarshal(out, &result))
+
+		return result
+	})
+
+}
+
+func CommandSyncJsonArrayOutput(ctx *ScopeContext, query *CmdCall) []map[string]interface{} {
+	return ScopingWithReturnOnly(ctx, "utils", "CommandSyncJsonArrayOutput", func(ctx *ScopeContext) []map[string]interface{} {
+		ctx.Log.DebugF("Executing command: %s", query.String())
+		cmd := exec.Command(query.Command, query.Args...)
+		if query.Cwd != nil {
+			cmd.Dir = *query.Cwd
+		}
+		out, err := cmd.Output()
+		ctx.Must(err)
+
+		var result []map[string]interface{}
+		ctx.Must(json.Unmarshal(out, &result))
+
+		return result
+	})
+
 }

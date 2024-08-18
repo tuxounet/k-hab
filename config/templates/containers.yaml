@@ -1,6 +1,6 @@
 - name: "bastion"
   image: "hab-alpine"
-  entry: "/etc/start.sh"
+  exec: "/etc/start.sh"
   shell: "sh"
   network:
     host: "10.33.0.1"
@@ -24,7 +24,7 @@
     apk_repos:
       alpine_repo:
         base_url: http://{{ .hab.lxd.lxc.host.address  }}:{{ .hab.egress.listen.port }}/os/alpine
-        community_enabled: false
+        community_enabled: true
         testing_enabled: false
         version: "3.20"
     timezone: Europe/Paris

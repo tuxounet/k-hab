@@ -3,33 +3,37 @@ package host
 import (
 	"strings"
 
-	"github.com/tuxounet/k-hab/config"
 	"github.com/tuxounet/k-hab/utils"
 )
 
 type SnapPackages struct {
 	scopeBase string
-	habConfig config.HabConfig
+	habConfig map[string]interface{}
 }
 
-func NewSnapPackages(config config.HabConfig) *SnapPackages {
+func NewSnapPackages(config interface{}) *SnapPackages {
 	return &SnapPackages{
 		scopeBase: "SnapPackages",
-		habConfig: config,
+		habConfig: config.(map[string]interface{}),
 	}
+}
+
+type snapCmd struct {
+	cmd  string
+	args []string
 }
 
 func (h *SnapPackages) withSnapCmd(ctx *utils.ScopeContext, args ...string) *utils.CmdCall {
 
-	return utils.ScopingWithReturn(ctx, h.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
-		return utils.WithCmdCall(ctx, h.habConfig, "snap.command.prefix", "snap.command.name", args...)
+	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
+		return utils.WithCmdCallBuilder(ctx, h.habConfig, "snap.command.prefix", "snap.command.name", args...)
 
 	})
 }
 
 func (h *SnapPackages) InstalledSnap(ctx *utils.ScopeContext, name string) bool {
-	return utils.ScopingWithReturn(ctx, h.scopeBase, "InstalledSnap", func(ctx *utils.ScopeContext) bool {
-		out := utils.RawCommandOutput(ctx, h.withSnapCmd(ctx, "list"))
+	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "InstalledSnap", func(ctx *utils.ScopeContext) bool {
+		out := utils.CommandSyncOutput(ctx, h.withSnapCmd(ctx, "list"))
 
 		//parse out to array of strings for each line
 		lines := strings.Split(strings.TrimSpace(out), "\n")
@@ -48,14 +52,14 @@ func (h *SnapPackages) InstalledSnap(ctx *utils.ScopeContext, name string) bool 
 
 func (h *SnapPackages) InstallSnap(ctx *utils.ScopeContext, name string, mode string) error {
 	return ctx.Scope(h.scopeBase, "InstallSnap", func(ctx *utils.ScopeContext) {
-		ctx.Must(utils.OsExec(ctx, h.withSnapCmd(ctx, "install", name, mode)))
+		ctx.Must(utils.ExecSyncOutput(ctx, h.withSnapCmd(ctx, "install", name, mode)))
 	})
 
 }
 
 func (h *SnapPackages) RemoveSnap(ctx *utils.ScopeContext, name string) error {
 	return ctx.Scope(h.scopeBase, "RemoveSnap", func(ctx *utils.ScopeContext) {
-		ctx.Must(utils.OsExec(ctx, h.withSnapCmd(ctx, "remove", name)))
+		ctx.Must(utils.ExecSyncOutput(ctx, h.withSnapCmd(ctx, "remove", name)))
 	})
 
 }
@@ -72,8 +76,8 @@ func (h *SnapPackages) RemoveSnapSnapshots(ctx *utils.ScopeContext, name string)
 }
 
 func (h *SnapPackages) ListSnapshots(ctx *utils.ScopeContext, name string) []string {
-	return utils.ScopingWithReturn(ctx, h.scopeBase, "ListSnapshots", func(ctx *utils.ScopeContext) []string {
-		out := utils.RawCommandOutput(ctx, h.withSnapCmd(ctx, "saved"))
+	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "ListSnapshots", func(ctx *utils.ScopeContext) []string {
+		out := utils.CommandSyncOutput(ctx, h.withSnapCmd(ctx, "saved"))
 
 		if !strings.HasPrefix(out, "Set") {
 			return make([]string, 0)
@@ -96,6 +100,6 @@ func (h *SnapPackages) ListSnapshots(ctx *utils.ScopeContext, name string) []str
 
 func (h *SnapPackages) ForgetSnapshot(ctx *utils.ScopeContext, name string, id string) error {
 	return ctx.Scope(h.scopeBase, "ForgetSnapshot", func(ctx *utils.ScopeContext) {
-		ctx.Must(utils.OsExec(ctx, h.withSnapCmd(ctx, "forget", id, name)))
+		ctx.Must(utils.ExecSyncOutput(ctx, h.withSnapCmd(ctx, "forget", id, name)))
 	})
 }
