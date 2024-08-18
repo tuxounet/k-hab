@@ -23,7 +23,7 @@ func NewDistroBuilder(habConfig config.HabConfig) *DistroBuilder {
 }
 func (l *DistroBuilder) withDistroBuilderCmd(ctx *utils.ScopeContext, args ...string) *utils.CmdCall {
 	return utils.ScopingWithReturn(ctx, l.scopeBase, "withDistroBuilderCmd", func(ctx *utils.ScopeContext) *utils.CmdCall {
-		return utils.WithCmdCallBuilder(ctx, l.habConfig, "distrobuilder.command.prefix", "distrobuilder.command.name", args...)
+		return utils.WithCmdCall(ctx, l.habConfig, "distrobuilder.command.prefix", "distrobuilder.command.name", args...)
 	})
 }
 
@@ -83,6 +83,6 @@ func (l *DistroBuilder) Nuke(ctx *utils.ScopeContext) error {
 		ctx.Must(snaps.RemoveSnap(ctx, snapName))
 		ctx.Must(snaps.RemoveSnapSnapshots(ctx, snapName))
 		buildPath := l.getImageBuildPath(ctx)
-		ctx.Must(utils.ExecSyncOutput(ctx, utils.NewCmdCall("sudo", "rm", "-rf", buildPath)))
+		ctx.Must(utils.OsExec(ctx, utils.NewCmdCall("sudo", "rm", "-rf", buildPath)))
 	})
 }

@@ -28,7 +28,7 @@ func (l *LXD) existsNetwork(ctx *utils.ScopeContext, name string) bool {
 
 	return utils.ScopingWithReturn(ctx, l.scopeBase, "existsNetwork", func(ctx *utils.ScopeContext) bool {
 
-		arr := utils.CommandSyncJsonArrayOutput(ctx, l.withLxcCmd(ctx, "network", "ls", "--format", "json"))
+		arr := utils.JsonCommandOutput[[]map[string]interface{}](ctx, l.withLxcCmd(ctx, "network", "ls", "--format", "json"))
 		for _, profile := range arr {
 			if profile["name"] == name {
 				return true
@@ -45,7 +45,7 @@ func (l *LXD) createNetwork(ctx *utils.ScopeContext, name string, driver string,
 		cmd := l.withLxcCmd(ctx, "network", "create", name, "--type", driver)
 		cmd.Args = append(cmd.Args, options...)
 
-		ctx.Must(utils.ExecSyncOutput(ctx, cmd))
+		ctx.Must(utils.OsExec(ctx, cmd))
 	})
 
 }

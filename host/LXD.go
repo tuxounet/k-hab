@@ -19,13 +19,13 @@ func NewLXD(habConfig map[string]interface{}) *LXD {
 
 func (l *LXD) withLxdCmd(ctx *utils.ScopeContext, args ...string) *utils.CmdCall {
 	return utils.ScopingWithReturn(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
-		return utils.WithCmdCallBuilder(ctx, l.habConfig, "lxd.command.prefix", "lxd.command.name", args...)
+		return utils.WithCmdCall(ctx, l.habConfig, "lxd.command.prefix", "lxd.command.name", args...)
 	})
 }
 
 func (l *LXD) withLxcCmd(ctx *utils.ScopeContext, args ...string) *utils.CmdCall {
 	return utils.ScopingWithReturn(ctx, l.scopeBase, "Present", func(ctx *utils.ScopeContext) *utils.CmdCall {
-		return utils.WithCmdCallBuilder(ctx, l.habConfig, "lxd.lxc.command.prefix", "lxd.lxc.command.name", args...)
+		return utils.WithCmdCall(ctx, l.habConfig, "lxd.lxc.command.prefix", "lxd.lxc.command.name", args...)
 	})
 }
 
@@ -53,7 +53,7 @@ func (l *LXD) Provision(ctx *utils.ScopeContext) error {
 			snapMode := utils.GetMapValue(ctx, l.habConfig, "lxd.snap_mode").(string)
 			ctx.Must(snaps.InstallSnap(ctx, snapName, snapMode))
 		}
-		ctx.Must(utils.ExecSyncOutput(ctx, l.withLxdCmd(ctx, "waitready")))
+		ctx.Must(utils.OsExec(ctx, l.withLxdCmd(ctx, "waitready")))
 		ctx.Must(l.ProvisionStorage(ctx))
 		ctx.Must(l.ProvisionNetwork(ctx))
 		ctx.Must(l.ProvisionProfile(ctx))
@@ -77,7 +77,7 @@ func (l *LXD) Down(ctx *utils.ScopeContext) error {
 			return
 		}
 
-		ctx.Must(utils.ExecSyncOutput(ctx, l.withLxdCmd(ctx, "shutdown")))
+		ctx.Must(utils.OsExec(ctx, l.withLxdCmd(ctx, "shutdown")))
 	})
 
 }

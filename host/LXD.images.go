@@ -7,7 +7,7 @@ import (
 func (l *LXD) PresentImage(ctx *utils.ScopeContext, name string) bool {
 	return utils.ScopingWithReturn(ctx, l.scopeBase, "PresentImage", func(ctx *utils.ScopeContext) bool {
 
-		out := utils.CommandSyncJsonArrayOutput(ctx, l.withLxcCmd(ctx, "image", "list", "--format", "json"))
+		out := utils.JsonCommandOutput[[]map[string]interface{}](ctx, l.withLxcCmd(ctx, "image", "list", "--format", "json"))
 
 		for _, image := range out {
 			aliases := image["aliases"].([]interface{})
@@ -30,7 +30,7 @@ func (l *LXD) RegisterImage(ctx *utils.ScopeContext, name string, metadataPackag
 			ctx.Must(l.RemoveImage(ctx, name))
 		}
 
-		ctx.Must(utils.ExecSyncOutput(ctx, l.withLxcCmd(ctx, "image", "import", metadataPackage, rootfsPackage, "--alias", name)))
+		ctx.Must(utils.OsExec(ctx, l.withLxcCmd(ctx, "image", "import", metadataPackage, rootfsPackage, "--alias", name)))
 	})
 }
 
@@ -39,7 +39,7 @@ func (l *LXD) RemoveImage(ctx *utils.ScopeContext, name string) error {
 
 		present := l.PresentImage(ctx, name)
 		if present {
-			ctx.Must(utils.ExecSyncOutput(ctx, l.withLxcCmd(ctx, "image", "delete", name)))
+			ctx.Must(utils.OsExec(ctx, l.withLxcCmd(ctx, "image", "delete", name)))
 		}
 	})
 }

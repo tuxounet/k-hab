@@ -27,7 +27,7 @@ func (l *DistroBuilder) BuildDistro(ctx *utils.ScopeContext, name string, builde
 			cmd := l.withDistroBuilderCmd(ctx, "build-lxd", distroBuildFile)
 			cmd.Cwd = &distroFolder
 
-			ctx.Must(utils.ExecSyncOutput(ctx, cmd))
+			ctx.Must(utils.OsExec(ctx, cmd))
 
 		}
 
@@ -46,7 +46,7 @@ func (l *DistroBuilder) RemoveCache(ctx *utils.ScopeContext, name string) error 
 	return ctx.Scope(l.scopeBase, "RemoveCache", func(ctx *utils.ScopeContext) {
 		distroFolder := path.Join(l.getImageBuildPath(ctx), name)
 		cmd := utils.NewCmdCall("sudo", "rm", "-rf", distroFolder)
-		ctx.Must(utils.ExecSyncOutput(ctx, cmd))
+		ctx.Must(utils.OsExec(ctx, cmd))
 	})
 }
 

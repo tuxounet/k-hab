@@ -9,21 +9,21 @@ import (
 
 func LoadYamlFromString[R any](ctx *ScopeContext, yamlStr string) R {
 	return ScopingWithReturn(ctx, "utils", "LoadYamlFromString", func(ctx *ScopeContext) R {
-		var anyJson R
+		var anyStruct R
 
-		ctx.Must(yaml.Unmarshal([]byte(yamlStr), &anyJson))
+		ctx.Must(yaml.Unmarshal([]byte(yamlStr), &anyStruct))
 
-		return anyJson
+		return anyStruct
 	})
 }
 
-func LoadJSONFromString[R any](ctx *ScopeContext, yamlStr string) R {
+func LoadJSONFromString[R any](ctx *ScopeContext, jsonStr string) R {
 	return ScopingWithReturn(ctx, "utils", "LoadJSONFromString", func(ctx *ScopeContext) R {
-		var anyJson R
+		var anyStruct R
 
-		ctx.Must(json.Unmarshal([]byte(yamlStr), &anyJson))
+		ctx.Must(json.Unmarshal([]byte(jsonStr), &anyStruct))
 
-		return anyJson
+		return anyStruct
 	})
 }
 
