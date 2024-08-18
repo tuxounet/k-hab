@@ -110,6 +110,7 @@ func (h *Hab) Unprovision() error {
 	return h.ctx.Scope(h.scopeBase, "Unprovision", func(ctx *utils.ScopeContext) {
 		lxdPresent := h.lxd.Present(ctx)
 		if lxdPresent {
+			ctx.Must(h.Rm())
 			ctx.Must(h.lxd.Unprovision(ctx))
 		}
 
@@ -123,6 +124,7 @@ func (h *Hab) Unprovision() error {
 
 func (h *Hab) Nuke() error {
 	return h.ctx.Scope(h.scopeBase, "Nuke", func(ctx *utils.ScopeContext) {
+		ctx.Must(h.Unprovision())
 		ctx.Must(h.nukeImages(ctx))
 		ctx.Must(h.lxd.Nuke(ctx))
 		ctx.Must(h.builder.Nuke(ctx))
