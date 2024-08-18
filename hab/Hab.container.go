@@ -11,7 +11,6 @@ type HabContainer struct {
 	scopeBase string
 	name      string
 	hab       *Hab
-	lxc       *host.LXC
 }
 
 func newHabContainer(name string, hab *Hab) *HabContainer {
@@ -46,13 +45,10 @@ func (hc *HabContainer) shell(ctx *utils.ScopeContext) error {
 	return ctx.Scope(hc.scopeBase, "shell", func(ctx *utils.ScopeContext) {
 		shell_cmd := utils.GetMapValue(ctx, hc.getLxc(ctx).ContainerConfig, "shell").(string)
 
-		call := make([]string, 0)
+		call := []string{shell_cmd}
 		if strings.Contains(shell_cmd, " ") {
 			call = strings.Split(shell_cmd, " ")
-		} else {
-			call = []string{shell_cmd}
 		}
-
 		ctx.Must(hc.getLxc(ctx).Exec(ctx, call...))
 	})
 }
@@ -67,14 +63,12 @@ func (hc *HabContainer) exec(ctx *utils.ScopeContext) error {
 	return ctx.Scope(hc.scopeBase, "exec", func(ctx *utils.ScopeContext) {
 
 		exec_cmd := utils.GetMapValue(ctx, hc.getLxc(ctx).ContainerConfig, "exec").(string)
-		call := make([]string, 0)
+		args := []string{exec_cmd}
 		if strings.Contains(exec_cmd, " ") {
-			call = strings.Split(exec_cmd, " ")
-		} else {
-			call = []string{exec_cmd}
+			args = strings.Split(exec_cmd, " ")
 		}
-
-		ctx.Must(hc.getLxc(ctx).Exec(ctx, call...))
+		cmd := hc.getLxc(ctx).Exec(ctx, args...)
+		ctx.Must(cmd)
 	})
 }
 

@@ -3,7 +3,7 @@ test:
 
 build:
 	mkdir -p ./out
-	go build -o ./out/hab main.go
+	go build -o ./out/k-hab main.go
 
 
 provision:

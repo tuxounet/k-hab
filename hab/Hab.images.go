@@ -52,7 +52,7 @@ func (h *Hab) provisionImages(ctx *utils.ScopeContext) error {
 		ctx.Must(h.loadImages(ctx))
 
 		for _, image := range h.images {
-			if !image.present(ctx) {
+			if !h.imagePresent(ctx, image.name) {
 				ctx.Must(image.provision(ctx))
 			}
 
@@ -62,7 +62,7 @@ func (h *Hab) provisionImages(ctx *utils.ScopeContext) error {
 	})
 }
 
-func (h *Hab) removeImages(ctx *utils.ScopeContext) error {
+func (h *Hab) unprovisionImages(ctx *utils.ScopeContext) error {
 	return ctx.Scope(h.scopeBase, "provisionImages", func(ctx *utils.ScopeContext) {
 		ctx.Must(h.builder.Provision(ctx))
 		ctx.Must(h.loadImages(ctx))
@@ -75,12 +75,12 @@ func (h *Hab) removeImages(ctx *utils.ScopeContext) error {
 	})
 }
 
-func (h *Hab) unprovisionImages(ctx *utils.ScopeContext) error {
-	return ctx.Scope(h.scopeBase, "unprovisionImages", func(ctx *utils.ScopeContext) {
+func (h *Hab) nukeImages(ctx *utils.ScopeContext) error {
+	return ctx.Scope(h.scopeBase, "nukeImages", func(ctx *utils.ScopeContext) {
 		ctx.Must(h.loadImages(ctx))
 
 		for _, image := range h.images {
-			ctx.Must(image.unprovision(ctx))
+			ctx.Must(image.nuke(ctx))
 		}
 	})
 }

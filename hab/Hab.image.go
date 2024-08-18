@@ -47,7 +47,7 @@ func (hi *HabImage) unprovision(ctx *utils.ScopeContext) error {
 	})
 }
 
-func (hi *HabImage) nuke(ctx *utils.ScopeContext, name string) error {
+func (hi *HabImage) nuke(ctx *utils.ScopeContext) error {
 	return ctx.Scope(hi.scopeBase, "nuke", func(ctx *utils.ScopeContext) {
 
 		ctx.Must(hi.hab.builder.RemoveCache(ctx, hi.name))
