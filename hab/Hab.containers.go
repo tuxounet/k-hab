@@ -8,16 +8,15 @@ func (h *Hab) loadContainers(ctx *utils.ScopeContext) error {
 	return ctx.Scope(h.scopeBase, "loadContainers", func(ctx *utils.ScopeContext) {
 		for _, confContainer := range h.config.ContainersConfig {
 
-			name := confContainer.(map[string]interface{})["name"].(string)
 			found := false
 			for _, localContainer := range h.containers {
-				if localContainer.name == name {
+				if localContainer.name == confContainer.Name {
 					found = true
 					break
 				}
 			}
 			if !found {
-				container := newHabContainer(name, h)
+				container := newHabContainer(confContainer.Name, h)
 				h.containers = append(h.containers, container)
 			}
 		}

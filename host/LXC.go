@@ -5,6 +5,7 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/tuxounet/k-hab/config"
 	"github.com/tuxounet/k-hab/utils"
 )
 
@@ -13,11 +14,11 @@ type LXC struct {
 	name      string
 	arch      string
 
-	habConfig       map[string]interface{}
-	ContainerConfig map[string]interface{}
+	habConfig       config.HabConfig
+	ContainerConfig config.HabContainerConfig
 }
 
-func NewLXC(name string, habConfig map[string]interface{}, containerConfig map[string]interface{}) *LXC {
+func NewLXC(name string, habConfig config.HabConfig, containerConfig config.HabContainerConfig) *LXC {
 
 	return &LXC{
 		scopeBase:       "LXC",
@@ -128,7 +129,7 @@ func (l *LXC) WaitReady(ctx *utils.ScopeContext) error {
 			}
 			time.Sleep(1 * time.Second)
 		}
-		ctx.Must(fmt.Errorf("Timeout to waiting ready"))
+		ctx.Must(ctx.Error("Timeout to waiting ready"))
 	})
 }
 

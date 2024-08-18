@@ -1,15 +1,16 @@
 package host
 
 import (
+	"github.com/tuxounet/k-hab/config"
 	"github.com/tuxounet/k-hab/utils"
 )
 
 type LXD struct {
 	scopeBase string
-	habConfig map[string]interface{}
+	habConfig config.HabConfig
 }
 
-func NewLXD(habConfig map[string]interface{}) *LXD {
+func NewLXD(habConfig config.HabConfig) *LXD {
 
 	return &LXD{
 		scopeBase: "LXD",

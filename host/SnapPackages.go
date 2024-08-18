@@ -3,24 +3,20 @@ package host
 import (
 	"strings"
 
+	"github.com/tuxounet/k-hab/config"
 	"github.com/tuxounet/k-hab/utils"
 )
 
 type SnapPackages struct {
 	scopeBase string
-	habConfig map[string]interface{}
+	habConfig config.HabConfig
 }
 
-func NewSnapPackages(config interface{}) *SnapPackages {
+func NewSnapPackages(config config.HabConfig) *SnapPackages {
 	return &SnapPackages{
 		scopeBase: "SnapPackages",
-		habConfig: config.(map[string]interface{}),
+		habConfig: config,
 	}
-}
-
-type snapCmd struct {
-	cmd  string
-	args []string
 }
 
 func (h *SnapPackages) withSnapCmd(ctx *utils.ScopeContext, args ...string) *utils.CmdCall {

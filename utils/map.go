@@ -27,12 +27,12 @@ func LoadJSONFromString[R any](ctx *ScopeContext, jsonStr string) R {
 	})
 }
 
-func GetMapValue(ctx *ScopeContext, m map[string]interface{}, path string) any {
+func GetMapValue(ctx *ScopeContext, anyMap any, path string) any {
 	return ScopingWithReturn(ctx, "utils", "GetMapValue", func(ctx *ScopeContext) any {
 		ctx.Log.DebugF("GetMapValue:  %v", path)
 		keys := strings.Split(path, ".")
 		var value interface{}
-		value = m
+		value = anyMap
 		for _, key := range keys {
 			value = value.(map[string]interface{})[key]
 		}

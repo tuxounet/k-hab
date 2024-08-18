@@ -43,7 +43,8 @@ func (hc *HabContainer) up(ctx *utils.ScopeContext) error {
 
 func (hc *HabContainer) shell(ctx *utils.ScopeContext) error {
 	return ctx.Scope(hc.scopeBase, "shell", func(ctx *utils.ScopeContext) {
-		shell_cmd := utils.GetMapValue(ctx, hc.getLxc(ctx).ContainerConfig, "shell").(string)
+		conf := hc.hab.config.GetContainerConfig(ctx, hc.name)
+		shell_cmd := utils.GetMapValue(ctx, conf, "shell").(string)
 
 		call := []string{shell_cmd}
 		if strings.Contains(shell_cmd, " ") {
@@ -61,8 +62,9 @@ func (hc *HabContainer) waitReady(ctx *utils.ScopeContext) error {
 
 func (hc *HabContainer) exec(ctx *utils.ScopeContext) error {
 	return ctx.Scope(hc.scopeBase, "exec", func(ctx *utils.ScopeContext) {
+		conf := hc.getLxc(ctx).ContainerConfig
 
-		exec_cmd := utils.GetMapValue(ctx, hc.getLxc(ctx).ContainerConfig, "exec").(string)
+		exec_cmd := utils.GetMapValue(ctx, conf, "exec").(string)
 		args := []string{exec_cmd}
 		if strings.Contains(exec_cmd, " ") {
 			args = strings.Split(exec_cmd, " ")

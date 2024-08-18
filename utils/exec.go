@@ -33,12 +33,12 @@ func (c *CmdCall) String() string {
 	return out
 }
 
-func WithCmdCall(ctx *ScopeContext, habConfig map[string]interface{}, cmdPrefixKey string, cmdNameKey string, args ...string) *CmdCall {
+func WithCmdCall(ctx *ScopeContext, anyMap any, cmdPrefixKey string, cmdNameKey string, args ...string) *CmdCall {
 
 	return ScopingWithReturn(ctx, "utils", "WithCmdCallBuilder", func(ctx *ScopeContext) *CmdCall {
 
-		cmd_prefix := GetMapValue(ctx, habConfig, cmdPrefixKey).(string)
-		cmd := GetMapValue(ctx, habConfig, cmdNameKey).(string)
+		cmd_prefix := GetMapValue(ctx, anyMap, cmdPrefixKey).(string)
+		cmd := GetMapValue(ctx, anyMap, cmdNameKey).(string)
 
 		full := strings.TrimSpace(fmt.Sprintf("%s %s", cmd_prefix, cmd))
 

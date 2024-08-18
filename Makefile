@@ -1,5 +1,5 @@
 test: 
-	go test ./... --cover
+	go test -v -coverpkg=./... -coverprofile=profile.coverage ./...
 
 build:
 	mkdir -p ./out
