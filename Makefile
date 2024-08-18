@@ -1,3 +1,6 @@
+test: 
+	go test ./... --cover
+
 build:
 	mkdir -p ./out
 	go build -o ./out/hab main.go
