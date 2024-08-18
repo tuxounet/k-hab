@@ -1,19 +1,17 @@
 # k-hab
 
-A single executable, that spawn or restore a virtual infrastructure, definied by plain yaml file. 
+A single executable, that spawn or restore a virtual infrastructure, definied by plain yaml files.
 
+# Based on :
 
-Based on : 
 - Linux
 - snap
 - LXD ecosystem :
-    - LXD Deamon
-    - LXC 
-    - Distrobuilder
+  - LXD Deamon
+  - LXC
+  - Distrobuilder
 - Alpine Linux
 
-# Built with : 
+# Built with :
 
 - Go Lang 1.22+
-
-
