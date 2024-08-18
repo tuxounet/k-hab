@@ -1,5 +1,5 @@
 test: 
-	go test -v -coverpkg=./... -coverprofile=profile.coverage ./...
+	go test -v -timeout 120s -coverpkg=./... -coverprofile=profile.coverage ./...
 
 build:
 	mkdir -p ./out
