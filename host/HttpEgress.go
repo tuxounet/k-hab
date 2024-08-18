@@ -7,17 +7,18 @@ import (
 	"os"
 	"strings"
 
+	"github.com/tuxounet/k-hab/config"
 	"github.com/tuxounet/k-hab/utils"
 )
 
 type HttpEgress struct {
 	scopeBase string
-	habConfig map[string]interface{}
+	habConfig config.HabConfig
 	server    *http.Server
 	ctx       *utils.ScopeContext
 }
 
-func NewHttpEgress(habConfig map[string]interface{}) *HttpEgress {
+func NewHttpEgress(habConfig config.HabConfig) *HttpEgress {
 
 	return &HttpEgress{
 		scopeBase: "HttpEgress",

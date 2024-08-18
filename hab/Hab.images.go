@@ -25,7 +25,7 @@ func (h *Hab) loadImages(ctx *utils.ScopeContext) error {
 }
 
 func (h *Hab) getImage(ctx *utils.ScopeContext, name string) *HabImage {
-	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "getImage", func(ctx *utils.ScopeContext) *HabImage {
+	return utils.ScopingWithReturn(ctx, h.scopeBase, "getImage", func(ctx *utils.ScopeContext) *HabImage {
 		ctx.Must(h.loadImages(ctx))
 		for _, image := range h.images {
 			if image.name == name {
@@ -38,7 +38,7 @@ func (h *Hab) getImage(ctx *utils.ScopeContext, name string) *HabImage {
 }
 
 func (h *Hab) imagePresent(ctx *utils.ScopeContext, name string) bool {
-	return utils.ScopingWithReturnOnly(ctx, h.scopeBase, "imagePresent", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, h.scopeBase, "imagePresent", func(ctx *utils.ScopeContext) bool {
 		ctx.Must(h.loadImages(ctx))
 		image := h.getImage(ctx, name)
 		return image.present(ctx)
@@ -46,13 +46,13 @@ func (h *Hab) imagePresent(ctx *utils.ScopeContext, name string) bool {
 	})
 }
 
-func (h *Hab) provisionImages(ctx *utils.ScopeContext) error {
-	return ctx.Scope(h.scopeBase, "provisionImages", func(ctx *utils.ScopeContext) {
-		ctx.Must(h.builder.Provision(ctx))
+func (h *Hab) upImages(ctx *utils.ScopeContext) error {
+	return ctx.Scope(h.scopeBase, "upImages", func(ctx *utils.ScopeContext) {
+
 		ctx.Must(h.loadImages(ctx))
 
 		for _, image := range h.images {
-			if !image.present(ctx) {
+			if !h.imagePresent(ctx, image.name) {
 				ctx.Must(image.provision(ctx))
 			}
 
@@ -62,8 +62,8 @@ func (h *Hab) provisionImages(ctx *utils.ScopeContext) error {
 	})
 }
 
-func (h *Hab) removeImages(ctx *utils.ScopeContext) error {
-	return ctx.Scope(h.scopeBase, "provisionImages", func(ctx *utils.ScopeContext) {
+func (h *Hab) downImages(ctx *utils.ScopeContext) error {
+	return ctx.Scope(h.scopeBase, "downImages", func(ctx *utils.ScopeContext) {
 		ctx.Must(h.builder.Provision(ctx))
 		ctx.Must(h.loadImages(ctx))
 
@@ -75,12 +75,12 @@ func (h *Hab) removeImages(ctx *utils.ScopeContext) error {
 	})
 }
 
-func (h *Hab) unprovisionImages(ctx *utils.ScopeContext) error {
-	return ctx.Scope(h.scopeBase, "unprovisionImages", func(ctx *utils.ScopeContext) {
+func (h *Hab) nukeImages(ctx *utils.ScopeContext) error {
+	return ctx.Scope(h.scopeBase, "nukeImages", func(ctx *utils.ScopeContext) {
 		ctx.Must(h.loadImages(ctx))
 
 		for _, image := range h.images {
-			ctx.Must(image.unprovision(ctx))
+			ctx.Must(image.nuke(ctx))
 		}
 	})
 }

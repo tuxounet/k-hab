@@ -24,7 +24,7 @@ func newHabImage(name string, hab *Hab, config *config.HabImageConfig) *HabImage
 }
 
 func (hi *HabImage) present(ctx *utils.ScopeContext) bool {
-	return utils.ScopingWithReturnOnly(ctx, hi.scopeBase, "present", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, hi.scopeBase, "present", func(ctx *utils.ScopeContext) bool {
 		return hi.hab.lxd.PresentImage(ctx, hi.name)
 
 	})
@@ -47,7 +47,7 @@ func (hi *HabImage) unprovision(ctx *utils.ScopeContext) error {
 	})
 }
 
-func (hi *HabImage) nuke(ctx *utils.ScopeContext, name string) error {
+func (hi *HabImage) nuke(ctx *utils.ScopeContext) error {
 	return ctx.Scope(hi.scopeBase, "nuke", func(ctx *utils.ScopeContext) {
 
 		ctx.Must(hi.hab.builder.RemoveCache(ctx, hi.name))

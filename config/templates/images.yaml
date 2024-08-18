@@ -45,7 +45,6 @@
         generator: dump
         content: |-
           auto eth0
-          iface eth0 inet dhcp
           hostname $(hostname)
 
       - path: /etc/inittab
@@ -108,7 +107,26 @@
           #!/bin/sh
           set -eux
           rm -f /var/cache/apk/*
+          
+      - trigger: post-packages
+        action: |-
+          #!/bin/sh
+          set -eux
 
+          # Rewrite configuration for LXC
+          sed -i 's/#rc_sys=""/rc_sys="lxc"/' /etc/rc.conf
+
+          # Honor fstab by not making the localmount script a noop
+          sed -i 's/-lxc//' /etc/init.d/localmount
+
+          # Enable services
+          for svc_name in bootmisc syslog devfs; do
+              ln -s /etc/init.d/${svc_name} /etc/runlevels/boot/${svc_name}
+          done
+
+          for svc_name in networking crond; do
+              ln -s /etc/init.d/${svc_name} /etc/runlevels/default/${svc_name}
+          done      
       - trigger: post-files
         action: |-
           #!/bin/sh

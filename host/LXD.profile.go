@@ -43,9 +43,9 @@ func (l *LXD) UnprovisionProfile(ctx *utils.ScopeContext) error {
 
 func (l *LXD) existsProfile(ctx *utils.ScopeContext, name string) bool {
 
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "existsProfile", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "existsProfile", func(ctx *utils.ScopeContext) bool {
 
-		arr := utils.CommandSyncJsonArrayOutput(ctx, l.withLxcCmd(ctx, "profile", "ls", "--format", "json"))
+		arr := utils.JsonCommandOutput[[]map[string]interface{}](ctx, l.withLxcCmd(ctx, "profile", "ls", "--format", "json"))
 
 		for _, profile := range arr {
 			if profile["name"] == name {
@@ -59,20 +59,20 @@ func (l *LXD) existsProfile(ctx *utils.ScopeContext, name string) bool {
 
 func (l *LXD) createProfile(ctx *utils.ScopeContext, name string) error {
 	return ctx.Scope(l.scopeBase, "createProfile", func(ctx *utils.ScopeContext) {
-		ctx.Must(utils.ExecSyncOutput(ctx, l.withLxcCmd(ctx, "profile", "create", name)))
+		ctx.Must(utils.OsExec(ctx, l.withLxcCmd(ctx, "profile", "create", name)))
 	})
 }
 func (l *LXD) deleteProfile(ctx *utils.ScopeContext, name string) error {
 	return ctx.Scope(l.scopeBase, "deleteProfile", func(ctx *utils.ScopeContext) {
-		ctx.Must(utils.ExecSyncOutput(ctx, l.withLxcCmd(ctx, "profile", "delete", name)))
+		ctx.Must(utils.OsExec(ctx, l.withLxcCmd(ctx, "profile", "delete", name)))
 	})
 }
 
 func (l *LXD) existsDeviceProfile(ctx *utils.ScopeContext, profileName string, deviceName string) bool {
 
-	return utils.ScopingWithReturnOnly(ctx, l.scopeBase, "existsDeviceProfile", func(ctx *utils.ScopeContext) bool {
+	return utils.ScopingWithReturn(ctx, l.scopeBase, "existsDeviceProfile", func(ctx *utils.ScopeContext) bool {
 
-		out := utils.CommandSyncOutput(ctx, l.withLxcCmd(ctx, "profile", "device", "list", profileName))
+		out := utils.RawCommandOutput(ctx, l.withLxcCmd(ctx, "profile", "device", "list", profileName))
 
 		lines := strings.Split(out, "\n")
 		for _, line := range lines {
@@ -91,6 +91,6 @@ func (l *LXD) addDeviceProfile(ctx *utils.ScopeContext, profileName string, devi
 		cmd := l.withLxcCmd(ctx, "profile", "device", "add", profileName, deviceName, deviceType)
 		cmd.Args = append(cmd.Args, options...)
 
-		ctx.Must(utils.ExecSyncOutput(ctx, cmd))
+		ctx.Must(utils.OsExec(ctx, cmd))
 	})
 }

@@ -2,7 +2,6 @@ package config
 
 import (
 	_ "embed"
-	"errors"
 
 	"github.com/tuxounet/k-hab/utils"
 )
@@ -37,15 +36,15 @@ func (c *Config) Load(ctx *utils.ScopeContext) error {
 	})
 }
 
-func (c *Config) GetContainerConfig(ctx *utils.ScopeContext, containerName string) map[string]interface{} {
-	return utils.ScopingWithReturnOnly(ctx, c.scopeBase, "GetContainerConfig", func(ctx *utils.ScopeContext) map[string]interface{} {
+func (c *Config) GetContainerConfig(ctx *utils.ScopeContext, containerName string) HabContainerConfig {
+	return utils.ScopingWithReturn(ctx, c.scopeBase, "GetContainerConfig", func(ctx *utils.ScopeContext) HabContainerConfig {
 
 		for _, container := range c.ContainersConfig {
-			if container.(map[string]interface{})["name"] == containerName {
-				return container.(map[string]interface{})
+			if container.Name == containerName {
+				return container
 			}
 		}
-		ctx.Must(errors.New("Container Not Found"))
-		return nil
+		ctx.Must(ctx.Error("Container Not Found"))
+		return HabContainerConfig{}
 	})
 }
