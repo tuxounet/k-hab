@@ -8,12 +8,14 @@ type HabImageConfig struct {
 }
 
 type HabContainerConfig struct {
-	Name          string `yaml:"name"`
-	Image         string `yaml:"image"`
-	Shell         string `yaml:"shell"`
-	Entry         string `yaml:"entry"`
-	CloudInit     string `yaml:"cloud-init"`
-	NetworkConfig string `yaml:"network-config"`
+	Name          string                 `yaml:"name"`
+	Image         string                 `yaml:"image"`
+	Shell         string                 `yaml:"shell"`
+	Entry         string                 `yaml:"entry"`
+	Network       map[string]interface{} `yaml:"network"`
+	Proxy         map[string]interface{} `yaml:"proxy"`
+	CloudInit     string                 `yaml:"cloud-init"`
+	NetworkConfig string                 `yaml:"network-config"`
 }
 
 func (hcc *HabContainerConfig) ToMap() map[string]interface{} {
@@ -22,6 +24,8 @@ func (hcc *HabContainerConfig) ToMap() map[string]interface{} {
 		"image":          hcc.Image,
 		"shell":          hcc.Shell,
 		"entry":          hcc.Entry,
+		"network":        hcc.Network,
+		"proxy":          hcc.Proxy,
 		"cloud-init":     hcc.CloudInit,
 		"network-config": hcc.NetworkConfig,
 	}

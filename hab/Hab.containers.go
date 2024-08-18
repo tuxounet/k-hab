@@ -49,13 +49,13 @@ func (h *Hab) getContainer(ctx *utils.ScopeContext, name string) *HabContainer {
 }
 
 func (h *Hab) upContainers(ctx *utils.ScopeContext) error {
-	return ctx.Scope(h.scopeBase, "provisionContainers", func(ctx *utils.ScopeContext) {
+	return ctx.Scope(h.scopeBase, "upContainers", func(ctx *utils.ScopeContext) {
 
 		ctx.Must(h.loadContainers(ctx))
 		for _, container := range h.containers {
 			ctx.Must(container.provision(ctx))
 		}
-		ctx.Log.InfoF("Provisioned %d containers", len(h.containers))
+		ctx.Log.InfoF("Uped %d containers", len(h.containers))
 	})
 }
 
@@ -79,7 +79,7 @@ func (h *Hab) stopContainers(ctx *utils.ScopeContext) error {
 }
 
 func (h *Hab) downContainers(ctx *utils.ScopeContext) error {
-	return ctx.Scope(h.scopeBase, "unprovisionContainers", func(ctx *utils.ScopeContext) {
+	return ctx.Scope(h.scopeBase, "downContainers", func(ctx *utils.ScopeContext) {
 		ctx.Must(h.loadContainers(ctx))
 		for _, container := range h.containers {
 			ctx.Must(container.unprovision(ctx))

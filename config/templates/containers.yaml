@@ -24,7 +24,7 @@
     apk_repos:
       alpine_repo:
         base_url: http://{{ .hab.lxd.lxc.host.address  }}:{{ .hab.egress.listen.port }}/os/alpine
-        community_enabled: true
+        community_enabled: false
         testing_enabled: false
         version: "3.20"
     timezone: Europe/Paris
