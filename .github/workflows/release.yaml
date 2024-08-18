@@ -4,7 +4,7 @@ on:
 name: Release
 jobs:
   release:
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -27,8 +27,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.head_ref }}
+          release_name: Release ${{ github.head_ref }}
           draft: false
           prerelease: true
 
