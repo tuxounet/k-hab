@@ -1,6 +1,6 @@
 - name: "bastion"
   image: "hab-alpine"
-  exec: "/etc/start.sh"
+  entry: "/etc/start.sh"
   shell: "sh"
   network:
     host: "10.33.0.1"

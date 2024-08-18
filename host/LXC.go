@@ -66,19 +66,20 @@ func (l *LXC) Provision(ctx *utils.ScopeContext) error {
 
 		containerExists := l.Present(ctx)
 		if !containerExists {
+			conf := l.ContainerConfig.ToMap()
 
-			containerImage := utils.GetMapValue(ctx, l.ContainerConfig, "image").(string)
+			containerImage := utils.GetMapValue(ctx, conf, "image").(string)
 
 			lxcProfile := utils.GetMapValue(ctx, l.habConfig, "lxd.lxc.profile").(string)
 			lxdCmd := l.withLxcCmd(ctx, "init", containerImage, l.name, "--profile", lxcProfile)
 
-			cloudInit := utils.GetMapValue(ctx, l.ContainerConfig, "cloud-init").(string)
-			networkConfig := utils.GetMapValue(ctx, l.ContainerConfig, "network-config").(string)
+			cloudInit := utils.GetMapValue(ctx, conf, "cloud-init").(string)
+			networkConfig := utils.GetMapValue(ctx, conf, "network-config").(string)
 
 			if cloudInit != "" {
 				sCloudInit := utils.UnTemplate(ctx, cloudInit, map[string]interface{}{
 					"hab":       l.habConfig,
-					"container": l.ContainerConfig,
+					"container": conf,
 				})
 				userDataInclude := fmt.Sprintf(`--config=user.user-data=%s`, sCloudInit)
 				lxdCmd.Args = append(lxdCmd.Args, userDataInclude)
@@ -87,7 +88,7 @@ func (l *LXC) Provision(ctx *utils.ScopeContext) error {
 			if networkConfig != "" {
 				sNetworkConfig := utils.UnTemplate(ctx, networkConfig, map[string]interface{}{
 					"hab":       l.habConfig,
-					"container": l.ContainerConfig,
+					"container": conf,
 				})
 				userDataInclude := fmt.Sprintf(`--config=user.network-config=%s`, sNetworkConfig)
 				lxdCmd.Args = append(lxdCmd.Args, userDataInclude)

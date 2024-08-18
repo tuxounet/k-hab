@@ -11,7 +11,18 @@ type HabContainerConfig struct {
 	Name          string `yaml:"name"`
 	Image         string `yaml:"image"`
 	Shell         string `yaml:"shell"`
-	Exec          string `yaml:"exec"`
+	Entry         string `yaml:"entry"`
 	CloudInit     string `yaml:"cloud-init"`
 	NetworkConfig string `yaml:"network-config"`
+}
+
+func (hcc *HabContainerConfig) ToMap() map[string]interface{} {
+	return map[string]interface{}{
+		"name":           hcc.Name,
+		"image":          hcc.Image,
+		"shell":          hcc.Shell,
+		"entry":          hcc.Entry,
+		"cloud-init":     hcc.CloudInit,
+		"network-config": hcc.NetworkConfig,
+	}
 }

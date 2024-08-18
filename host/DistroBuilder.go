@@ -74,14 +74,19 @@ func (l *DistroBuilder) Provision(ctx *utils.ScopeContext) error {
 
 	})
 }
-
-func (l *DistroBuilder) Nuke(ctx *utils.ScopeContext) error {
-	return ctx.Scope(l.scopeBase, "Nuke", func(ctx *utils.ScopeContext) {
+func (l *DistroBuilder) Unprovision(ctx *utils.ScopeContext) error {
+	return ctx.Scope(l.scopeBase, "Build", func(ctx *utils.ScopeContext) {
 
 		snaps := NewSnapPackages(l.habConfig)
 		snapName := utils.GetMapValue(ctx, l.habConfig, "distrobuilder.snap").(string)
 		ctx.Must(snaps.RemoveSnap(ctx, snapName))
 		ctx.Must(snaps.RemoveSnapSnapshots(ctx, snapName))
+	})
+}
+
+func (l *DistroBuilder) Nuke(ctx *utils.ScopeContext) error {
+	return ctx.Scope(l.scopeBase, "Nuke", func(ctx *utils.ScopeContext) {
+
 		buildPath := l.getImageBuildPath(ctx)
 		ctx.Must(utils.OsExec(ctx, utils.NewCmdCall("sudo", "rm", "-rf", buildPath)))
 	})

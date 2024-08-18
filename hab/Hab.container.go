@@ -41,10 +41,23 @@ func (hc *HabContainer) up(ctx *utils.ScopeContext) error {
 	})
 }
 
+func (hc *HabContainer) entry(ctx *utils.ScopeContext) error {
+	return ctx.Scope(hc.scopeBase, "entry", func(ctx *utils.ScopeContext) {
+		conf := hc.hab.config.GetContainerConfig(ctx, hc.name)
+		shell_cmd := utils.GetMapValue(ctx, conf.ToMap(), "entry").(string)
+
+		call := []string{shell_cmd}
+		if strings.Contains(shell_cmd, " ") {
+			call = strings.Split(shell_cmd, " ")
+		}
+		ctx.Must(hc.getLxc(ctx).Exec(ctx, call...))
+	})
+}
+
 func (hc *HabContainer) shell(ctx *utils.ScopeContext) error {
 	return ctx.Scope(hc.scopeBase, "shell", func(ctx *utils.ScopeContext) {
 		conf := hc.hab.config.GetContainerConfig(ctx, hc.name)
-		shell_cmd := utils.GetMapValue(ctx, conf, "shell").(string)
+		shell_cmd := utils.GetMapValue(ctx, conf.ToMap(), "shell").(string)
 
 		call := []string{shell_cmd}
 		if strings.Contains(shell_cmd, " ") {
@@ -57,20 +70,6 @@ func (hc *HabContainer) shell(ctx *utils.ScopeContext) error {
 func (hc *HabContainer) waitReady(ctx *utils.ScopeContext) error {
 	return ctx.Scope(hc.scopeBase, "waitReady", func(ctx *utils.ScopeContext) {
 		ctx.Must(hc.getLxc(ctx).WaitReady(ctx))
-	})
-}
-
-func (hc *HabContainer) exec(ctx *utils.ScopeContext) error {
-	return ctx.Scope(hc.scopeBase, "exec", func(ctx *utils.ScopeContext) {
-		conf := hc.getLxc(ctx).ContainerConfig
-
-		exec_cmd := utils.GetMapValue(ctx, conf, "exec").(string)
-		args := []string{exec_cmd}
-		if strings.Contains(exec_cmd, " ") {
-			args = strings.Split(exec_cmd, " ")
-		}
-		cmd := hc.getLxc(ctx).Exec(ctx, args...)
-		ctx.Must(cmd)
 	})
 }
 

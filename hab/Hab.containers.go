@@ -22,6 +22,19 @@ func (h *Hab) loadContainers(ctx *utils.ScopeContext) error {
 		}
 	})
 }
+
+func (h *Hab) getEntryContainer(ctx *utils.ScopeContext) *HabContainer {
+	return utils.ScopingWithReturn(ctx, h.scopeBase, "getEntryContainer", func(ctx *utils.ScopeContext) *HabContainer {
+
+		entrypoint := utils.GetMapValue(ctx, h.config.HabConfig, "entry.container").(string)
+		container := h.getContainer(ctx, entrypoint)
+		if container == nil {
+			ctx.Must(ctx.Error("Container not found"))
+		}
+		return container
+	})
+}
+
 func (h *Hab) getContainer(ctx *utils.ScopeContext, name string) *HabContainer {
 	return utils.ScopingWithReturn(ctx, h.scopeBase, "getContainer", func(ctx *utils.ScopeContext) *HabContainer {
 		ctx.Must(h.loadContainers(ctx))
@@ -35,9 +48,9 @@ func (h *Hab) getContainer(ctx *utils.ScopeContext, name string) *HabContainer {
 	})
 }
 
-func (h *Hab) provisionContainers(ctx *utils.ScopeContext) error {
+func (h *Hab) upContainers(ctx *utils.ScopeContext) error {
 	return ctx.Scope(h.scopeBase, "provisionContainers", func(ctx *utils.ScopeContext) {
-		ctx.Must(h.lxd.Provision(ctx))
+
 		ctx.Must(h.loadContainers(ctx))
 		for _, container := range h.containers {
 			ctx.Must(container.provision(ctx))
@@ -62,11 +75,10 @@ func (h *Hab) stopContainers(ctx *utils.ScopeContext) error {
 		for _, container := range h.containers {
 			ctx.Must(container.down(ctx))
 		}
-		ctx.Must(h.lxd.Down(ctx))
 	})
 }
 
-func (h *Hab) unprovisionContainers(ctx *utils.ScopeContext) error {
+func (h *Hab) downContainers(ctx *utils.ScopeContext) error {
 	return ctx.Scope(h.scopeBase, "unprovisionContainers", func(ctx *utils.ScopeContext) {
 		ctx.Must(h.loadContainers(ctx))
 		for _, container := range h.containers {

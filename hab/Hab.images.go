@@ -46,9 +46,9 @@ func (h *Hab) imagePresent(ctx *utils.ScopeContext, name string) bool {
 	})
 }
 
-func (h *Hab) provisionImages(ctx *utils.ScopeContext) error {
-	return ctx.Scope(h.scopeBase, "provisionImages", func(ctx *utils.ScopeContext) {
-		ctx.Must(h.builder.Provision(ctx))
+func (h *Hab) upImages(ctx *utils.ScopeContext) error {
+	return ctx.Scope(h.scopeBase, "upImages", func(ctx *utils.ScopeContext) {
+
 		ctx.Must(h.loadImages(ctx))
 
 		for _, image := range h.images {
@@ -62,8 +62,8 @@ func (h *Hab) provisionImages(ctx *utils.ScopeContext) error {
 	})
 }
 
-func (h *Hab) unprovisionImages(ctx *utils.ScopeContext) error {
-	return ctx.Scope(h.scopeBase, "provisionImages", func(ctx *utils.ScopeContext) {
+func (h *Hab) downImages(ctx *utils.ScopeContext) error {
+	return ctx.Scope(h.scopeBase, "downImages", func(ctx *utils.ScopeContext) {
 		ctx.Must(h.builder.Provision(ctx))
 		ctx.Must(h.loadImages(ctx))
 
