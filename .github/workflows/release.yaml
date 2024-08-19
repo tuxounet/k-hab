@@ -1,4 +1,4 @@
-on: 
+on:
   pull_request:
     types: [closed]
     branches:
@@ -6,7 +6,7 @@ on:
 name: Release
 jobs:
   release:
-    if: github.event.pull_request.merged == true 
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -20,7 +20,6 @@ jobs:
         with:
           go-version: 1.22.x
 
-      - run: make test
       - run: make release
 
       - name: Create Release
@@ -29,8 +28,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.head_ref  }}
+          tag_name: ${{ github.head_ref }}
+          release_name: Release ${{ github.head_ref }}
           draft: false
           prerelease: true
 

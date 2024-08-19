@@ -117,7 +117,9 @@ func RawCommandOutput(ctx *ScopeContext, query *CmdCall) string {
 			cmd.Dir = *query.Cwd
 		}
 		ret, err := cmd.Output()
-		ctx.Must(err)
+		if err != nil {
+			ctx.Must(ctx.Error("Error executing command:", query.String(), err.Error(), string(ret)))
+		}
 		return string(ret)
 	})
 }

@@ -20,8 +20,8 @@ lxd:
       driver: "dir"
       path: "out/lxd"
     command:
+      prefix: "sudo"
       name: "lxc"
-      prefix: ""
 distrobuilder:
   snap: "distrobuilder"
   snap_mode: "--classic"

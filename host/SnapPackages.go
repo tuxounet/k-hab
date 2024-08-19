@@ -60,6 +60,12 @@ func (h *SnapPackages) RemoveSnap(ctx *utils.ScopeContext, name string) error {
 
 }
 
+func (h *SnapPackages) TakeSnapSnapshots(ctx *utils.ScopeContext, name string) error {
+	return ctx.Scope(h.scopeBase, "TakeSnapSnapshots", func(ctx *utils.ScopeContext) {
+		ctx.Must(utils.OsExec(ctx, h.withSnapCmd(ctx, "save", name)))
+	})
+}
+
 func (h *SnapPackages) RemoveSnapSnapshots(ctx *utils.ScopeContext, name string) error {
 	return ctx.Scope(h.scopeBase, "RemoveSnapSnapshots", func(ctx *utils.ScopeContext) {
 		snapshots := h.ListSnapshots(ctx, name)
