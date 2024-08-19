@@ -4,7 +4,7 @@ import "testing"
 
 func TestTTHabLifecycle(t *testing.T) {
 
-	hab := NewHab(true)
+	hab := NewHab(false)
 
 	err := hab.Provision()
 	if err != nil {
