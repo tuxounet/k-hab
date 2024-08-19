@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 	"errors"
+	"fmt"
 )
 
 type ScopingCallFunc func(ctx *ScopeContext)
@@ -45,8 +46,8 @@ func (s *ScopeContext) Must(err error) {
 	}
 }
 
-func (s *ScopeContext) Error(message string) error {
-	return errors.New(message)
+func (s *ScopeContext) Error(args ...string) error {
+	return errors.New(s.Name + " FAILURE: " + fmt.Sprintln(args))
 }
 func (s *ScopeContext) Scope(prefix string, name string, f ScopingCallFunc) error {
 	scopeName := ""
