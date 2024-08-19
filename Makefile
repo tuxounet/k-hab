@@ -1,6 +1,6 @@
 
 unit-test: 
-	go test $$(go list ./... | grep -v /hab/) -v -timeout 120s -coverpkg=./... -coverprofile=profile.coverage ./...
+	go test $$(go list ./... | grep -v "/hab") -v -timeout 120s -coverpkg=./... -coverprofile=profile.coverage ./...
 
 integration-test:
 	go test -v -timeout 120s -coverpkg=./... -coverprofile=profile.coverage ./hab/... -tags=functionnal
