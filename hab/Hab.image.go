@@ -33,7 +33,12 @@ func (hi *HabImage) present(ctx *utils.ScopeContext) bool {
 func (hi *HabImage) provision(ctx *utils.ScopeContext) error {
 	return ctx.Scope(hi.scopeBase, "provision", func(ctx *utils.ScopeContext) {
 
-		buildResult := hi.hab.builder.BuildDistro(ctx, hi.name, hi.config.Builder)
+		sBuilderConfig := utils.UnTemplate(ctx, hi.config.Builder, map[string]interface{}{
+			"hab":   hi.hab.config.HabConfig,
+			"image": hi.config,
+		})
+
+		buildResult := hi.hab.builder.BuildDistro(ctx, hi.name, sBuilderConfig)
 
 		ctx.Must(hi.hab.lxd.RegisterImage(ctx, hi.name, buildResult.MetadataPackage, buildResult.RootfsPackage, buildResult.Built))
 

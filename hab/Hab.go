@@ -52,11 +52,12 @@ func (h *Hab) Start() error {
 		//Ensure Provisioning
 		ctx.Must(h.Provision())
 
+		//Start
+		ctx.Must(h.httpEgress.Start(ctx))
+
 		ctx.Must(h.upImages(ctx))
 		ctx.Must(h.upContainers(ctx))
 
-		//Start
-		ctx.Must(h.httpEgress.Start(ctx))
 		ctx.Must(h.httpIngress.Start(ctx))
 		ctx.Must(h.startContainers(ctx))
 	})
@@ -92,8 +93,10 @@ func (h *Hab) Shell() error {
 func (h *Hab) Stop() error {
 	return h.ctx.Scope(h.scopeBase, "Stop", func(ctx *utils.ScopeContext) {
 		ctx.Must(h.httpIngress.Stop(ctx))
-		ctx.Must(h.httpEgress.Stop(ctx))
+
 		ctx.Must(h.stopContainers(ctx))
+
+		ctx.Must(h.httpEgress.Stop(ctx))
 	})
 }
 
