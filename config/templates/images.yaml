@@ -11,7 +11,7 @@
     targets:
       lxc:
         create_message: |
-          You just created an {{ image.description }} container.
+          You just created an {{"{{"}} image.description {{"}}"}} container.
 
         config:
           - type: all
@@ -32,7 +32,7 @@
               lxc.include = LXC_TEMPLATE_CONFIG/userns.conf
           - type: all
             content: |-
-              lxc.arch = {{ image.architecture_personality }}
+              lxc.arch = {{"{{"}} image.architecture_personality {{"}}"}}
 
     files:
       - path: /etc/hostname

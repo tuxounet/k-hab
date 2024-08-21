@@ -18,7 +18,7 @@ lxd:
     storage:
       pool: "hab"
       driver: "dir"
-      path: "out/lxd"
+      path: ".out/lxd"
     command:
       prefix: "sudo"
       name: "lxc"
@@ -29,7 +29,7 @@ distrobuilder:
     prefix: "sudo"
     name: "distrobuilder"
   build:
-    path: out/distrobuilder
+    path: .out/distrobuilder
 egress:
   listen:
     port: "58050"

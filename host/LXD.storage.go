@@ -16,9 +16,7 @@ func (l *LXD) getStoragePath(ctx *utils.ScopeContext) string {
 		var storagePath string
 		isAbsolute := filepath.IsAbs(storagePathDefinition)
 		if !isAbsolute {
-			cwd, err := os.Getwd()
-			ctx.Must(err)
-			storagePath = path.Join(cwd, storagePathDefinition)
+			storagePath = path.Join(l.cwd, storagePathDefinition)
 
 		} else {
 			storagePath = storagePathDefinition

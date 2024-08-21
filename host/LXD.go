@@ -7,13 +7,15 @@ import (
 
 type LXD struct {
 	scopeBase string
+	cwd       string
 	habConfig config.HabConfig
 }
 
-func NewLXD(habConfig config.HabConfig) *LXD {
+func NewLXD(habConfig config.HabConfig, cwd string) *LXD {
 
 	return &LXD{
 		scopeBase: "LXD",
+		cwd:       cwd,
 		habConfig: habConfig,
 	}
 }
