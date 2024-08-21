@@ -11,13 +11,15 @@ import (
 
 type DistroBuilder struct {
 	scopeBase string
+	cwd       string
 	habConfig config.HabConfig
 }
 
-func NewDistroBuilder(habConfig config.HabConfig) *DistroBuilder {
+func NewDistroBuilder(habConfig config.HabConfig, cwd string) *DistroBuilder {
 
 	return &DistroBuilder{
 		scopeBase: "DistroBuilder",
+		cwd:       cwd,
 		habConfig: habConfig,
 	}
 }

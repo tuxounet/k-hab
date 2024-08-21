@@ -1,9 +1,6 @@
 
-unit-test: 
-	go test $$(go list ./... | grep -v "/hab") -v -timeout 120s -coverpkg=./... -coverprofile=profile.coverage
-
-integration-test:
-	go test $$(go list ./... | grep "/hab") -timeout 120s -coverpkg=./... -coverprofile=profile.coverage 
+test: 
+	go test ./... -timeout 120s -coverpkg=./... -coverprofile=profile.coverage
 
 build:
 	mkdir -p ./out

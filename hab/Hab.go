@@ -1,6 +1,8 @@
 package hab
 
 import (
+	"os"
+
 	"github.com/tuxounet/k-hab/config"
 	"github.com/tuxounet/k-hab/host"
 	"github.com/tuxounet/k-hab/utils"
@@ -8,6 +10,7 @@ import (
 
 type Hab struct {
 	scopeBase   string
+	cwd         string
 	ctx         *utils.ScopeContext
 	config      *config.Config
 	lxd         *host.LXD
@@ -20,15 +23,20 @@ type Hab struct {
 
 func NewHab(quiet bool) *Hab {
 	scopeCtx := utils.NewScopeContext(quiet, "Hab")
+
+	cwd, err := os.Getwd()
+	scopeCtx.Must(err)
+
 	config := config.NewConfig()
 	config.Load(scopeCtx)
 
 	hab := &Hab{
 		scopeBase:   scopeCtx.Name,
+		cwd:         cwd,
 		ctx:         scopeCtx,
 		config:      config,
-		builder:     host.NewDistroBuilder(config.HabConfig),
-		lxd:         host.NewLXD(config.HabConfig),
+		builder:     host.NewDistroBuilder(config.HabConfig, cwd),
+		lxd:         host.NewLXD(config.HabConfig, cwd),
 		httpEgress:  host.NewHttpEgress(config.HabConfig),
 		httpIngress: host.NewHttpIngress(config.HabConfig),
 		containers:  make([]*HabContainer, 0),
@@ -52,11 +60,12 @@ func (h *Hab) Start() error {
 		//Ensure Provisioning
 		ctx.Must(h.Provision())
 
+		//Start
+		ctx.Must(h.httpEgress.Start(ctx))
+
 		ctx.Must(h.upImages(ctx))
 		ctx.Must(h.upContainers(ctx))
 
-		//Start
-		ctx.Must(h.httpEgress.Start(ctx))
 		ctx.Must(h.httpIngress.Start(ctx))
 		ctx.Must(h.startContainers(ctx))
 	})
@@ -92,8 +101,10 @@ func (h *Hab) Shell() error {
 func (h *Hab) Stop() error {
 	return h.ctx.Scope(h.scopeBase, "Stop", func(ctx *utils.ScopeContext) {
 		ctx.Must(h.httpIngress.Stop(ctx))
-		ctx.Must(h.httpEgress.Stop(ctx))
+
 		ctx.Must(h.stopContainers(ctx))
+
+		ctx.Must(h.httpEgress.Stop(ctx))
 	})
 }
 
