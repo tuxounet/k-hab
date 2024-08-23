@@ -1,4 +1,5 @@
 - name: "bastion"
+  base: alpine
   image: "hab-alpine"
   entry: "/etc/start.sh"
   shell: "sh"
@@ -8,6 +9,17 @@
     gateway: "10.33.0.254"
   proxy:
     port: "58050"
+
+  provision: |
+    #!/bin/sh
+    set -x
+    touch /root/salut.txt
+
+  unprovision: |
+    #!/bin/sh
+    set -x
+    rm -f /root/salut.txt
+
   cloud-init: |
     #cloud-config
     write_files:   
