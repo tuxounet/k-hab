@@ -13,14 +13,15 @@ import (
 
 type HttpIngressController struct {
 	bases.BaseController
-	ctx bases.IContext
-
+	ctx    bases.IContext
+	log    bases.ILogger
 	server *http.Server
 }
 
 func NewHttpIngress(ctx bases.IContext) *HttpIngressController {
 	return &HttpIngressController{
 		ctx: ctx,
+		log: ctx.GetSubLogger("HttpIngressController", ctx.GetLogger()),
 	}
 }
 
@@ -32,6 +33,7 @@ func (h *HttpIngressController) handleProxy(w http.ResponseWriter, r *http.Reque
 }
 
 func (h *HttpIngressController) Start() error {
+	h.log.TraceF("Starting")
 
 	config := h.ctx.GetHabConfig()
 
@@ -49,6 +51,7 @@ func (h *HttpIngressController) Start() error {
 		}
 	}()
 
+	h.log.DebugF("Started")
 	return nil
 }
 

@@ -13,15 +13,18 @@ import (
 type BuilderController struct {
 	bases.BaseController
 	ctx bases.IContext
+	log bases.ILogger
 }
 
 func NewBuilderController(ctx bases.IContext) *BuilderController {
 	return &BuilderController{
 		ctx: ctx,
+		log: ctx.GetSubLogger("BuilderController", ctx.GetLogger()),
 	}
 }
 
 func (b *BuilderController) Provision() error {
+	b.log.TraceF("Provisioning")
 	controller, err := b.ctx.GetController("DependenciesController")
 	if err != nil {
 		return err
@@ -43,6 +46,7 @@ func (b *BuilderController) Provision() error {
 			return err
 		}
 	}
+	b.log.DebugF("Provisioned")
 	return nil
 }
 
@@ -62,15 +66,25 @@ func (b *BuilderController) Unprovision() error {
 		return err
 	}
 
-	err = dependencyController.RemoveSnapSnapshots(snapName)
-	if err != nil {
-		return err
-	}
 	return nil
 
 }
 
 func (b *BuilderController) Nuke() error {
+	controller, err := b.ctx.GetController("DependenciesController")
+	if err != nil {
+		return err
+	}
+	dependencyController := controller.(*dependencies.DependenciesController)
+
+	config := b.ctx.GetHabConfig()
+
+	snapName := utils.GetMapValue(config, "distrobuilder.snap").(string)
+
+	err = dependencyController.RemoveSnapSnapshots(snapName)
+	if err != nil {
+		return err
+	}
 
 	buildPath, err := b.getImageBuildPath()
 	if err != nil {
@@ -107,5 +121,4 @@ func (b *BuilderController) getImageBuildPath() (string, error) {
 func (b *BuilderController) withDistroBuilderCmd(args ...string) (*utils.CmdCall, error) {
 	habConfig := b.ctx.GetHabConfig()
 	return utils.WithCmdCall(habConfig, "distrobuilder.command.prefix", "distrobuilder.command.name", args...)
-
 }

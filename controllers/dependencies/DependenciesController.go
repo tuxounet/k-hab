@@ -10,11 +10,13 @@ import (
 type DependenciesController struct {
 	bases.BaseController
 	ctx bases.IContext
+	log bases.ILogger
 }
 
 func NewDependenciesController(ctx bases.IContext) *DependenciesController {
 	return &DependenciesController{
 		ctx: ctx,
+		log: ctx.GetSubLogger("DependenciesController", ctx.GetLogger()),
 	}
 }
 
@@ -49,6 +51,7 @@ func (h *DependenciesController) InstalledSnap(name string) (bool, error) {
 }
 
 func (h *DependenciesController) InstallSnap(name string, mode string) error {
+	h.log.TraceF("Installing snap %s", name)
 	cmd, err := h.withSnapCmd("install", name, mode)
 	if err != nil {
 		return err
@@ -58,10 +61,13 @@ func (h *DependenciesController) InstallSnap(name string, mode string) error {
 	if err != nil {
 		return err
 	}
+	h.log.DebugF("Installed snap %s", name)
 	return nil
 }
 
 func (h *DependenciesController) RemoveSnap(name string) error {
+	h.log.TraceF("removing snap %s", name)
+
 	cmd, err := h.withSnapCmd("remove", name)
 	if err != nil {
 		return err
@@ -71,10 +77,12 @@ func (h *DependenciesController) RemoveSnap(name string) error {
 	if err != nil {
 		return err
 	}
+	h.log.DebugF("Removed snap %s", name)
 	return nil
 }
 
 func (h *DependenciesController) TakeSnapSnapshots(name string) error {
+	h.log.TraceF("Taking snapshots for snap %s", name)
 	cmd, err := h.withSnapCmd("save", name)
 	if err != nil {
 		return err
@@ -84,11 +92,14 @@ func (h *DependenciesController) TakeSnapSnapshots(name string) error {
 	if err != nil {
 		return err
 	}
+
+	h.log.DebugF("Snapshots taken for snap %s", name)
 	return nil
 }
 
 func (h *DependenciesController) RemoveSnapSnapshots(name string) error {
 
+	h.log.TraceF("Removing snapshots for snap %s", name)
 	snapshots, err := h.ListSnapshots(name)
 	if err != nil {
 		return err
@@ -100,6 +111,7 @@ func (h *DependenciesController) RemoveSnapSnapshots(name string) error {
 			return err
 		}
 	}
+	h.log.DebugF("Snapshots removed for snap %s", name)
 	return nil
 }
 
@@ -124,7 +136,11 @@ func (h *DependenciesController) ListSnapshots(name string) ([]string, error) {
 	for i := 1; i < len(lines); i++ {
 		line := lines[i]
 		id := strings.Fields(line)[0]
-		snapshots = append(snapshots, id)
+		snap := strings.Fields(line)[1]
+		if snap == name {
+
+			snapshots = append(snapshots, id)
+		}
 
 	}
 
@@ -133,6 +149,8 @@ func (h *DependenciesController) ListSnapshots(name string) ([]string, error) {
 }
 
 func (h *DependenciesController) ForgetSnapshot(name string, id string) error {
+	h.log.TraceF("Forgetting snapshot %s for snap %s", id, name)
+
 	cmd, err := h.withSnapCmd("forget", id, name)
 	if err != nil {
 		return err
@@ -142,6 +160,7 @@ func (h *DependenciesController) ForgetSnapshot(name string, id string) error {
 	if err != nil {
 		return err
 	}
+	h.log.DebugF("Forgotten snapshot %s for snap %s", id, name)
 	return nil
 
 }

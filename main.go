@@ -29,22 +29,16 @@ func main() {
 		HideHelp:              false,
 		HideVersion:           false,
 		Flags: []cli.Flag{
-
-			&cli.BoolFlag{
-				Name:  "quiet",
-				Value: false,
-				Usage: "be quiet",
-			},
 			&cli.StringFlag{
 				Name:  "loglevel",
 				Value: "INFO",
-				Usage: "set minimal level to produce log (DEBUG, INFO, WARN, ERROR, FATAL)",
+				Usage: "set minimal level to produce log (TRACE, DEBUG, INFO, WARN, ERROR, FATAL)",
 				Validator: func(s string) error {
 					switch s {
-					case "DEBUG", "INFO", "WARN", "ERROR", "FATAL":
+					case "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL":
 						return nil
 					default:
-						return errors.New("loglevel must be one of DEBUG, INFO, WARN, ERROR, FATAL")
+						return errors.New("loglevel must be one of TRACE, DEBUG, INFO, WARN, ERROR, FATAL")
 					}
 				},
 			},

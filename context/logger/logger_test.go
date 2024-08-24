@@ -7,7 +7,7 @@ import (
 
 func TestTTLogLevels(t *testing.T) {
 	// Test all log levels
-	logger := NewLogger(context.TODO())
+	logger := NewLogger(context.TODO(), "test")
 	logger.TraceF("trace")
 	logger.DebugF("debug")
 	logger.InfoF("info")
