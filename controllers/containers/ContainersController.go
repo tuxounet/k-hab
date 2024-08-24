@@ -2,6 +2,7 @@ package containers
 
 import (
 	"github.com/tuxounet/k-hab/bases"
+	"github.com/tuxounet/k-hab/controllers/runtime"
 )
 
 type ContainersController struct {
@@ -60,27 +61,74 @@ func (c *ContainersController) Start() error {
 
 func (c *ContainersController) Stop() error {
 
-	c.log.TraceF("Stopping containers")
-	err := c.loadContainers()
+	controller, err := c.ctx.GetController(bases.RuntimeController)
+	if err != nil {
+		return err
+	}
+	runtimeController := controller.(*runtime.RuntimeController)
+	present, err := runtimeController.IsPresent()
+	if err != nil {
+		return err
+	}
+
+	if present {
+		err := runtimeController.Stop()
+		if err != nil {
+			return err
+		}
+
+		c.log.TraceF("Stopping containers")
+		err = c.loadContainers()
+		if err != nil {
+			return err
+		}
+
+		for _, container := range c.containers {
+			err = container.Stop()
+			if err != nil {
+				return err
+			}
+
+		}
+
+		c.log.DebugF("stopped %d containers", len(c.containers))
+	}
+	return nil
+}
+
+func (c *ContainersController) Rm() error {
+
+	err := c.Stop()
+	if err != nil {
+		return err
+	}
+
+	c.log.TraceF("Remove containers")
+	err = c.loadContainers()
 	if err != nil {
 		return err
 	}
 
 	for _, container := range c.containers {
-		err = container.Start()
+		err = container.Unprovision()
 		if err != nil {
 			return err
 		}
 
 	}
-	c.log.DebugF("stopped %d containers", len(c.containers))
+	c.log.DebugF("removed %d containers", len(c.containers))
 	return nil
 }
 
 func (c *ContainersController) Unprovision() error {
 
+	err := c.Rm()
+	if err != nil {
+		return err
+	}
+
 	c.log.TraceF("Unprovisioning containers")
-	err := c.loadContainers()
+	err = c.loadContainers()
 	if err != nil {
 		return err
 	}

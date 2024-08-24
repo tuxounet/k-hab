@@ -18,7 +18,25 @@ func NewRuntimeController(ctx bases.IContext) *RuntimeController {
 		log: ctx.GetSubLogger("RuntimeController", ctx.GetLogger()),
 	}
 }
+func (r *RuntimeController) IsPresent() (bool, error) {
 
+	controller, err := r.ctx.GetController("DependenciesController")
+	if err != nil {
+		return false, err
+	}
+	dependencyController := controller.(*dependencies.DependenciesController)
+
+	config := r.ctx.GetHabConfig()
+
+	snapName := utils.GetMapValue(config, "lxd.snap").(string)
+
+	present, err := dependencyController.InstalledSnap(snapName)
+	if err != nil {
+		return false, err
+	}
+	return present, nil
+
+}
 func (r *RuntimeController) Provision() error {
 	r.log.TraceF("Provisioning")
 
@@ -64,18 +82,8 @@ func (r *RuntimeController) Provision() error {
 }
 
 func (r *RuntimeController) Rm() error {
-	controller, err := r.ctx.GetController("DependenciesController")
-	if err != nil {
-		return err
-	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
-	config := r.ctx.GetHabConfig()
-
-	snapName := utils.GetMapValue(config, "lxd.snap").(string)
-
-	present, err := dependencyController.InstalledSnap(snapName)
-
+	present, err := r.IsPresent()
 	if err != nil {
 		return err
 	}
@@ -99,20 +107,11 @@ func (r *RuntimeController) Rm() error {
 func (r *RuntimeController) Unprovision() error {
 	r.log.TraceF("Unprovisioning")
 
-	controller, err := r.ctx.GetController("DependenciesController")
+	present, err := r.IsPresent()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
-	config := r.ctx.GetHabConfig()
-
-	snapName := utils.GetMapValue(config, "lxd.snap").(string)
-
-	present, err := dependencyController.InstalledSnap(snapName)
-	if err != nil {
-		return err
-	}
 	if present {
 
 		err = r.unprovisionProfile()
@@ -125,6 +124,12 @@ func (r *RuntimeController) Unprovision() error {
 			return err
 		}
 
+		controller, err := r.ctx.GetController("DependenciesController")
+		if err != nil {
+			return err
+		}
+		dependencyController := controller.(*dependencies.DependenciesController)
+		snapName := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.snap").(string)
 		err = dependencyController.RemoveSnap(snapName)
 		if err != nil {
 			return err
