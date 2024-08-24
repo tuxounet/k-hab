@@ -5,15 +5,17 @@ import (
 	"text/template"
 )
 
-func UnTemplate(ctx *ScopeContext, tpl string, data any) string {
+func UnTemplate(tpl string, data any) (string, error) {
 
-	return ScopingWithReturn(ctx, "utils", "UnTemplate", func(ctx *ScopeContext) string {
+	var buf bytes.Buffer
+	tmpl, err := template.New(tpl).Parse(tpl)
+	if err != nil {
+		return "", err
+	}
+	err = tmpl.Execute(&buf, data)
+	if err != nil {
+		return "", err
+	}
+	return buf.String(), nil
 
-		var buf bytes.Buffer
-		tmpl, err := template.New(tpl).Parse(tpl)
-		ctx.Must(err)
-		err = tmpl.Execute(&buf, data)
-		ctx.Must(err)
-		return buf.String()
-	})
 }

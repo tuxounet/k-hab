@@ -1,4 +1,4 @@
-package utils
+package logger
 
 import (
 	"context"
@@ -7,39 +7,34 @@ import (
 )
 
 type Logger struct {
-	log   *logrus.Entry
-	async bool
+	log *logrus.Entry
 }
 
-func NewLogger(quiet bool, ctx context.Context) *Logger {
+func NewLogger(ctx context.Context) *Logger {
 	rootLogger := logrus.New()
 	rootLogger.SetFormatter(&logrus.TextFormatter{
 		DisableColors:   false,
-		ForceColors:     !quiet,
+		ForceColors:     true,
 		FullTimestamp:   true,
 		TimestampFormat: "15-01-2018 15:04:05.000000",
 	})
-
-	if quiet {
-		rootLogger.SetLevel(logrus.InfoLevel)
-	} else {
-		rootLogger.SetLevel(logrus.TraceLevel)
-	}
+	rootLogger.SetLevel(logrus.TraceLevel)
 	return &Logger{
-		log:   rootLogger.WithContext(ctx),
-		async: false,
+		log: rootLogger.WithContext(ctx),
 	}
 }
-func (l *Logger) CreateScopeLogger(name string, fields map[string]interface{}) *Logger {
 
+func (l *Logger) SetLevel(level logrus.Level) {
+	l.log.Logger.SetLevel(level)
+}
+
+func (l *Logger) CreateScopeLogger(name string, fields map[string]interface{}) *Logger {
 	return &Logger{
 		log: l.log.WithField("scope", name).WithFields(fields),
 	}
-
 }
 
 func (l *Logger) TraceF(format string, args ...interface{}) {
-
 	l.log.Tracef(format, args...)
 }
 func (l *Logger) DebugF(format string, args ...interface{}) {

@@ -1,11 +1,14 @@
+GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+
 
 test: 
 	go test ./... -timeout 120s -coverpkg=./... -coverprofile=profile.coverage
 
 build:
 	mkdir -p ./out
-	go build -o ./out/k-hab main.go
+	go build -ldflags="-X 'main.version=v${GIT_BRANCH}'" -o ./out/k-hab main.go
 
+ 
 
 release:
 	mkdir -p ./out

@@ -1,4 +1,4 @@
-package config
+package bases
 
 type HabConfig = map[string]interface{}
 

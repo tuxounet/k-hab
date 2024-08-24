@@ -2,14 +2,12 @@ package config
 
 import (
 	"testing"
-
-	"github.com/tuxounet/k-hab/utils"
 )
 
 func TestTTDefaultConfig(t *testing.T) {
-	ctx := utils.NewTestContext()
+
 	config := NewConfig()
-	err := config.Load(ctx)
+	err := config.Load()
 	if err != nil {
 		t.Fatalf("Error loading config: %s", err)
 	}
@@ -23,7 +21,11 @@ func TestTTDefaultConfig(t *testing.T) {
 		t.Fatalf("ImagesConfig is empty")
 	}
 
-	containerConfig := config.GetContainerConfig(ctx, "bastion")
+	containerConfig, err := config.GetContainerConfig("bastion")
+	if err != nil {
+		t.Fatalf("Error getting container config: %s", err)
+	}
+
 	if containerConfig.Name != "bastion" {
 		t.Fatalf("ContainerConfig.Name is not bastion")
 	}
@@ -35,6 +37,9 @@ func TestTTDefaultConfig(t *testing.T) {
 		}
 	}()
 
-	config.GetContainerConfig(ctx, "non-existing")
+	_, err = config.GetContainerConfig("non-existing")
+	if err == nil {
+		t.Fatalf("Expected error")
+	}
 
 }
