@@ -5,33 +5,66 @@ import (
 )
 
 func TestTtLoadYamlFromString(t *testing.T) {
-	ctx := NewTestContext()
+
 	yamlStr := `
 name: "test"
 `
-	result := LoadYamlFromString[map[string]string](ctx, yamlStr)
+	result, err := LoadYamlFromString[map[string]string](yamlStr)
+	if err != nil {
+		t.Fatalf("Error loading yaml: %v", err)
+	}
 	if result["name"] != "test" {
 		t.Fatalf("Expected 'test', got '%s'", result["name"])
+	}
+}
+
+func TestTTLoadYamlFromInvalidString(t *testing.T) {
+
+	yamlStr := `
+name:  est"
+  jdj: 1
+`
+	_, err := LoadYamlFromString[map[string]string](yamlStr)
+	if err == nil {
+		t.Fatalf("Expected error, got nil")
 	}
 }
 
 func TestTTLoadJSONFromString(t *testing.T) {
-	ctx := NewTestContext()
+
 	jsonStr := `
 {"name": "test"}
 `
-	result := LoadJSONFromString[map[string]string](ctx, jsonStr)
+	result, err := LoadJSONFromString[map[string]string](jsonStr)
+	if err != nil {
+		t.Fatalf("Error loading json: %v", err)
+	}
 	if result["name"] != "test" {
 		t.Fatalf("Expected 'test', got '%s'", result["name"])
 	}
 }
+func TestTTLoadJSONFromInvalidString(t *testing.T) {
+
+	jsonStr := `
+{"name": "test
+`
+	result, err := LoadJSONFromString[map[string]string](jsonStr)
+	if err == nil {
+		t.Fatalf("Expected error, got nil")
+	}
+
+	if result != nil {
+		t.Fatalf("Expected nil, got '%v'", result)
+	}
+}
 
 func TestTTGetMapValue(t *testing.T) {
-	ctx := NewTestContext()
+
 	m := map[string]interface{}{
 		"name": "test",
 	}
-	result := GetMapValue(ctx, m, "name")
+	result := GetMapValue(m, "name")
+
 	if result != "test" {
 		t.Fatalf("Expected 'test', got '%s'", result)
 	}

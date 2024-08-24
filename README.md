@@ -8,7 +8,7 @@ A single executable, that spawn or restore a virtual infrastructure, definied by
 - snap
 - LXD ecosystem :
   - LXD Deamon
-  - LXC
+  - LXC (from LXD)
   - Distrobuilder
 - Alpine Linux
 

@@ -1,0 +1,133 @@
+image:
+  distribution: "alpinelinux"
+  release: 3.20
+source:
+  downloader: alpinelinux-http
+  same_as: 3.20
+  url: https://eu.edge.kernel.org/alpine
+
+targets:
+  lxc:
+    create_message: |
+      You just created an {{"{{"}} image.description {{"}}"}} container.
+    config:
+      - type: all
+        before: 5
+        content: |-
+          lxc.include = LXC_TEMPLATE_CONFIG/alpine.common.conf
+      - type: user
+        before: 5
+        content: |-
+          lxc.include = LXC_TEMPLATE_CONFIG/alpine.userns.conf
+      - type: all
+        after: 4
+        content: |-
+          lxc.include = LXC_TEMPLATE_CONFIG/common.conf
+      - type: user
+        after: 4
+        content: |-
+          lxc.include = LXC_TEMPLATE_CONFIG/userns.conf
+      - type: all
+        content: |-
+          lxc.arch = {{"{{"}} image.architecture_personality {{"}}"}}
+
+files:
+  - path: /etc/hostname
+    generator: hostname
+
+  - path: /etc/hosts
+    generator: hosts
+
+  - path: /etc/network/interfaces
+    generator: dump
+    content: |-
+      auto eth0
+      hostname $(hostname)
+
+  - path: /etc/inittab
+    generator: template
+    name: inittab
+    content: |-
+      # /etc/inittab
+      ::sysinit:/sbin/openrc sysinit
+      ::sysinit:/sbin/openrc boot
+      ::wait:/sbin/openrc default
+
+      # Set up a couple of getty's
+      ::respawn:/sbin/getty 38400 console
+
+      # Stuff to do for the 3-finger salute
+      ::ctrlaltdel:/sbin/reboot
+
+      # Stuff to do before rebooting
+      ::shutdown:/sbin/openrc shutdown
+
+  - name: meta-data
+    generator: cloud-init
+
+  - name: network-config
+    generator: cloud-init
+    content: |-
+      version: 1
+      config:
+      - type: physical
+        name: eth0
+        subnets:
+        - type: dhcp
+          control: auto
+
+  - name: user-data
+    generator: cloud-init
+
+  - name: vendor-data
+    generator: cloud-init
+
+packages:
+  manager: apk
+  update: true
+  cleanup: true
+  sets:
+    - packages:
+        - alpine-base
+        - logrotate
+        - htop
+        - nano
+        - curl
+      action: install
+
+    - packages:
+        - cloud-init
+      action: install
+actions:
+  - trigger: post-packages
+    action: |-
+      #!/bin/sh
+      set -eux
+      rm -f /var/cache/apk/*
+
+  - trigger: post-packages
+    action: |-
+      #!/bin/sh
+      set -eux
+
+      # Rewrite configuration for LXC
+      sed -i 's/#rc_sys=""/rc_sys="lxc"/' /etc/rc.conf
+
+      # Honor fstab by not making the localmount script a noop
+      sed -i 's/-lxc//' /etc/init.d/localmount
+
+      # Enable services
+      for svc_name in bootmisc syslog devfs; do
+          ln -s /etc/init.d/${svc_name} /etc/runlevels/boot/${svc_name}
+      done
+
+      for svc_name in networking crond; do
+          ln -s /etc/init.d/${svc_name} /etc/runlevels/default/${svc_name}
+      done
+  - trigger: post-files
+    action: |-
+      #!/bin/sh
+      set -eux
+      setup-cloud-init
+mappings:
+  architecture_map: alpinelinux

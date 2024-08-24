@@ -7,35 +7,40 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func LoadYamlFromString[R any](ctx *ScopeContext, yamlStr string) R {
-	return ScopingWithReturn(ctx, "utils", "LoadYamlFromString", func(ctx *ScopeContext) R {
-		var anyStruct R
+func LoadYamlFromString[R any](yamlStr string) (R, error) {
 
-		ctx.Must(yaml.Unmarshal([]byte(yamlStr), &anyStruct))
+	var anyStruct R
 
-		return anyStruct
-	})
+	err := yaml.Unmarshal([]byte(yamlStr), &anyStruct)
+	if err != nil {
+		return anyStruct, err
+	}
+
+	return anyStruct, nil
+
 }
 
-func LoadJSONFromString[R any](ctx *ScopeContext, jsonStr string) R {
-	return ScopingWithReturn(ctx, "utils", "LoadJSONFromString", func(ctx *ScopeContext) R {
-		var anyStruct R
+func LoadJSONFromString[R any](jsonStr string) (R, error) {
+	var anyStruct R
 
-		ctx.Must(json.Unmarshal([]byte(jsonStr), &anyStruct))
+	err := (json.Unmarshal([]byte(jsonStr), &anyStruct))
 
-		return anyStruct
-	})
+	if err != nil {
+		return anyStruct, err
+	}
+
+	return anyStruct, nil
+
 }
 
-func GetMapValue(ctx *ScopeContext, anyMap any, path string) any {
-	return ScopingWithReturn(ctx, "utils", "GetMapValue", func(ctx *ScopeContext) any {
-		ctx.Log.DebugF("GetMapValue:  %v", path)
-		keys := strings.Split(path, ".")
-		var value interface{}
-		value = anyMap
-		for _, key := range keys {
-			value = value.(map[string]interface{})[key]
-		}
-		return value
-	})
+func GetMapValue(anyMap any, path string) any {
+
+	keys := strings.Split(path, ".")
+	var value interface{}
+	value = anyMap
+	for _, key := range keys {
+		value = value.(map[string]interface{})[key]
+	}
+	return value
+
 }
