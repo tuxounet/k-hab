@@ -200,6 +200,22 @@ func (l *ContainerModel) Exec(command ...string) error {
 
 }
 
+func (l *ContainerModel) Shell() error {
+	shellCmd := l.ContainerConfig.Shell
+
+	cmd, err := l.withLxcCmd("exec", l.name, "--")
+	if err != nil {
+		return err
+	}
+	cmd.Args = append(cmd.Args, shellCmd)
+	err = utils.OsExec(cmd)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
 func (l *ContainerModel) Stop() error {
 
 	status, err := l.Status()

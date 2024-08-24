@@ -18,6 +18,18 @@ name: "test"
 	}
 }
 
+func TestTTLoadYamlFromInvalidString(t *testing.T) {
+
+	yamlStr := `
+name:  est"
+  jdj: 1
+`
+	_, err := LoadYamlFromString[map[string]string](yamlStr)
+	if err == nil {
+		t.Fatalf("Expected error, got nil")
+	}
+}
+
 func TestTTLoadJSONFromString(t *testing.T) {
 
 	jsonStr := `
@@ -29,6 +41,20 @@ func TestTTLoadJSONFromString(t *testing.T) {
 	}
 	if result["name"] != "test" {
 		t.Fatalf("Expected 'test', got '%s'", result["name"])
+	}
+}
+func TestTTLoadJSONFromInvalidString(t *testing.T) {
+
+	jsonStr := `
+{"name": "test
+`
+	result, err := LoadJSONFromString[map[string]string](jsonStr)
+	if err == nil {
+		t.Fatalf("Expected error, got nil")
+	}
+
+	if result != nil {
+		t.Fatalf("Expected nil, got '%v'", result)
 	}
 }
 

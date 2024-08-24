@@ -154,7 +154,8 @@ func (h *HabContext) Shell() error {
 	}
 
 	h.log.DebugF("Starting shell")
-	err = container.Exec("/bin/sh")
+
+	err = container.Shell()
 	if err != nil {
 		return err
 	}

@@ -39,6 +39,44 @@ func (c *ContainersController) Provision() error {
 	return nil
 }
 
+func (c *ContainersController) Start() error {
+
+	c.log.TraceF("Starting containers")
+	err := c.loadContainers()
+	if err != nil {
+		return err
+	}
+
+	for _, container := range c.containers {
+		err = container.Start()
+		if err != nil {
+			return err
+		}
+
+	}
+	c.log.DebugF("started %d containers", len(c.containers))
+	return nil
+}
+
+func (c *ContainersController) Stop() error {
+
+	c.log.TraceF("Stopping containers")
+	err := c.loadContainers()
+	if err != nil {
+		return err
+	}
+
+	for _, container := range c.containers {
+		err = container.Start()
+		if err != nil {
+			return err
+		}
+
+	}
+	c.log.DebugF("stopped %d containers", len(c.containers))
+	return nil
+}
+
 func (c *ContainersController) Unprovision() error {
 
 	c.log.TraceF("Unprovisioning containers")

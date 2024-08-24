@@ -45,6 +45,33 @@ func TestTTJsonOutput(t *testing.T) {
 	}
 }
 
+func TestTTJsonOutputFailed(t *testing.T) {
+
+	cmd := NewCmdCall("inexistant", `{"hello": "world"}`)
+
+	_, err := JsonCommandOutput[map[string]string](cmd)
+	if err == nil {
+		t.Fatalf("Expected error, got nil")
+	}
+
+}
+
+func TestTTInvalidJsonOutput(t *testing.T) {
+
+	cmd := NewCmdCall("echo", `{"hello": "worl"`)
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Error getting current working directory")
+	}
+	cmd.Cwd = &cwd
+
+	_, err = JsonCommandOutput[map[string]string](cmd)
+	if err == nil {
+		t.Fatalf("Expected error, got nil")
+	}
+
+}
+
 func TestTTExecExitCode(t *testing.T) {
 
 	cmd := NewCmdCall("ls")
@@ -79,6 +106,21 @@ func TestTTOSExec(t *testing.T) {
 func TestTTFail(t *testing.T) {
 
 	cmd := NewCmdCall("unexistant", "command")
+	cwd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Error getting current working directory")
+	}
+	cmd.Cwd = &cwd
+
+	err = OsExec(cmd)
+	if err == nil {
+		t.Fatalf("Expected error, got nil")
+	}
+
+}
+func TestTTINonZero(t *testing.T) {
+
+	cmd := NewCmdCall("which", "lsd")
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Error getting current working directory")
