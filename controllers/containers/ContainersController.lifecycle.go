@@ -68,14 +68,23 @@ func (c *ContainersController) Stop() error {
 		}
 
 		for _, container := range c.containers {
-			err = container.Stop()
+			status, err := container.Status()
 			if err != nil {
 				return err
 			}
 
+			if status != "Stopped" {
+
+				err = container.Stop()
+				if err != nil {
+					return err
+				}
+				c.log.DebugF("stopped container %s", container.Name)
+			}
+
 		}
 
-		c.log.DebugF("stopped %d containers", len(c.containers))
+		c.log.DebugF("Stopped containers")
 	}
 	return nil
 }

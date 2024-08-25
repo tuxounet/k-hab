@@ -122,13 +122,13 @@ func (r *RuntimeController) Unprovision() error {
 			return err
 		}
 
-		r.log.DebugF("Unprovioned")
 	}
 
+	r.log.DebugF("Unprovioned")
 	return nil
 }
 func (r *RuntimeController) Nuke() error {
-
+	r.log.TraceF("Nuking")
 	err := r.nukeStorage()
 	if err != nil {
 		return err
@@ -147,6 +147,8 @@ func (r *RuntimeController) Nuke() error {
 	if err != nil {
 		return err
 	}
+
+	r.log.DebugF("Nuked")
 	return nil
 
 }

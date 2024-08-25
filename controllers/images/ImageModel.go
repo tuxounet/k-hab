@@ -10,16 +10,16 @@ import (
 
 type ImageModel struct {
 	ctx        bases.IContext
-	name       string
-	definition definitions.HabBaseDefinition
+	Name       string
+	Definition definitions.HabBaseDefinition
 }
 
 func NewImageModel(name string, ctx bases.IContext, definition definitions.HabBaseDefinition) *ImageModel {
 
 	return &ImageModel{
-		name:       name,
+		Name:       name,
 		ctx:        ctx,
-		definition: definition,
+		Definition: definition,
 	}
 }
 
@@ -30,16 +30,16 @@ func (hi *ImageModel) present() (bool, error) {
 	}
 	runtimeController := rRunContaner.(*runtime.RuntimeController)
 
-	return runtimeController.PresentImage(hi.name)
+	return runtimeController.PresentImage(hi.Name)
 
 }
 
 func (hi *ImageModel) provision() error {
 	habConfig := hi.ctx.GetHabConfig()
 
-	sBuilderConfig, err := utils.UnTemplate(hi.definition.Builder, map[string]interface{}{
+	sBuilderConfig, err := utils.UnTemplate(hi.Definition.Builder, map[string]interface{}{
 		"hab":   habConfig,
-		"image": hi.definition,
+		"image": hi.Definition,
 	})
 	if err != nil {
 		return err
@@ -57,12 +57,12 @@ func (hi *ImageModel) provision() error {
 	}
 	runtimeController := rRunContaner.(*runtime.RuntimeController)
 
-	buildResult, err := builderController.BuildDistro(hi.name, sBuilderConfig)
+	buildResult, err := builderController.BuildDistro(hi.Name, sBuilderConfig)
 	if err != nil {
 		return err
 	}
 
-	err = runtimeController.RegisterImage(hi.name, buildResult.MetadataPackage, buildResult.RootfsPackage, buildResult.Built)
+	err = runtimeController.RegisterImage(hi.Name, buildResult.MetadataPackage, buildResult.RootfsPackage, buildResult.Built)
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func (hi *ImageModel) unprovision() error {
 		return err
 	}
 	builderController := controller.(*builder.BuilderController)
-	err = builderController.RemoveCache(hi.name)
+	err = builderController.RemoveCache(hi.Name)
 	if err != nil {
 		return err
 	}
@@ -92,7 +92,7 @@ func (hi *ImageModel) nuke() error {
 		return err
 	}
 	builderController := controller.(*builder.BuilderController)
-	err = builderController.RemoveCache(hi.name)
+	err = builderController.RemoveCache(hi.Name)
 	if err != nil {
 		return err
 

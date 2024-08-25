@@ -15,8 +15,8 @@ import (
 
 type ContainerModel struct {
 	ctx  bases.IContext
-	name string
-	arch string
+	Name string
+	Arch string
 
 	ContainerConfig bases.HabContainerConfig
 }
@@ -24,9 +24,9 @@ type ContainerModel struct {
 func NewContainerModel(name string, ctx bases.IContext, containerConfig bases.HabContainerConfig) *ContainerModel {
 
 	return &ContainerModel{
-		name:            name,
+		Name:            name,
 		ctx:             ctx,
-		arch:            runtime.GOARCH,
+		Arch:            runtime.GOARCH,
 		ContainerConfig: containerConfig,
 	}
 }
@@ -49,7 +49,7 @@ func (l *ContainerModel) Present() (bool, error) {
 	}
 
 	for _, container := range out {
-		if container["name"] == l.name {
+		if container["name"] == l.Name {
 			return true, nil
 		}
 	}
@@ -69,7 +69,7 @@ func (l *ContainerModel) Status() (string, error) {
 		return "", err
 	}
 	for _, container := range out {
-		if container["name"] == l.name {
+		if container["name"] == l.Name {
 			return container["status"].(string), nil
 		}
 	}
@@ -95,23 +95,21 @@ func (l *ContainerModel) Provision() error {
 			return err
 		}
 
-		containerDatas := l.ContainerConfig.ToMap()
-
-		containerImage := utils.GetMapValue(containerDatas, "image").(string)
-
-		lxcProfile := utils.GetMapValue(l.ctx.GetHabConfig(), "lxd.lxc.profile").(string)
-		lxdCmd, err := l.withLxcCmd("init", containerImage, l.name, "--profile", lxcProfile)
+		image, err := imagesController.GetImage(l.ContainerConfig.Base)
 		if err != nil {
 			return err
 		}
 
-		cloudInit := utils.GetMapValue(containerDatas, "cloud-init").(string)
-		networkConfig := utils.GetMapValue(containerDatas, "network-config").(string)
+		lxcProfile := utils.GetMapValue(l.ctx.GetHabConfig(), "lxd.lxc.profile").(string)
+		lxdCmd, err := l.withLxcCmd("init", l.ContainerConfig.Base, l.Name, "--profile", lxcProfile)
+		if err != nil {
+			return err
+		}
 
-		if cloudInit != "" {
-			sCloudInit, err := utils.UnTemplate(cloudInit, map[string]interface{}{
+		if image.Definition.CloudInit != "" {
+			sCloudInit, err := utils.UnTemplate(image.Definition.CloudInit, map[string]interface{}{
 				"hab":       l.ctx.GetHabConfig(),
-				"container": containerDatas,
+				"container": l.ContainerConfig.ToMap(),
 			})
 			if err != nil {
 				return err
@@ -120,10 +118,10 @@ func (l *ContainerModel) Provision() error {
 			lxdCmd.Args = append(lxdCmd.Args, userDataInclude)
 		}
 
-		if networkConfig != "" {
-			sNetworkConfig, err := utils.UnTemplate(networkConfig, map[string]interface{}{
+		if image.Definition.NetworkConfig != "" {
+			sNetworkConfig, err := utils.UnTemplate(image.Definition.NetworkConfig, map[string]interface{}{
 				"hab":       l.ctx.GetHabConfig(),
-				"container": containerDatas,
+				"container": l.ContainerConfig.ToMap(),
 			})
 			if err != nil {
 				return err
@@ -136,6 +134,7 @@ func (l *ContainerModel) Provision() error {
 		if err != nil {
 			return err
 		}
+
 		return nil
 	}
 	return nil
@@ -149,7 +148,7 @@ func (l *ContainerModel) Start() error {
 	}
 
 	if status != "Running" {
-		cmd, err := l.withLxcCmd("start", l.name)
+		cmd, err := l.withLxcCmd("start", l.Name)
 		if err != nil {
 			return err
 		}
@@ -179,7 +178,7 @@ func (l *ContainerModel) WaitReady() error {
 			return err
 		}
 		if status == "Running" {
-			cmd, err := l.withLxcCmd("exec", l.name, "--", "cloud-init", "status", "--wait")
+			cmd, err := l.withLxcCmd("exec", l.Name, "--", "cloud-init", "status", "--wait")
 			if err != nil {
 				return err
 			}
@@ -199,7 +198,7 @@ func (l *ContainerModel) WaitReady() error {
 
 func (l *ContainerModel) Exec(command ...string) error {
 
-	cmd, err := l.withLxcCmd("exec", l.name, "--")
+	cmd, err := l.withLxcCmd("exec", l.Name, "--")
 	if err != nil {
 		return err
 	}
@@ -214,7 +213,11 @@ func (l *ContainerModel) Exec(command ...string) error {
 
 func (l *ContainerModel) Shell() error {
 	shellCmd := l.ContainerConfig.Shell
-	return l.Exec(shellCmd)
+	err := l.Exec(shellCmd)
+	if err != nil {
+		l.ctx.GetLogger().ErrorF("Error while executing shell command: %s", err)
+	}
+	return nil
 }
 
 func (l *ContainerModel) Stop() error {
@@ -224,7 +227,7 @@ func (l *ContainerModel) Stop() error {
 		return err
 	}
 	if status == "Running" {
-		cmd, err := l.withLxcCmd("stop", l.name)
+		cmd, err := l.withLxcCmd("stop", l.Name)
 		if err != nil {
 			return err
 		}
@@ -263,7 +266,7 @@ func (l *ContainerModel) Unprovision() error {
 			if err != nil {
 				return err
 			}
-			cmd, err := l.withLxcCmd("delete", l.name)
+			cmd, err := l.withLxcCmd("delete", l.Name)
 			if err != nil {
 				return err
 			}

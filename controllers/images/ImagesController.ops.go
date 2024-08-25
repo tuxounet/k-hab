@@ -16,7 +16,7 @@ func (h *ImagesController) loadImages() error {
 
 		found := false
 		for _, localBase := range h.images {
-			if localBase.name == confContainer.Base {
+			if localBase.Name == confContainer.Base {
 				found = true
 				break
 			}
@@ -40,7 +40,7 @@ func (h *ImagesController) GetImage(name string) (*ImageModel, error) {
 		return nil, err
 	}
 	for _, image := range h.images {
-		if image.name == name {
+		if image.Name == name {
 			return image, nil
 		}
 	}
@@ -63,6 +63,30 @@ func (h *ImagesController) ImagePresent(name string) (bool, error) {
 }
 
 func (h *ImagesController) EnsureImage(name string) error {
+
+	h.log.TraceF("Ensuring image %s", name)
+
+	present, err := h.ImagePresent(name)
+	if err != nil {
+		return err
+	}
+
+	if !present {
+		h.log.WarnF("Image %s not present, provisioning", name)
+
+		definition, err := definitions.GetImageBase(name)
+		if err != nil {
+			return err
+		}
+
+		image := NewImageModel(name, h.ctx, definition)
+		err = image.provision()
+		if err != nil {
+			return err
+		}
+		h.images = append(h.images, image)
+		h.log.DebugF("Image %s provisioned", name)
+	}
 
 	return nil
 
