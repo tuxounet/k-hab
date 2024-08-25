@@ -12,7 +12,7 @@ func (h *ImagesController) loadImages() error {
 		return nil
 	}
 
-	for _, confContainer := range h.ctx.GetContainersConfig() {
+	for _, confContainer := range h.ctx.GetSetupContainers() {
 
 		found := false
 		for _, localBase := range h.images {

@@ -8,9 +8,9 @@ import (
 
 func (r *RuntimeController) provisionProfile() error {
 
-	profile := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.profile").(string)
-	storage_pool := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.storage.pool").(string)
-	network_bridge := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.host.interface").(string)
+	profile := r.ctx.GetConfigValue("hab.lxd.lxc.profile")
+	storage_pool := r.ctx.GetConfigValue("hab.lxd.lxc.storage.pool")
+	network_bridge := r.ctx.GetConfigValue("hab.lxd.lxc.host.interface")
 
 	profileExists, err := r.existsProfile(profile)
 	if err != nil {
@@ -51,7 +51,7 @@ func (r *RuntimeController) provisionProfile() error {
 
 func (r *RuntimeController) unprovisionProfile() error {
 
-	profile := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.profile").(string)
+	profile := r.ctx.GetConfigValue("hab.lxd.lxc.profile")
 	profileExists, err := r.existsProfile(profile)
 	if err != nil {
 		return err

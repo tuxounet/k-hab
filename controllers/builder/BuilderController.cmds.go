@@ -9,8 +9,8 @@ import (
 )
 
 func (b *BuilderController) getImageBuildPath() (string, error) {
-	config := b.ctx.GetHabConfig()
-	buildPathDefinition := utils.GetMapValue(config, "distrobuilder.build.path").(string)
+
+	buildPathDefinition := b.ctx.GetConfigValue("hab.distrobuilder.build.path")
 	var buildPath string
 	isAbsolute := filepath.IsAbs(buildPathDefinition)
 	if !isAbsolute {
@@ -28,6 +28,5 @@ func (b *BuilderController) getImageBuildPath() (string, error) {
 
 }
 func (b *BuilderController) withDistroBuilderCmd(args ...string) (*utils.CmdCall, error) {
-	habConfig := b.ctx.GetHabConfig()
-	return utils.WithCmdCall(habConfig, "distrobuilder.command.prefix", "distrobuilder.command.name", args...)
+	return utils.WithCmdCall(b.ctx, "hab.distrobuilder.command.prefix", "hab.distrobuilder.command.name", args...)
 }

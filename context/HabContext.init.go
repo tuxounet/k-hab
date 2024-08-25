@@ -21,10 +21,6 @@ func (h *HabContext) Init() error {
 	}
 	h.cwd = cwd
 
-	err = h.config.Load()
-	if err != nil {
-		return err
-	}
 	order := bases.HabControllersLoadOrder()
 	h.controllers = make(map[bases.HabControllers]bases.IController, len(order))
 

@@ -13,9 +13,7 @@ func (r *RuntimeController) IsPresent() (bool, error) {
 	}
 	dependencyController := controller.(*dependencies.DependenciesController)
 
-	config := r.ctx.GetHabConfig()
-
-	snapName := utils.GetMapValue(config, "lxd.snap").(string)
+	snapName := r.ctx.GetConfigValue("hab.lxd.snap")
 
 	present, err := dependencyController.InstalledSnap(snapName)
 	if err != nil {
@@ -33,10 +31,8 @@ func (r *RuntimeController) Provision() error {
 	}
 	dependencyController := controller.(*dependencies.DependenciesController)
 
-	config := r.ctx.GetHabConfig()
-
-	snapName := utils.GetMapValue(config, "lxd.snap").(string)
-	snapMode := utils.GetMapValue(config, "lxd.snap_mode").(string)
+	snapName := r.ctx.GetConfigValue("hab.lxd.snap")
+	snapMode := r.ctx.GetConfigValue("hab.lxd.snap_mode")
 	present, err := dependencyController.InstalledSnap(snapName)
 	if err != nil {
 		return err
@@ -116,7 +112,7 @@ func (r *RuntimeController) Unprovision() error {
 			return err
 		}
 		dependencyController := controller.(*dependencies.DependenciesController)
-		snapName := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.snap").(string)
+		snapName := r.ctx.GetConfigValue("hab.lxd.snap")
 		err = dependencyController.RemoveSnap(snapName)
 		if err != nil {
 			return err
@@ -140,8 +136,7 @@ func (r *RuntimeController) Nuke() error {
 	}
 	dependencyController := controller.(*dependencies.DependenciesController)
 
-	config := r.ctx.GetHabConfig()
-	snapName := utils.GetMapValue(config, "lxd.snap").(string)
+	snapName := r.ctx.GetConfigValue("hab.lxd.snap")
 
 	err = dependencyController.RemoveSnapSnapshots(snapName)
 	if err != nil {

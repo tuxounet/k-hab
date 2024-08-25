@@ -35,11 +35,10 @@ func (hi *ImageModel) present() (bool, error) {
 }
 
 func (hi *ImageModel) provision() error {
-	habConfig := hi.ctx.GetHabConfig()
 
 	sBuilderConfig, err := utils.UnTemplate(hi.Definition.Builder, map[string]interface{}{
-		"hab":   habConfig,
-		"image": hi.Definition,
+		"config": hi.ctx.GetCurrentConfig(),
+		"image":  hi.Definition,
 	})
 	if err != nil {
 		return err

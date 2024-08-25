@@ -2,50 +2,36 @@ package config
 
 import (
 	_ "embed"
-	"errors"
 
 	"github.com/tuxounet/k-hab/bases"
-	"github.com/tuxounet/k-hab/utils"
 )
 
-//go:embed templates/hab.yaml
-var defaultHabConfig string
-
-//go:embed templates/containers.yaml
-var defaultContainersConfig string
-
 type Config struct {
-	HabConfig        bases.HabConfig
-	ContainersConfig []bases.HabContainerConfig
+	values map[string]string
+	log    bases.ILogger
 }
 
-func NewConfig() *Config {
-	return &Config{}
+func NewConfig(logger bases.ILogger, defaultConfig map[string]string) *Config {
+	return &Config{
+		values: defaultConfig,
+		log:    logger.CreateSubLogger("Setup", logger),
+	}
 }
 
-func (c *Config) Load() error {
+func (c *Config) SetConfigValue(key string, value string) error {
 
-	habConfig, err := utils.LoadYamlFromString[bases.HabConfig](defaultHabConfig)
-	if err != nil {
-		return err
-	}
-	containersConfig, err := utils.LoadYamlFromString[[]bases.HabContainerConfig](defaultContainersConfig)
-	if err != nil {
-		return err
-	}
+	c.values[key] = value
 
-	c.ContainersConfig = containersConfig
-	c.HabConfig = habConfig
+	c.log.TraceF("Config value %s set to %s", key, value)
 	return nil
 }
 
-func (c *Config) GetContainerConfig(containerName string) (bases.HabContainerConfig, error) {
+func (c *Config) GetValue(key string) string {
+	c.log.TraceF("Config value %s requested", key)
+	return c.values[key]
+}
 
-	for _, container := range c.ContainersConfig {
-		if container.Name == containerName {
-			return container, nil
-		}
-	}
+func (c *Config) GetCurrent() map[string]string {
 
-	return bases.HabContainerConfig{}, errors.New("container not found")
+	return c.values
 }

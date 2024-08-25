@@ -8,10 +8,10 @@ import (
 
 func (r *RuntimeController) provisionNetwork() error {
 
-	host_interface := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.host.interface").(string)
-	host_address := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.host.address").(string)
-	host_address_mask := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.host.netmask").(string)
-	network_nat := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.host.nat").(string)
+	host_interface := r.ctx.GetConfigValue("hab.lxd.lxc.host.interface")
+	host_address := r.ctx.GetConfigValue("hab.lxd.lxc.host.address")
+	host_address_mask := r.ctx.GetConfigValue("hab.lxd.lxc.host.netmask")
+	network_nat := r.ctx.GetConfigValue("hab.lxd.lxc.host.nat")
 
 	ipv4_address := fmt.Sprintf("%s/%s", host_address, host_address_mask)
 	existsNetwork, err := r.existsNetwork(host_interface)

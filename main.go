@@ -2,14 +2,23 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"errors"
 	"log"
 	"os"
 
 	"github.com/urfave/cli/v3"
 
+	"github.com/tuxounet/k-hab/bases"
 	habContext "github.com/tuxounet/k-hab/context"
+	"github.com/tuxounet/k-hab/utils"
 )
+
+//go:embed default.config.yaml
+var defaultConfig string
+
+//go:embed default.setup.yaml
+var defaultSetup string
 
 var version = "DEVELOPEMENT"
 
@@ -19,6 +28,14 @@ type Author struct {
 }
 
 func main() {
+	defaultConfig, err := utils.LoadYamlFromString[map[string]string](defaultConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defaultSetup, err := utils.LoadYamlFromString[bases.SetupFile](defaultSetup)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	cmd := &cli.Command{
 		Name:                  "k-hab",
@@ -42,15 +59,35 @@ func main() {
 					}
 				},
 			},
+			&cli.StringFlag{
+				Name:  "setup",
+				Value: "",
+				Usage: "use a specific setup yaml file, else the built-in one is used",
+				Validator: func(s string) error {
+					if s == "" {
+						return nil
+					}
+					info, err := os.Stat(s)
+					if os.IsNotExist(err) {
+						return errors.New("setup file does not exist at " + s)
+					}
+
+					if info.IsDir() {
+						return errors.New("setup file is a directory and must be a file at " + s)
+					}
+
+					return nil
+				},
+			},
 		},
 		Commands: []*cli.Command{
-			buildCommand("provision", "provision the hab", habContext.ProvisionVerb),
-			buildCommand("up", "create and/or launch the hab", habContext.UpVerb),
-			buildCommand("shell", "create and/or launch the hab", habContext.ShellVerb),
-			buildCommand("down", "stop the hab", habContext.DownVerb),
-			buildCommand("rm", "rm the hab", habContext.RmVerb),
-			buildCommand("unprovision", "unprovision the hab", habContext.UnprovisionVerb),
-			buildCommand("nuke", "destroy the hab", habContext.NukeVerb),
+			buildCommand("provision", "provision the hab", habContext.ProvisionVerb, defaultConfig, defaultSetup),
+			buildCommand("up", "create and/or launch the hab", habContext.UpVerb, defaultConfig, defaultSetup),
+			buildCommand("shell", "create and/or launch the hab", habContext.ShellVerb, defaultConfig, defaultSetup),
+			buildCommand("down", "stop the hab", habContext.DownVerb, defaultConfig, defaultSetup),
+			buildCommand("rm", "rm the hab", habContext.RmVerb, defaultConfig, defaultSetup),
+			buildCommand("unprovision", "unprovision the hab", habContext.UnprovisionVerb, defaultConfig, defaultSetup),
+			buildCommand("nuke", "destroy the hab", habContext.NukeVerb, defaultConfig, defaultSetup),
 		},
 	}
 
@@ -60,12 +97,12 @@ func main() {
 
 }
 
-func buildCommand(name string, usage string, verb habContext.HabVerbs) *cli.Command {
+func buildCommand(name string, usage string, verb habContext.HabVerbs, defaultConfig map[string]string, defaultSetup bases.SetupFile) *cli.Command {
 	return &cli.Command{
 		Name:  name,
 		Usage: usage,
 		Action: func(ctx context.Context, ocmd *cli.Command) error {
-			habCtx := habContext.NewHabContext(ctx)
+			habCtx := habContext.NewHabContext(ctx, defaultConfig, defaultSetup)
 			err := habCtx.ParseCli(ocmd)
 			if err != nil {
 				return err

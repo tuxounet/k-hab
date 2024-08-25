@@ -10,7 +10,7 @@ import (
 
 func (r *RuntimeController) getStoragePath() (string, error) {
 
-	storagePathDefinition := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.storage.path").(string)
+	storagePathDefinition := r.ctx.GetConfigValue("hab.lxd.lxc.storage.path")
 	var storagePath string
 	isAbsolute := filepath.IsAbs(storagePathDefinition)
 	if !isAbsolute {
@@ -29,8 +29,8 @@ func (r *RuntimeController) getStoragePath() (string, error) {
 
 func (r *RuntimeController) provisionStorage() error {
 
-	storage_pool := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.storage.pool").(string)
-	storage_driver := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.storage.driver").(string)
+	storage_pool := r.ctx.GetConfigValue("hab.lxd.lxc.storage.pool")
+	storage_driver := r.ctx.GetConfigValue("hab.lxd.lxc.storage.driver")
 	storage_path, err := r.getStoragePath()
 	if err != nil {
 		return err
@@ -53,7 +53,7 @@ func (r *RuntimeController) provisionStorage() error {
 
 func (r *RuntimeController) unprovisionStorage() error {
 
-	storage_pool := utils.GetMapValue(r.ctx.GetHabConfig(), "lxd.lxc.storage.pool").(string)
+	storage_pool := r.ctx.GetConfigValue("hab.lxd.lxc.storage.pool")
 
 	storageExists, err := r.existsStorage(storage_pool)
 	if err != nil {
@@ -77,7 +77,7 @@ func (r *RuntimeController) nukeStorage() error {
 		return err
 	}
 
-	cmd, err := utils.WithCmdCall(r.ctx.GetHabConfig(), "rm.prefix", "rm.name", "-rf", stroagePath)
+	cmd, err := utils.WithCmdCall(r.ctx, "hab.rm.prefix", "hab.rm.name", "-rf", stroagePath)
 	if err != nil {
 		return err
 	}

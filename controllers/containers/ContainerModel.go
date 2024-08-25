@@ -18,10 +18,10 @@ type ContainerModel struct {
 	Name string
 	Arch string
 
-	ContainerConfig bases.HabContainerConfig
+	ContainerConfig bases.SetupContainer
 }
 
-func NewContainerModel(name string, ctx bases.IContext, containerConfig bases.HabContainerConfig) *ContainerModel {
+func NewContainerModel(name string, ctx bases.IContext, containerConfig bases.SetupContainer) *ContainerModel {
 
 	return &ContainerModel{
 		Name:            name,
@@ -33,7 +33,7 @@ func NewContainerModel(name string, ctx bases.IContext, containerConfig bases.Ha
 
 func (l *ContainerModel) withLxcCmd(args ...string) (*utils.CmdCall, error) {
 
-	return utils.WithCmdCall(l.ctx.GetHabConfig(), "lxd.lxc.command.prefix", "lxd.lxc.command.name", args...)
+	return utils.WithCmdCall(l.ctx, "hab.lxd.lxc.command.prefix", "hab.lxd.lxc.command.name", args...)
 
 }
 
@@ -100,7 +100,7 @@ func (l *ContainerModel) Provision() error {
 			return err
 		}
 
-		lxcProfile := utils.GetMapValue(l.ctx.GetHabConfig(), "lxd.lxc.profile").(string)
+		lxcProfile := l.ctx.GetConfigValue("hab.lxd.lxc.profile")
 		lxdCmd, err := l.withLxcCmd("init", l.ContainerConfig.Base, l.Name, "--profile", lxcProfile)
 		if err != nil {
 			return err
@@ -108,7 +108,7 @@ func (l *ContainerModel) Provision() error {
 
 		if image.Definition.CloudInit != "" {
 			sCloudInit, err := utils.UnTemplate(image.Definition.CloudInit, map[string]interface{}{
-				"hab":       l.ctx.GetHabConfig(),
+				"config":    l.ctx.GetCurrentConfig(),
 				"container": l.ContainerConfig.ToMap(),
 			})
 			if err != nil {
@@ -120,7 +120,7 @@ func (l *ContainerModel) Provision() error {
 
 		if image.Definition.NetworkConfig != "" {
 			sNetworkConfig, err := utils.UnTemplate(image.Definition.NetworkConfig, map[string]interface{}{
-				"hab":       l.ctx.GetHabConfig(),
+				"config":    l.ctx.GetCurrentConfig(),
 				"container": l.ContainerConfig.ToMap(),
 			})
 			if err != nil {
@@ -246,9 +246,7 @@ func (l *ContainerModel) Unprovision() error {
 	}
 	dependencyController := controller.(*dependencies.DependenciesController)
 
-	config := l.ctx.GetHabConfig()
-
-	snapName := utils.GetMapValue(config, "lxd.snap").(string)
+	snapName := l.ctx.GetConfigValue("hab.lxd.snap")
 	present, err := dependencyController.InstalledSnap(snapName)
 	if err != nil {
 		return err

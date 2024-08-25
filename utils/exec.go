@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/tuxounet/k-hab/bases"
 )
 
 type CmdCall struct {
@@ -34,10 +36,10 @@ func (c *CmdCall) String() string {
 	return out
 }
 
-func WithCmdCall(anyMap any, cmdPrefixKey string, cmdNameKey string, args ...string) (*CmdCall, error) {
+func WithCmdCall(ctx bases.IContext, cmdPrefixKey string, cmdNameKey string, args ...string) (*CmdCall, error) {
 
-	cmd_prefix := GetMapValue(anyMap, cmdPrefixKey).(string)
-	cmd := GetMapValue(anyMap, cmdNameKey).(string)
+	cmd_prefix := ctx.GetConfigValue(cmdPrefixKey)
+	cmd := ctx.GetConfigValue(cmdNameKey)
 
 	full := strings.TrimSpace(fmt.Sprintf("%s %s", cmd_prefix, cmd))
 

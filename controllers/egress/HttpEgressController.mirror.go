@@ -5,8 +5,6 @@ import (
 	"io"
 	"net/http"
 	"strings"
-
-	"github.com/tuxounet/k-hab/utils"
 )
 
 func (h *HttpEgressController) handleOsMirror(w http.ResponseWriter, r *http.Request) {
@@ -16,16 +14,16 @@ func (h *HttpEgressController) handleOsMirror(w http.ResponseWriter, r *http.Req
 	segments := strings.Split(r.RequestURI, "/")
 	distro := segments[2]
 
-	mirrors := utils.GetMapValue(h.ctx.GetHabConfig(), "egress.mirrors").(map[string]interface{})
+	mirror := h.ctx.GetConfigValue("hab.egress.mirrors." + distro)
+	if mirror == "" {
+		http.Error(w, "Not Found", http.StatusNotFound)
+		return
+	}
 
 	finalUrl := ""
-	for key, mirror := range mirrors {
-		if strings.HasPrefix(distro, key) {
-			rest := strings.Join(segments[3:], "/")
-			finalUrl = fmt.Sprintf("%s%s", mirror, rest)
-			break
-		}
-	}
+
+	rest := strings.Join(segments[3:], "/")
+	finalUrl = fmt.Sprintf("%s%s", mirror, rest)
 
 	if finalUrl == "" {
 		http.Error(w, "Not Found", http.StatusNotFound)

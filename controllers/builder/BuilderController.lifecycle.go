@@ -13,10 +13,8 @@ func (b *BuilderController) Provision() error {
 	}
 	dependencyController := controller.(*dependencies.DependenciesController)
 
-	config := b.ctx.GetHabConfig()
-
-	snapName := utils.GetMapValue(config, "distrobuilder.snap").(string)
-	snapMode := utils.GetMapValue(config, "distrobuilder.snap_mode").(string)
+	snapName := b.ctx.GetConfigValue("hab.distrobuilder.snap")
+	snapMode := b.ctx.GetConfigValue("hab.distrobuilder.snap_mode")
 	present, err := dependencyController.InstalledSnap(snapName)
 	if err != nil {
 		return err
@@ -39,9 +37,7 @@ func (b *BuilderController) Unprovision() error {
 	}
 	dependencyController := controller.(*dependencies.DependenciesController)
 
-	config := b.ctx.GetHabConfig()
-
-	snapName := utils.GetMapValue(config, "distrobuilder.snap").(string)
+	snapName := b.ctx.GetConfigValue("hab.distrobuilder.snap")
 	err = dependencyController.RemoveSnap(snapName)
 
 	if err != nil {
@@ -59,9 +55,7 @@ func (b *BuilderController) Nuke() error {
 	}
 	dependencyController := controller.(*dependencies.DependenciesController)
 
-	config := b.ctx.GetHabConfig()
-
-	snapName := utils.GetMapValue(config, "distrobuilder.snap").(string)
+	snapName := b.ctx.GetConfigValue("hab.distrobuilder.snap")
 
 	err = dependencyController.RemoveSnapSnapshots(snapName)
 	if err != nil {
@@ -73,7 +67,7 @@ func (b *BuilderController) Nuke() error {
 		return err
 	}
 
-	cmd, err := utils.WithCmdCall(b.ctx.GetHabConfig(), "rm.prefix", "rm.name", "-rf", buildPath)
+	cmd, err := utils.WithCmdCall(b.ctx, "hab.rm.prefix", "hab.rm.name", "-rf", buildPath)
 	if err != nil {
 		return err
 	}

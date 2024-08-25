@@ -4,7 +4,7 @@ import "errors"
 
 func (r *ContainersController) loadContainers() error {
 
-	for _, confContainer := range r.ctx.GetContainersConfig() {
+	for _, confContainer := range r.ctx.GetSetupContainers() {
 
 		found := false
 		for _, localContainer := range r.containers {

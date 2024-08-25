@@ -12,7 +12,7 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "provision"],
+      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "provision"],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
@@ -23,7 +23,7 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "up"],
+      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "up"],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
@@ -34,7 +34,7 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "shell"],
+      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "shell"],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
@@ -45,7 +45,7 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "down"],
+      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "down"],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
@@ -56,7 +56,7 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "rm"],
+      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "rm"],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
@@ -67,7 +67,7 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "nuke"],
+      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "nuke"],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     }

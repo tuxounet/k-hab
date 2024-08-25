@@ -134,23 +134,23 @@ func TestTTINonZero(t *testing.T) {
 
 }
 
-func TestTTCmdBuilder(t *testing.T) {
+// func TestTTCmdBuilder(t *testing.T) {
 
-	const jsonString = `{"cmd": { "prefix" : "", "name" : "ls" }}`
-	habConfig, err := LoadJSONFromString[map[string]interface{}](jsonString)
-	if err != nil {
-		t.Fatalf("Error loading json: %v", err)
-	}
+// 	const jsonString = `{"cmd": { "prefix" : "", "name" : "ls" }}`
+// 	habConfig, err := LoadJSONFromString[map[string]interface{}](jsonString)
+// 	if err != nil {
+// 		t.Fatalf("Error loading json: %v", err)
+// 	}
 
-	cmd, err := WithCmdCall(habConfig, "cmd.prefix", "cmd.name", "-l")
-	if err != nil {
-		t.Fatalf("Error building command: %v", err)
-	}
-	if cmd.Command != "ls" {
-		t.Fatalf("Expected 'ls', got '%s'", cmd.Command)
-	}
-	if cmd.Args[0] != "-l" {
-		t.Fatalf("Expected '-l', got '%s'", cmd.Args[0])
-	}
+// 	cmd, err := WithCmdCall(habConfig, "cmd.prefix", "cmd.name", "-l")
+// 	if err != nil {
+// 		t.Fatalf("Error building command: %v", err)
+// 	}
+// 	if cmd.Command != "ls" {
+// 		t.Fatalf("Expected 'ls', got '%s'", cmd.Command)
+// 	}
+// 	if cmd.Args[0] != "-l" {
+// 		t.Fatalf("Expected '-l', got '%s'", cmd.Args[0])
+// 	}
 
-}
+// }

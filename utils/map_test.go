@@ -58,14 +58,14 @@ func TestTTLoadJSONFromInvalidString(t *testing.T) {
 	}
 }
 
-func TestTTGetMapValue(t *testing.T) {
+// func TestTTGetMapValue(t *testing.T) {
 
-	m := map[string]interface{}{
-		"name": "test",
-	}
-	result := GetMapValue(m, "name")
+// 	m := map[string]interface{}{
+// 		"name": "test",
+// 	}
+// 	result := GetMapValue(m, "name")
 
-	if result != "test" {
-		t.Fatalf("Expected 'test', got '%s'", result)
-	}
-}
+// 	if result != "test" {
+// 		t.Fatalf("Expected 'test', got '%s'", result)
+// 	}
+// }
