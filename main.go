@@ -83,7 +83,9 @@ func main() {
 		Commands: []*cli.Command{
 			buildCommand("provision", "provision the hab", habContext.ProvisionVerb, defaultConfig, defaultSetup),
 			buildCommand("up", "create and/or launch the hab", habContext.UpVerb, defaultConfig, defaultSetup),
+			buildCommand("start", "create and/or launch the hab", habContext.UpVerb, defaultConfig, defaultSetup),
 			buildCommand("shell", "create and/or launch the hab", habContext.ShellVerb, defaultConfig, defaultSetup),
+			buildCommand("stop", "stop the hab", habContext.DownVerb, defaultConfig, defaultSetup),
 			buildCommand("down", "stop the hab", habContext.DownVerb, defaultConfig, defaultSetup),
 			buildCommand("rm", "rm the hab", habContext.RmVerb, defaultConfig, defaultSetup),
 			buildCommand("unprovision", "unprovision the hab", habContext.UnprovisionVerb, defaultConfig, defaultSetup),

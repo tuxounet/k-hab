@@ -71,12 +71,6 @@ func (h *HabContext) Shell() error {
 		return err
 	}
 
-	h.log.DebugF("Shell exited")
-	err = h.Stop()
-	if err != nil {
-		return err
-	}
-
 	h.log.InfoF("Hab Shell completed")
 	return nil
 
