@@ -2,7 +2,7 @@ config:
   hab.entry.container: "bastion"
 containers:
   - name: "bastion"
-    base: alpine
+    base: ubuntu
     shell: "/etc/start.sh"
     network:
       host: "10.33.0.1"

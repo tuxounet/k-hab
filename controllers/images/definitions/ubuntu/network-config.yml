@@ -1,0 +1,11 @@
+#cloud-config
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: no
+      addresses:
+        - "{{ .container.network.host }}/{{ .container.network.mask }}"
+      routes:
+        - to: default
+          via: "{{ .container.network.gateway }}"

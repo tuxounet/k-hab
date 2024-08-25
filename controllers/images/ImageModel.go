@@ -34,6 +34,17 @@ func (hi *ImageModel) present() (bool, error) {
 
 }
 
+func (hi *ImageModel) needBuild(definition definitions.HabBaseDefinition) (bool, error) {
+	rBuildContainer, err := hi.ctx.GetController("BuilderController")
+	if err != nil {
+		return false, err
+	}
+	builderController := rBuildContainer.(*builder.BuilderController)
+
+	return builderController.ConfigHasChnaged(hi.Name, definition.Builder)
+
+}
+
 func (hi *ImageModel) provision() error {
 
 	sBuilderConfig, err := utils.UnTemplate(hi.Definition.Builder, map[string]interface{}{
@@ -75,7 +86,20 @@ func (hi *ImageModel) unprovision() error {
 	if err != nil {
 		return err
 	}
+
 	builderController := controller.(*builder.BuilderController)
+
+	rRunContaner, err := hi.ctx.GetController("RuntimeController")
+	if err != nil {
+		return err
+	}
+	runtimeController := rRunContaner.(*runtime.RuntimeController)
+
+	err = runtimeController.RemoveImage(hi.Name)
+	if err != nil {
+		return err
+	}
+
 	err = builderController.RemoveCache(hi.Name)
 	if err != nil {
 		return err

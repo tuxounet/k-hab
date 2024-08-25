@@ -22,6 +22,7 @@ hab.distrobuilder.snap_mode: "--classic"
 hab.distrobuilder.command.prefix: "sudo"
 hab.distrobuilder.command.name: "distrobuilder"
 hab.distrobuilder.build.path: .out/distrobuilder
+hab.containers.path: ".out/containers"
 hab.egress.listen.port: "58050"
 hab.egress.mirrors.alpine: "https://eu.edge.kernel.org/alpine/v"
 hab.ingress.listen.host: "127.0.0.1"

@@ -62,32 +62,52 @@ func (h *ImagesController) ImagePresent(name string) (bool, error) {
 
 }
 
-func (h *ImagesController) EnsureImage(name string) error {
-
+func (h *ImagesController) EnsureImage(name string) (bool, error) {
+	changed := false
 	h.log.TraceF("Ensuring image %s", name)
+	definition, err := definitions.GetImageBase(name)
+	if err != nil {
+		return false, err
+	}
 
 	present, err := h.ImagePresent(name)
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	if !present {
 		h.log.WarnF("Image %s not present, provisioning", name)
 
-		definition, err := definitions.GetImageBase(name)
-		if err != nil {
-			return err
-		}
-
 		image := NewImageModel(name, h.ctx, definition)
 		err = image.provision()
 		if err != nil {
-			return err
+			return false, err
 		}
 		h.images = append(h.images, image)
 		h.log.DebugF("Image %s provisioned", name)
+		changed = true
 	}
 
-	return nil
+	image, err := h.GetImage(name)
+	if err != nil {
+		return false, err
+	}
+
+	needBuild, err := image.needBuild(definition)
+	if err != nil {
+		return false, err
+	}
+	if needBuild {
+		h.log.WarnF("Image %s need rebuild, provisioning", name)
+
+		err = image.provision()
+		if err != nil {
+			return false, err
+		}
+		h.log.DebugF("Image %s provisioned", name)
+
+	}
+
+	return changed, err
 
 }

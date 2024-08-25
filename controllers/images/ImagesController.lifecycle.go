@@ -26,7 +26,7 @@ func (h *ImagesController) Unprovision() error {
 			return err
 		}
 	}
-	h.log.DebugF("Unprovisioned %d images", len(h.images))
+	h.log.DebugF("Unprovisionned %d images", len(h.images))
 	return nil
 }
 
