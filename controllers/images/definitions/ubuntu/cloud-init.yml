@@ -28,6 +28,7 @@ apt:
   primary:
     - arches: [default]
       uri: http://fr.archive.ubuntu.com/ubuntu/
+  http_proxy: http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
 timezone: Europe/Paris
 runcmd:
   - systemctl daemon-reload
