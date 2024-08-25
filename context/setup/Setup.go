@@ -25,7 +25,8 @@ func NewSetup(logger bases.ILogger, config *config.Config, defaultSetup bases.Se
 }
 
 func (s *Setup) LoadDefaultSetup() error {
-	return s.loadSetup(s.defaultSetup)
+	s.loadSetup(s.defaultSetup)
+	return nil
 }
 
 func (s *Setup) LoadSetupFromYamlFile(file string) error {
@@ -39,16 +40,14 @@ func (s *Setup) LoadSetupFromYamlFile(file string) error {
 	if err != nil {
 		return err
 	}
-	err = s.loadSetup(setupFile)
-	if err != nil {
-		return err
-	}
+	s.loadSetup(setupFile)
+
 	s.log.InfoF("Setup loaded from file %s", file)
 	return nil
 
 }
 
-func (s *Setup) loadSetup(setup bases.SetupFile) error {
+func (s *Setup) loadSetup(setup bases.SetupFile) {
 
 	if setup.Config != nil {
 		for key, value := range setup.Config {
@@ -58,5 +57,4 @@ func (s *Setup) loadSetup(setup bases.SetupFile) error {
 
 	s.ContainersConfig = append(s.ContainersConfig, setup.Containers...)
 
-	return nil
 }

@@ -71,6 +71,10 @@ func (h *HabContext) GetConfigValue(key string) string {
 	return h.config.GetValue(key)
 }
 
+func (h *HabContext) SetConfigValue(key string, value string) {
+	h.config.SetConfigValue(key, value)
+}
+
 func (h *HabContext) GetCurrentConfig() map[string]string {
 	return h.config.GetCurrent()
 }
