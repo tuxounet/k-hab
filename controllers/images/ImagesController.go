@@ -26,7 +26,7 @@ func (h *ImagesController) Provision() error {
 	}
 
 	for _, image := range h.images {
-		present, err := h.imagePresent(image.name)
+		present, err := h.ImagePresent(image.name)
 		if err != nil {
 			return err
 		}

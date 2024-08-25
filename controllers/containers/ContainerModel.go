@@ -8,6 +8,7 @@ import (
 
 	"github.com/tuxounet/k-hab/bases"
 	"github.com/tuxounet/k-hab/controllers/dependencies"
+	"github.com/tuxounet/k-hab/controllers/images"
 
 	"github.com/tuxounet/k-hab/utils"
 )
@@ -83,9 +84,20 @@ func (l *ContainerModel) Provision() error {
 		return err
 	}
 	if !containerExists {
-		conf := l.ContainerConfig.ToMap()
+		controller, err := l.ctx.GetController(bases.ImagesController)
+		if err != nil {
+			return err
+		}
+		imagesController := controller.(*images.ImagesController)
 
-		containerImage := utils.GetMapValue(conf, "image").(string)
+		err = imagesController.EnsureImage(l.ContainerConfig.Base)
+		if err != nil {
+			return err
+		}
+
+		containerDatas := l.ContainerConfig.ToMap()
+
+		containerImage := utils.GetMapValue(containerDatas, "image").(string)
 
 		lxcProfile := utils.GetMapValue(l.ctx.GetHabConfig(), "lxd.lxc.profile").(string)
 		lxdCmd, err := l.withLxcCmd("init", containerImage, l.name, "--profile", lxcProfile)
@@ -93,13 +105,13 @@ func (l *ContainerModel) Provision() error {
 			return err
 		}
 
-		cloudInit := utils.GetMapValue(conf, "cloud-init").(string)
-		networkConfig := utils.GetMapValue(conf, "network-config").(string)
+		cloudInit := utils.GetMapValue(containerDatas, "cloud-init").(string)
+		networkConfig := utils.GetMapValue(containerDatas, "network-config").(string)
 
 		if cloudInit != "" {
 			sCloudInit, err := utils.UnTemplate(cloudInit, map[string]interface{}{
 				"hab":       l.ctx.GetHabConfig(),
-				"container": conf,
+				"container": containerDatas,
 			})
 			if err != nil {
 				return err
@@ -111,7 +123,7 @@ func (l *ContainerModel) Provision() error {
 		if networkConfig != "" {
 			sNetworkConfig, err := utils.UnTemplate(networkConfig, map[string]interface{}{
 				"hab":       l.ctx.GetHabConfig(),
-				"container": conf,
+				"container": containerDatas,
 			})
 			if err != nil {
 				return err
@@ -202,18 +214,7 @@ func (l *ContainerModel) Exec(command ...string) error {
 
 func (l *ContainerModel) Shell() error {
 	shellCmd := l.ContainerConfig.Shell
-
-	cmd, err := l.withLxcCmd("exec", l.name, "--")
-	if err != nil {
-		return err
-	}
-	cmd.Args = append(cmd.Args, shellCmd)
-	err = utils.OsExec(cmd)
-	if err != nil {
-		return err
-	}
-	return nil
-
+	return l.Exec(shellCmd)
 }
 
 func (l *ContainerModel) Stop() error {

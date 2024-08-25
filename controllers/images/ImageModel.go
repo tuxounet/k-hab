@@ -3,22 +3,23 @@ package images
 import (
 	"github.com/tuxounet/k-hab/bases"
 	"github.com/tuxounet/k-hab/controllers/builder"
+	"github.com/tuxounet/k-hab/controllers/images/definitions"
 	"github.com/tuxounet/k-hab/controllers/runtime"
 	"github.com/tuxounet/k-hab/utils"
 )
 
 type ImageModel struct {
-	ctx    bases.IContext
-	name   string
-	config bases.HabImageConfig
+	ctx        bases.IContext
+	name       string
+	definition definitions.HabBaseDefinition
 }
 
-func NewImageModel(name string, ctx bases.IContext, imageConfig bases.HabImageConfig) *ImageModel {
+func NewImageModel(name string, ctx bases.IContext, definition definitions.HabBaseDefinition) *ImageModel {
 
 	return &ImageModel{
-		name:   name,
-		ctx:    ctx,
-		config: imageConfig,
+		name:       name,
+		ctx:        ctx,
+		definition: definition,
 	}
 }
 
@@ -36,9 +37,9 @@ func (hi *ImageModel) present() (bool, error) {
 func (hi *ImageModel) provision() error {
 	habConfig := hi.ctx.GetHabConfig()
 
-	sBuilderConfig, err := utils.UnTemplate(hi.config.Builder, map[string]interface{}{
+	sBuilderConfig, err := utils.UnTemplate(hi.definition.Builder, map[string]interface{}{
 		"hab":   habConfig,
-		"image": hi.config,
+		"image": hi.definition,
 	})
 	if err != nil {
 		return err

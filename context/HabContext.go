@@ -62,10 +62,6 @@ func (h *HabContext) SetHabConfig(habConfig bases.HabConfig) {
 	h.config.HabConfig = habConfig
 }
 
-func (h *HabContext) GetImagesConfig() []bases.HabImageConfig {
-	return h.config.ImagesConfig
-}
-
 func (h *HabContext) GetContainersConfig() []bases.HabContainerConfig {
 	return h.config.ContainersConfig
 }

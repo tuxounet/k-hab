@@ -4,7 +4,6 @@ type IContext interface {
 	Getwd() string
 	GetHabConfig() HabConfig
 	SetHabConfig(HabConfig)
-	GetImagesConfig() []HabImageConfig
 	GetContainersConfig() []HabContainerConfig
 	GetLogger() ILogger
 	GetSubLogger(name string, parent ILogger) ILogger

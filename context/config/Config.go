@@ -14,13 +14,9 @@ var defaultHabConfig string
 //go:embed templates/containers.yaml
 var defaultContainersConfig string
 
-//go:embed templates/images.yaml
-var defaultImagesConfig string
-
 type Config struct {
 	HabConfig        bases.HabConfig
 	ContainersConfig []bases.HabContainerConfig
-	ImagesConfig     []bases.HabImageConfig
 }
 
 func NewConfig() *Config {
@@ -38,12 +34,7 @@ func (c *Config) Load() error {
 		return err
 	}
 
-	imagesConfig, err := utils.LoadYamlFromString[[]bases.HabImageConfig](defaultImagesConfig)
-	if err != nil {
-		return err
-	}
 	c.ContainersConfig = containersConfig
-	c.ImagesConfig = imagesConfig
 	c.HabConfig = habConfig
 	return nil
 }
@@ -57,5 +48,4 @@ func (c *Config) GetContainerConfig(containerName string) (bases.HabContainerCon
 	}
 
 	return bases.HabContainerConfig{}, errors.New("container not found")
-
 }

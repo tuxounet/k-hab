@@ -17,9 +17,6 @@ func TestTTDefaultConfig(t *testing.T) {
 	if len(config.ContainersConfig) == 0 {
 		t.Fatalf("ContainersConfig is empty")
 	}
-	if len(config.ImagesConfig) == 0 {
-		t.Fatalf("ImagesConfig is empty")
-	}
 
 	containerConfig, err := config.GetContainerConfig("bastion")
 	if err != nil {
