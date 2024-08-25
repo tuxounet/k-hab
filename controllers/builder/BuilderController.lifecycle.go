@@ -72,7 +72,12 @@ func (b *BuilderController) Nuke() error {
 	if err != nil {
 		return err
 	}
-	err = utils.OsExec(utils.NewCmdCall("sudo", "rm", "-rf", buildPath))
+
+	cmd, err := utils.WithCmdCall(b.ctx.GetHabConfig(), "rm.prefix", "rm.name", "-rf", buildPath)
+	if err != nil {
+		return err
+	}
+	err = utils.OsExec(cmd)
 	if err != nil {
 		return err
 	}

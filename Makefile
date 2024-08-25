@@ -3,6 +3,7 @@ RUN_ARGS := "--loglevel=TRACE"
 
 test: 
 	go test ./... -timeout 120s -coverpkg=./... -coverprofile=profile.coverage
+	go tool cover -func profile.coverage
 
 build:
 	mkdir -p ./out

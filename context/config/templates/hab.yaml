@@ -2,6 +2,9 @@ snap:
   command:
     prefix: "sudo"
     name: "snap"
+rm:
+  prefix: "sudo"
+  name: "rm"
 lxd:
   snap: "lxd"
   snap_mode: ""
@@ -22,6 +25,7 @@ lxd:
     command:
       prefix: "sudo"
       name: "lxc"
+
 distrobuilder:
   snap: "distrobuilder"
   snap_mode: "--classic"

@@ -65,7 +65,12 @@ func (l *BuilderController) RemoveCache(name string) error {
 		return err
 	}
 	distroFolder := path.Join(builderPath, name)
-	cmd := utils.NewCmdCall("sudo", "rm", "-rf", distroFolder)
+
+	cmd, err := utils.WithCmdCall(l.ctx.GetHabConfig(), "rm.prefix", "rm.name", "-rf", distroFolder)
+	if err != nil {
+		return err
+	}
+
 	return utils.OsExec(cmd)
 
 }

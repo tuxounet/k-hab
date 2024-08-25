@@ -72,12 +72,17 @@ func (r *RuntimeController) unprovisionStorage() error {
 
 func (r *RuntimeController) nukeStorage() error {
 
-	storage_path, err := r.getStoragePath()
+	stroagePath, err := r.getStoragePath()
 	if err != nil {
 		return err
 	}
 
-	return utils.OsExec(utils.NewCmdCall("sudo", "rm", "-rvf", storage_path))
+	cmd, err := utils.WithCmdCall(r.ctx.GetHabConfig(), "rm.prefix", "rm.name", "-rf", stroagePath)
+	if err != nil {
+		return err
+	}
+
+	return utils.OsExec(cmd)
 
 }
 
