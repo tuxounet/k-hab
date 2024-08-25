@@ -1,0 +1,194 @@
+image:
+  distribution: "ubuntu"
+  release: "noble"
+  architecture: "amd64"
+  variant: "cloud"
+source:
+  downloader: rootfs-http
+  url: https://cdimage.ubuntu.com/ubuntu-base/releases/20.04/release/ubuntu-base-24.04-base-amd64.tar.gz
+targets:
+  lxc:
+    create_message: |-
+      You just created an  {{ "{{" }} image.description {{ "}}" }} container.
+
+      To enable SSH, run: apt install openssh-server
+      No default root or user password are set by LXC.
+    config:
+      - type: all
+        before: 5
+        content: |-
+          lxc.include = LXC_TEMPLATE_CONFIG/ubuntu.common.conf
+
+      - type: user
+        before: 5
+        content: |-
+          lxc.include = LXC_TEMPLATE_CONFIG/ubuntu.userns.conf
+
+      - type: all
+        after: 4
+        content: |-
+          lxc.include = LXC_TEMPLATE_CONFIG/common.conf
+
+      - type: user
+        after: 4
+        content: |-
+          lxc.include = LXC_TEMPLATE_CONFIG/userns.conf
+
+      - type: all
+        content: |-
+          lxc.arch =  {{ "{{" }} image.architecture_personality  {{ "}}" }}
+
+files:
+  - path: /etc/hostname
+    generator: hostname
+
+  - path: /etc/hosts
+    generator: hosts
+
+  - path: /etc/machine-id
+    generator: dump
+
+  - path: /var/lib/dbus/machine-id
+    generator: remove
+
+  - path: /etc/netplan/10-lxc.yaml
+    generator: dump
+    mode: 0600
+    content: |-
+      network:
+        version: 2
+        ethernets:
+          eth0:
+            dhcp4: true
+            dhcp-identifier: mac
+
+  - name: meta-data
+    generator: cloud-init
+
+  - name: network-config
+    generator: cloud-init
+
+  - name: user-data
+    generator: cloud-init
+
+  - name: vendor-data
+    generator: cloud-init
+
+  - path: /etc/sudoers.d/90-incus
+    generator: dump
+    mode: 0440
+    content: |-
+      # User rules for ubuntu
+      ubuntu ALL=(ALL) NOPASSWD:ALL
+    variants:
+      - default
+
+packages:
+  manager: apt
+  update: true
+  cleanup: true
+  sets:
+    - packages:
+        - udev
+        - sudo
+        - bash
+        - vim
+        - curl
+        - htop
+      action: install
+
+    - packages:
+        - language-pack-fr
+      action: install
+      architectures:
+        - amd64
+        - arm64
+        - armhf
+
+    - packages:
+        - cloud-init
+      action: install
+
+    - packages:
+        - systemd-resolved
+      action: install
+      releases:
+        - mantic
+        - noble
+
+  repositories:
+    - name: sources.list
+      url: |-
+        deb http://fr.archive.ubuntu.com/ubuntu  {{ "{{" }} image.release {{ "}}" }} main restricted universe multiverse
+        deb http://fr.archive.ubuntu.com/ubuntu  {{ "{{" }} image.release  {{ "}}" }}-updates main restricted universe multiverse
+        deb http://security.ubuntu.com/ubuntu  {{ "{{" }} image.release  {{ "}}" }}-security main restricted universe multiverse
+      architectures:
+        - amd64
+        - i386
+
+    - name: sources.list
+      url: |-
+        deb http://ports.ubuntu.com/ubuntu-ports  {{ "{{" }} image.release  {{ "}}" }} main restricted universe multiverse
+        deb http://ports.ubuntu.com/ubuntu-ports  {{ "{{" }} image.release  {{ "}}" }}-updates main restricted universe multiverse
+        deb http://ports.ubuntu.com/ubuntu-ports  {{ "{{" }} image.release  {{ "}}" }}-security main restricted universe multiverse
+      architectures:
+        - armhf
+        - arm64
+
+actions:
+  - trigger: post-unpack
+    action: |-
+      #!/bin/sh
+      set -eux
+
+      # Make sure systemd doesn't think it's running.
+      [ ! -d /run/systemd ] && exit 0
+      rm -Rf /run/systemd/system
+      chattr +i /run/systemd
+
+  - trigger: post-update
+    action: |-
+      #!/bin/sh
+      set -eux
+
+      # Create the ubuntu user account
+      getent group sudo >/dev/null 2>&1 || groupadd --system sudo
+      useradd --create-home -s /bin/bash -G sudo -U ubuntu
+    variants:
+      - default
+
+  - trigger: post-packages
+    action: |-
+      #!/bin/sh
+      set -eux
+
+      # Enable systemd-networkd
+      # systemctl enable systemd-networkd
+
+      # Disable UA attach
+      systemctl mask ua-auto-attach
+  - trigger: post-packages
+    action: |-
+      #!/bin/sh
+      set -eux
+
+      # Make sure the locale is built and functional
+      locale-gen fr_FR.UTF-8
+      update-locale LANG=fr_FR.UTF-8
+
+      # Cleanup apt cache
+      apt-get clean
+      rm -rf /var/lib/apt/*
+      # remove logs 
+      rm -rf /var/log/*
+
+      # Cleanup underlying /run
+      mount -o bind / /mnt
+      rm -rf /mnt/run/*
+      umount /mnt
+
+      # Cleanup temporary shadow paths
+      rm /etc/*-
+
+mappings:
+  architecture_map: debian

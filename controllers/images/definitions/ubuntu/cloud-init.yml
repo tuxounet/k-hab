@@ -1,0 +1,34 @@
+#cloud-config
+write_files:
+  - path: /etc/start.sh
+    permissions: "0755"
+    content: |
+      #!/bin/sh
+      set -x      
+      export http_proxy=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
+      export no_proxy=localhost,.local,.localdomain
+      export HTTP_PROXY=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
+      export NO_PROXY=localhost,.local,.localdomain
+      cd /home/ubuntu
+      /usr/bin/su ubuntu || exit 0
+
+  - path: /etc/provision.sh
+    permissions: "0755"
+    content: |
+      #!/bin/sh
+      set -x
+
+  - path: /etc/unprovision.sh
+    permissions: "0755"
+    content: |
+      #!/bin/sh
+      set -x
+
+apt:
+  primary:
+    - arches: [default]
+      uri: http://fr.archive.ubuntu.com/ubuntu/
+  http_proxy: http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
+timezone: Europe/Paris
+runcmd:
+  - systemctl daemon-reload

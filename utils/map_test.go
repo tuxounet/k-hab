@@ -1,7 +1,9 @@
-package utils
+package utils_test
 
 import (
 	"testing"
+
+	"github.com/tuxounet/k-hab/utils"
 )
 
 func TestTtLoadYamlFromString(t *testing.T) {
@@ -9,7 +11,7 @@ func TestTtLoadYamlFromString(t *testing.T) {
 	yamlStr := `
 name: "test"
 `
-	result, err := LoadYamlFromString[map[string]string](yamlStr)
+	result, err := utils.LoadYamlFromString[map[string]string](yamlStr)
 	if err != nil {
 		t.Fatalf("Error loading yaml: %v", err)
 	}
@@ -24,7 +26,7 @@ func TestTTLoadYamlFromInvalidString(t *testing.T) {
 name:  est"
   jdj: 1
 `
-	_, err := LoadYamlFromString[map[string]string](yamlStr)
+	_, err := utils.LoadYamlFromString[map[string]string](yamlStr)
 	if err == nil {
 		t.Fatalf("Expected error, got nil")
 	}
@@ -35,7 +37,7 @@ func TestTTLoadJSONFromString(t *testing.T) {
 	jsonStr := `
 {"name": "test"}
 `
-	result, err := LoadJSONFromString[map[string]string](jsonStr)
+	result, err := utils.LoadJSONFromString[map[string]string](jsonStr)
 	if err != nil {
 		t.Fatalf("Error loading json: %v", err)
 	}
@@ -48,24 +50,12 @@ func TestTTLoadJSONFromInvalidString(t *testing.T) {
 	jsonStr := `
 {"name": "test
 `
-	result, err := LoadJSONFromString[map[string]string](jsonStr)
+	result, err := utils.LoadJSONFromString[map[string]string](jsonStr)
 	if err == nil {
 		t.Fatalf("Expected error, got nil")
 	}
 
 	if result != nil {
 		t.Fatalf("Expected nil, got '%v'", result)
-	}
-}
-
-func TestTTGetMapValue(t *testing.T) {
-
-	m := map[string]interface{}{
-		"name": "test",
-	}
-	result := GetMapValue(m, "name")
-
-	if result != "test" {
-		t.Fatalf("Expected 'test', got '%s'", result)
 	}
 }

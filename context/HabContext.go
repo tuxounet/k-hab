@@ -9,6 +9,7 @@ import (
 	"github.com/tuxounet/k-hab/bases"
 	"github.com/tuxounet/k-hab/context/config"
 	"github.com/tuxounet/k-hab/context/logger"
+	"github.com/tuxounet/k-hab/context/setup"
 
 	"github.com/urfave/cli/v3"
 )
@@ -17,23 +18,27 @@ type HabContext struct {
 	startContext context.Context
 	cwd          string
 	config       *config.Config
+	setup        *setup.Setup
 	log          *logger.Logger
 	controllers  map[bases.HabControllers]bases.IController
 }
 
-func NewHabContext(startContext context.Context) *HabContext {
+func NewHabContext(startContext context.Context, defaultConfig map[string]string, defaultSetup bases.SetupFile) *HabContext {
+	logger := logger.NewLogger(startContext, "Hab")
 
+	config := config.NewConfig(logger, defaultConfig)
+	setup := setup.NewSetup(logger, config, defaultSetup)
 	return &HabContext{
 		startContext: startContext,
-		config:       config.NewConfig(),
-		log:          logger.NewLogger(startContext, "Hab"),
+		log:          logger,
+		config:       config,
+		setup:        setup,
 	}
 }
 
 func (h *HabContext) ParseCli(cmd *cli.Command) error {
 
 	logLevel := cmd.String("loglevel")
-	println(logLevel)
 
 	switch logLevel {
 	case "TRACE":
@@ -50,24 +55,32 @@ func (h *HabContext) ParseCli(cmd *cli.Command) error {
 		h.log.SetLevel(logrus.FatalLevel)
 	}
 
+	setup := cmd.String("setup")
+
+	if setup == "" {
+		h.setup.LoadDefaultSetup()
+	} else {
+		h.setup.LoadSetupFromYamlFile(setup)
+	}
+
 	return nil
 
 }
 
-func (h *HabContext) GetHabConfig() bases.HabConfig {
-	return h.config.HabConfig
+func (h *HabContext) GetConfigValue(key string) string {
+	return h.config.GetValue(key)
 }
 
-func (h *HabContext) SetHabConfig(habConfig bases.HabConfig) {
-	h.config.HabConfig = habConfig
+func (h *HabContext) SetConfigValue(key string, value string) {
+	h.config.SetConfigValue(key, value)
 }
 
-func (h *HabContext) GetImagesConfig() []bases.HabImageConfig {
-	return h.config.ImagesConfig
+func (h *HabContext) GetCurrentConfig() map[string]string {
+	return h.config.GetCurrent()
 }
 
-func (h *HabContext) GetContainersConfig() []bases.HabContainerConfig {
-	return h.config.ContainersConfig
+func (h *HabContext) GetSetupContainers() []bases.SetupContainer {
+	return h.setup.ContainersConfig
 }
 
 func (h *HabContext) GetLogger() bases.ILogger {

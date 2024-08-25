@@ -7,8 +7,6 @@ import (
 	"os"
 
 	"github.com/tuxounet/k-hab/bases"
-
-	"github.com/tuxounet/k-hab/utils"
 )
 
 type HttpIngressController struct {
@@ -35,10 +33,8 @@ func (h *HttpIngressController) handleProxy(w http.ResponseWriter, r *http.Reque
 func (h *HttpIngressController) Start() error {
 	h.log.TraceF("Starting")
 
-	config := h.ctx.GetHabConfig()
-
-	ingress_host := utils.GetMapValue(config, "ingress.listen.host").(string)
-	ingress_port_http := utils.GetMapValue(config, "ingress.listen.port.http").(string)
+	ingress_host := h.ctx.GetConfigValue("hab.ingress.listen.host")
+	ingress_port_http := h.ctx.GetConfigValue("hab.ingress.listen.port.http")
 
 	h.server = &http.Server{
 		Addr:    fmt.Sprintf("%s:%s", ingress_host, ingress_port_http),

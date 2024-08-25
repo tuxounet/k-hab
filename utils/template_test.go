@@ -1,6 +1,10 @@
-package utils
+package utils_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/tuxounet/k-hab/utils"
+)
 
 func TestUntemplate(t *testing.T) {
 	tpl := "Hello {{.Name}}"
@@ -9,7 +13,7 @@ func TestUntemplate(t *testing.T) {
 	}{
 		Name: "World",
 	}
-	result, err := UnTemplate(tpl, data)
+	result, err := utils.UnTemplate(tpl, data)
 	if err != nil {
 		t.Fatalf("Error untemplating: %v", err)
 	}
@@ -25,7 +29,7 @@ func TestUntemplateInvalidTemplate(t *testing.T) {
 	}{
 		Name: "World",
 	}
-	result, err := UnTemplate(tpl, data)
+	result, err := utils.UnTemplate(tpl, data)
 	if err == nil {
 		t.Fatalf("Expected error, got nil")
 	}
@@ -41,7 +45,7 @@ func TestUntemplateBadTemplate(t *testing.T) {
 	}{
 		Name: "World",
 	}
-	result, err := UnTemplate(tpl, data)
+	result, err := utils.UnTemplate(tpl, data)
 	if err == nil {
 		t.Fatalf("Expected error, got nil")
 	}

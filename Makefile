@@ -1,8 +1,9 @@
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
-RUN_ARGS := "--loglevel=TRACE"
+RUN_ARGS := --loglevel=TRACE --setup=./default.setup.yaml
 
 test: 
 	go test ./... -timeout 120s -coverpkg=./... -coverprofile=profile.coverage
+	go tool cover -func profile.coverage
 
 build:
 	mkdir -p ./out

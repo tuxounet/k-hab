@@ -1,34 +1,35 @@
-package logger
+package logger_test
 
 import (
 	"context"
 	"testing"
 
 	"github.com/sirupsen/logrus"
+	"github.com/tuxounet/k-hab/context/logger"
 )
 
 func TestTTLogLevels(t *testing.T) {
 	// Test all log levels
-	logger := NewLogger(context.TODO(), "test")
+	log := logger.NewLogger(context.TODO(), "test")
 
-	name := logger.GetName()
+	name := log.GetName()
 	if name != "test" {
 		t.Fatalf("Expected 'test', got '%s'", name)
 	}
 
-	logger.SetLevel(logrus.WarnLevel)
+	log.SetLevel(logrus.WarnLevel)
 
-	logger.TraceF("trace")
-	logger.DebugF("debug")
-	logger.InfoF("info")
-	logger.WarnF("warn")
-	logger.ErrorF("error")
+	log.TraceF("trace")
+	log.DebugF("debug")
+	log.InfoF("info")
+	log.WarnF("warn")
+	log.ErrorF("error")
 	defer func() {
 		if r := recover(); r == nil {
 			t.Fatalf("Expected panic")
 		}
 	}()
-	logger.PanicF("panic")
+	log.PanicF("panic")
 
 	//recover panic
 
@@ -36,8 +37,8 @@ func TestTTLogLevels(t *testing.T) {
 
 func TestTTSubLogger(t *testing.T) {
 	// Test sublogger
-	logger := NewLogger(context.TODO(), "test")
-	sublogger := logger.CreateSubLogger("sub", logger)
+	log := logger.NewLogger(context.TODO(), "test")
+	sublogger := log.CreateSubLogger("sub", log)
 
 	name := sublogger.GetName()
 	if name != "test.sub" {

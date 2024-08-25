@@ -2,7 +2,6 @@ package utils
 
 import (
 	"encoding/json"
-	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -30,17 +29,5 @@ func LoadJSONFromString[R any](jsonStr string) (R, error) {
 	}
 
 	return anyStruct, nil
-
-}
-
-func GetMapValue(anyMap any, path string) any {
-
-	keys := strings.Split(path, ".")
-	var value interface{}
-	value = anyMap
-	for _, key := range keys {
-		value = value.(map[string]interface{})[key]
-	}
-	return value
 
 }

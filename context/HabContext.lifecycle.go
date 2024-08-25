@@ -71,12 +71,6 @@ func (h *HabContext) Shell() error {
 		return err
 	}
 
-	h.log.DebugF("Shell exited")
-	err = h.Stop()
-	if err != nil {
-		return err
-	}
-
 	h.log.InfoF("Hab Shell completed")
 	return nil
 
@@ -107,7 +101,7 @@ func (h *HabContext) Rm() error {
 		return err
 	}
 
-	h.log.TraceF("Hab Removing...")
+	h.log.DebugF("Hab Removing...")
 	for _, controllerKey := range bases.HabControllersUnloadOrder() {
 		controller, err := h.GetController(controllerKey)
 		if err != nil {
@@ -119,7 +113,7 @@ func (h *HabContext) Rm() error {
 		}
 		h.log.DebugF("Controller %s removed", controllerKey)
 	}
-	h.log.DebugF("Hab Removed")
+	h.log.InfoF("Hab Removed")
 	return nil
 
 }
@@ -130,7 +124,7 @@ func (h *HabContext) Unprovision() error {
 	if err != nil {
 		return err
 	}
-	h.log.TraceF("Hab Unprovisioning...")
+	h.log.DebugF("Hab Unprovisioning...")
 	for _, controllerKey := range bases.HabControllersUnloadOrder() {
 		controller, err := h.GetController(controllerKey)
 		if err != nil {
@@ -142,7 +136,7 @@ func (h *HabContext) Unprovision() error {
 		}
 		h.log.DebugF("Controller %s unprovisioned", controllerKey)
 	}
-	h.log.DebugF("Hab Unprovisioned")
+	h.log.InfoF("Hab Unprovisioned")
 	return nil
 
 }
@@ -152,6 +146,7 @@ func (h *HabContext) Nuke() error {
 	if err != nil {
 		return err
 	}
+	h.log.DebugF("Hab Nuking...")
 	for _, controllerKey := range bases.HabControllersUnloadOrder() {
 		controller, err := h.GetController(controllerKey)
 		if err != nil {

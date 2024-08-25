@@ -2,10 +2,10 @@ package bases
 
 type IContext interface {
 	Getwd() string
-	GetHabConfig() HabConfig
-	SetHabConfig(HabConfig)
-	GetImagesConfig() []HabImageConfig
-	GetContainersConfig() []HabContainerConfig
+	GetConfigValue(key string) string
+	SetConfigValue(key string, value string)
+	GetCurrentConfig() map[string]string
+	GetSetupContainers() []SetupContainer
 	GetLogger() ILogger
 	GetSubLogger(name string, parent ILogger) ILogger
 	GetController(key HabControllers) (IController, error)

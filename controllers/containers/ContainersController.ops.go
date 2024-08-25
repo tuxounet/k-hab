@@ -4,18 +4,18 @@ import "errors"
 
 func (r *ContainersController) loadContainers() error {
 
-	for _, confContainer := range r.ctx.GetContainersConfig() {
+	for _, confContainer := range r.ctx.GetSetupContainers() {
 
 		found := false
 		for _, localContainer := range r.containers {
-			if localContainer.name == confContainer.Name {
+			if localContainer.Name == confContainer.Name {
 				found = true
 				break
 			}
 		}
 		if !found {
 			container := NewContainerModel(confContainer.Name, r.ctx, confContainer)
-			r.containers[container.name] = *container
+			r.containers[container.Name] = *container
 		}
 	}
 
@@ -29,7 +29,7 @@ func (r *ContainersController) GetContainer(name string) (*ContainerModel, error
 		return nil, err
 	}
 	for _, container := range r.containers {
-		if container.name == name {
+		if container.Name == name {
 			return &container, nil
 		}
 	}

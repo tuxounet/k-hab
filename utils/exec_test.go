@@ -1,15 +1,18 @@
-package utils
+package utils_test
 
 import (
 	"os"
 	"testing"
+
+	"github.com/tuxounet/k-hab/context"
+	"github.com/tuxounet/k-hab/utils"
 )
 
 func TestTTCmdCall(t *testing.T) {
 
 	cmd := "echo"
 	args := []string{"hello"}
-	result := NewCmdCall(cmd, args...)
+	result := utils.NewCmdCall(cmd, args...)
 	cwd := "plop"
 	result.Cwd = &cwd
 	if result.Command != "echo" {
@@ -29,14 +32,14 @@ func TestTTCmdCall(t *testing.T) {
 
 func TestTTJsonOutput(t *testing.T) {
 
-	cmd := NewCmdCall("echo", `{"hello": "world"}`)
+	cmd := utils.NewCmdCall("echo", `{"hello": "world"}`)
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Error getting current working directory")
 	}
 	cmd.Cwd = &cwd
 
-	out, err := JsonCommandOutput[map[string]string](cmd)
+	out, err := utils.JsonCommandOutput[map[string]string](cmd)
 	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
@@ -47,9 +50,9 @@ func TestTTJsonOutput(t *testing.T) {
 
 func TestTTJsonOutputFailed(t *testing.T) {
 
-	cmd := NewCmdCall("inexistant", `{"hello": "world"}`)
+	cmd := utils.NewCmdCall("inexistant", `{"hello": "world"}`)
 
-	_, err := JsonCommandOutput[map[string]string](cmd)
+	_, err := utils.JsonCommandOutput[map[string]string](cmd)
 	if err == nil {
 		t.Fatalf("Expected error, got nil")
 	}
@@ -58,14 +61,14 @@ func TestTTJsonOutputFailed(t *testing.T) {
 
 func TestTTInvalidJsonOutput(t *testing.T) {
 
-	cmd := NewCmdCall("echo", `{"hello": "worl"`)
+	cmd := utils.NewCmdCall("echo", `{"hello": "worl"`)
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Error getting current working directory")
 	}
 	cmd.Cwd = &cwd
 
-	_, err = JsonCommandOutput[map[string]string](cmd)
+	_, err = utils.JsonCommandOutput[map[string]string](cmd)
 	if err == nil {
 		t.Fatalf("Expected error, got nil")
 	}
@@ -74,13 +77,13 @@ func TestTTInvalidJsonOutput(t *testing.T) {
 
 func TestTTExecExitCode(t *testing.T) {
 
-	cmd := NewCmdCall("ls")
+	cmd := utils.NewCmdCall("ls")
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Error getting current working directory")
 	}
 	cmd.Cwd = &cwd
-	code, err := OsExecWithExitCode(cmd)
+	code, err := utils.OsExecWithExitCode(cmd)
 	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
@@ -91,13 +94,13 @@ func TestTTExecExitCode(t *testing.T) {
 }
 func TestTTOSExec(t *testing.T) {
 
-	cmd := NewCmdCall("ls")
+	cmd := utils.NewCmdCall("ls")
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Error getting current working directory")
 	}
 	cmd.Cwd = &cwd
-	err = OsExec(cmd)
+	err = utils.OsExec(cmd)
 	if err != nil {
 		t.Fatalf("Expected nil, got %v", err)
 	}
@@ -105,14 +108,14 @@ func TestTTOSExec(t *testing.T) {
 }
 func TestTTFail(t *testing.T) {
 
-	cmd := NewCmdCall("unexistant", "command")
+	cmd := utils.NewCmdCall("unexistant", "command")
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Error getting current working directory")
 	}
 	cmd.Cwd = &cwd
 
-	err = OsExec(cmd)
+	err = utils.OsExec(cmd)
 	if err == nil {
 		t.Fatalf("Expected error, got nil")
 	}
@@ -120,14 +123,14 @@ func TestTTFail(t *testing.T) {
 }
 func TestTTINonZero(t *testing.T) {
 
-	cmd := NewCmdCall("which", "lsd")
+	cmd := utils.NewCmdCall("which", "lsd")
 	cwd, err := os.Getwd()
 	if err != nil {
 		t.Fatalf("Error getting current working directory")
 	}
 	cmd.Cwd = &cwd
 
-	err = OsExec(cmd)
+	err = utils.OsExec(cmd)
 	if err == nil {
 		t.Fatalf("Expected error, got nil")
 	}
@@ -135,14 +138,11 @@ func TestTTINonZero(t *testing.T) {
 }
 
 func TestTTCmdBuilder(t *testing.T) {
+	ctx := context.NewTestContext()
+	ctx.SetConfigValue("cmd.prefix", "")
+	ctx.SetConfigValue("cmd.name", "ls")
 
-	const jsonString = `{"cmd": { "prefix" : "", "name" : "ls" }}`
-	habConfig, err := LoadJSONFromString[map[string]interface{}](jsonString)
-	if err != nil {
-		t.Fatalf("Error loading json: %v", err)
-	}
-
-	cmd, err := WithCmdCall(habConfig, "cmd.prefix", "cmd.name", "-l")
+	cmd, err := utils.WithCmdCall(ctx, "cmd.prefix", "cmd.name", "-l")
 	if err != nil {
 		t.Fatalf("Error building command: %v", err)
 	}

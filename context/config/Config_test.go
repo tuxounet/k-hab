@@ -1,45 +1,40 @@
-package config
+package config_test
 
 import (
+	"context"
 	"testing"
+
+	"github.com/tuxounet/k-hab/context/config"
+	"github.com/tuxounet/k-hab/context/logger"
 )
 
 func TestTTDefaultConfig(t *testing.T) {
 
-	config := NewConfig()
-	err := config.Load()
+	log := logger.NewLogger(context.TODO(), "TEST")
+	config := config.NewConfig(log, map[string]string{
+		"a.b.c": "1",
+	})
+
+	if config.GetValue("a.b.c") != "1" {
+		t.Fatalf("Expected '1', got '%s'", config.GetValue("a.b.c"))
+	}
+
+	current := config.GetCurrent()
+	if current["a.b.c"] != "1" {
+		t.Fatalf("Expected '1', got '%s'", current["a.b.c"])
+	}
+}
+
+func TestTTSetConfigValue(t *testing.T) {
+
+	log := logger.NewLogger(context.TODO(), "TEST")
+	config := config.NewConfig(log, map[string]string{})
+
+	err := config.SetConfigValue("a.b.c", "1")
 	if err != nil {
-		t.Fatalf("Error loading config: %s", err)
+		t.Fatalf("Expected nil, got %v", err)
 	}
-	if config.HabConfig == nil {
-		t.Fatalf("HabConfig is nil")
+	if config.GetValue("a.b.c") != "1" {
+		t.Fatalf("Expected '1', got '%s'", config.GetValue("a.b.c"))
 	}
-	if len(config.ContainersConfig) == 0 {
-		t.Fatalf("ContainersConfig is empty")
-	}
-	if len(config.ImagesConfig) == 0 {
-		t.Fatalf("ImagesConfig is empty")
-	}
-
-	containerConfig, err := config.GetContainerConfig("bastion")
-	if err != nil {
-		t.Fatalf("Error getting container config: %s", err)
-	}
-
-	if containerConfig.Name != "bastion" {
-		t.Fatalf("ContainerConfig.Name is not bastion")
-	}
-
-	// expect panic
-	defer func() {
-		if r := recover(); r != nil {
-			t.Logf("Recovered from panic: %s", r)
-		}
-	}()
-
-	_, err = config.GetContainerConfig("non-existing")
-	if err == nil {
-		t.Fatalf("Expected error")
-	}
-
 }

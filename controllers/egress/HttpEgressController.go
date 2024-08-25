@@ -8,8 +8,6 @@ import (
 	"strings"
 
 	"github.com/tuxounet/k-hab/bases"
-
-	"github.com/tuxounet/k-hab/utils"
 )
 
 type HttpEgressController struct {
@@ -49,8 +47,8 @@ func (h *HttpEgressController) handleProxy(w http.ResponseWriter, r *http.Reques
 
 func (h *HttpEgressController) Start() error {
 
-	egress_host := utils.GetMapValue(h.ctx.GetHabConfig(), "lxd.lxc.host.address").(string)
-	egress_port := utils.GetMapValue(h.ctx.GetHabConfig(), "egress.listen.port").(string)
+	egress_host := h.ctx.GetConfigValue("hab.lxd.lxc.host.address")
+	egress_port := h.ctx.GetConfigValue("hab.egress.listen.port")
 
 	h.server = &http.Server{
 		Addr:    fmt.Sprintf("%s:%s", egress_host, egress_port),
