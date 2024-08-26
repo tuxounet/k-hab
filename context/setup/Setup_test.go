@@ -31,8 +31,8 @@ func TestTTSetup(t *testing.T) {
 		t.Fatalf("Expected nil, got %v", err)
 	}
 
-	if len(setup.ContainersConfig) != 0 {
-		t.Fatalf("Expected 0, got %d", len(setup.ContainersConfig))
+	if len(setup.SetupContainers) != 0 {
+		t.Fatalf("Expected 0, got %d", len(setup.SetupContainers))
 	}
 
 	os.WriteFile("test.yaml", []byte("config:\n  a: b\ncontainers:\n  - name: test\n    image: test\n"), 0644)

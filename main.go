@@ -15,10 +15,10 @@ import (
 )
 
 //go:embed default.config.yaml
-var defaultConfig string
+var DefaultConfig string
 
 //go:embed default.setup.yaml
-var defaultSetup string
+var DefaultSetup string
 
 var version = "DEVELOPEMENT"
 
@@ -28,11 +28,11 @@ type Author struct {
 }
 
 func main() {
-	defaultConfig, err := utils.LoadYamlFromString[map[string]string](defaultConfig)
+	defaultConfig, err := utils.LoadYamlFromString[map[string]string](DefaultConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defaultSetup, err := utils.LoadYamlFromString[bases.SetupFile](defaultSetup)
+	defaultSetup, err := utils.LoadYamlFromString[bases.SetupFile](DefaultSetup)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -104,11 +104,27 @@ func buildCommand(name string, usage string, verb habContext.HabVerbs, defaultCo
 		Name:  name,
 		Usage: usage,
 		Action: func(ctx context.Context, ocmd *cli.Command) error {
-			habCtx := habContext.NewHabContext(ctx, defaultConfig, defaultSetup)
-			err := habCtx.ParseCli(ocmd)
+			workingFolder, err := os.Getwd()
 			if err != nil {
 				return err
 			}
+
+			habCtx := habContext.NewHabContext(ctx, defaultConfig, defaultSetup, workingFolder)
+
+			logLevel := ocmd.String("loglevel")
+
+			err = habCtx.SetLogLevel(logLevel)
+			if err != nil {
+				return err
+			}
+
+			setup := ocmd.String("setup")
+
+			err = habCtx.SetSetup(setup)
+			if err != nil {
+				return err
+			}
+
 			err = habCtx.Init()
 			if err != nil {
 				return err

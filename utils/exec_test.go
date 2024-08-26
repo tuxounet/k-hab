@@ -138,6 +138,7 @@ func TestTTINonZero(t *testing.T) {
 }
 
 func TestTTCmdBuilder(t *testing.T) {
+
 	ctx := context.NewTestContext()
 	ctx.SetConfigValue("cmd.prefix", "")
 	ctx.SetConfigValue("cmd.name", "ls")

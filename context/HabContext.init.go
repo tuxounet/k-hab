@@ -2,7 +2,6 @@ package context
 
 import (
 	"errors"
-	"os"
 
 	"github.com/tuxounet/k-hab/bases"
 	"github.com/tuxounet/k-hab/controllers/builder"
@@ -15,11 +14,6 @@ import (
 )
 
 func (h *HabContext) Init() error {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	h.cwd = cwd
 
 	order := bases.HabControllersLoadOrder()
 	h.controllers = make(map[bases.HabControllers]bases.IController, len(order))
