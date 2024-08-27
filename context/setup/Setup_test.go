@@ -12,7 +12,7 @@ import (
 
 func TestTTSetup(t *testing.T) {
 
-	ctx := context.NewTestContext()
+	ctx := context.NewTestContext(t)
 	config := config.NewConfig(ctx.GetLogger(), map[string]string{
 		"setup": "test",
 	})
@@ -43,7 +43,7 @@ func TestTTSetup(t *testing.T) {
 }
 
 func TestTTSetupBadFile(t *testing.T) {
-	ctx := context.NewTestContext()
+	ctx := context.NewTestContext(t)
 	config := config.NewConfig(ctx.GetLogger(), map[string]string{
 		"setup": "test",
 	})
@@ -65,7 +65,7 @@ func TestTTSetupBadFile(t *testing.T) {
 }
 
 func TestTTSetupInvalidFile(t *testing.T) {
-	ctx := context.NewTestContext()
+	ctx := context.NewTestContext(t)
 	config := config.NewConfig(ctx.GetLogger(), map[string]string{
 		"setup": "test",
 	})

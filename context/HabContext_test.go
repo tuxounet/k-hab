@@ -8,7 +8,7 @@ import (
 )
 
 func TestBaseHabContext(t *testing.T) {
-	ctx := context.NewTestContext()
+	ctx := context.NewTestContext(t)
 	ctx.SetConfigValue("test", "test")
 
 	value := ctx.GetConfigValue("test")
@@ -16,36 +16,10 @@ func TestBaseHabContext(t *testing.T) {
 		t.Errorf("Expected 'test' but got '%s'", value)
 	}
 
-	currentConfig := ctx.GetCurrentConfig()
-	if currentConfig["test"] != "test" {
-		t.Errorf("Expected 'test' but got '%s'", currentConfig["test"])
-	}
-
-	setupContainers := ctx.GetSetupContainers()
-	if len(setupContainers) != 0 {
-		t.Errorf("Expected 0 but got %d", len(setupContainers))
-	}
-
-	notFoundController, err := ctx.GetController(bases.BuilderController)
-	if err != nil {
-		if err.Error() != "controller not found" {
-			t.Errorf("Expected 'controller not found' but got '%s'", err.Error())
-		}
-
-	}
-	if notFoundController != nil {
-		t.Errorf("Expected nil but got %v", notFoundController)
-	}
-
-	err = ctx.Init()
-	if err != nil {
-		t.Errorf("Expected nil but got %v", err)
-	}
-
 }
 
 func TestHabContextLogger(t *testing.T) {
-	ctx := context.NewTestContext()
+	ctx := context.NewTestContext(t)
 	logger := ctx.GetLogger()
 
 	logger.InfoF("Test")
@@ -53,17 +27,29 @@ func TestHabContextLogger(t *testing.T) {
 	sub.InfoF("Test")
 }
 
-// func TestTTHabLifecycle(t *testing.T) {
-// 	ctx := context.NewTestContext()
+func TestTTHabControllers(t *testing.T) {
+	ctx := context.NewTestContext(t)
+	err := ctx.Init()
+	if err != nil {
+		t.Errorf("Expected nil but got %v", err)
+	}
 
-// 	err := ctx.Provision()
-// 	if err != nil {
-// 		t.Errorf("Expected nil but got %v", err)
-// 	}
+	order := bases.HabControllersLoadOrder()
 
-// 	err = ctx.Unprovision()
-// 	if err != nil {
-// 		t.Errorf("Expected nil but got %v", err)
-// 	}
+	for _, controllerType := range order {
+		controller, err := ctx.GetController(controllerType)
+		if err != nil {
+			t.Errorf("Expected nil but got %v", err)
+		}
+		if controller == nil {
+			t.Errorf("Expected not nil but got nil")
+		}
 
-// }
+	}
+
+	_, err = ctx.GetController(bases.HabControllers("test"))
+	if err == nil {
+		t.Errorf("Expected error but got nil")
+	}
+
+}

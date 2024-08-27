@@ -2,20 +2,13 @@ package context
 
 import (
 	"context"
-	"log"
 	"os"
-
-	"github.com/tuxounet/k-hab/bases"
+	"testing"
 )
 
-func NewTestContext() *HabContext {
-	workingFolder, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
+func NewTestContext(t *testing.T) *HabContext {
+	workingFolder, _ := os.Getwd()
 
-	return NewHabContext(context.TODO(), map[string]string{
-		"hab.storage.root": ".hab-tests",
-	}, bases.SetupFile{}, workingFolder)
+	return NewHabContext(context.TODO(), workingFolder)
 
 }

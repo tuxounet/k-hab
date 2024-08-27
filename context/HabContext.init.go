@@ -1,8 +1,6 @@
 package context
 
 import (
-	"errors"
-
 	"github.com/tuxounet/k-hab/bases"
 	"github.com/tuxounet/k-hab/controllers/builder"
 	"github.com/tuxounet/k-hab/controllers/containers"
@@ -36,12 +34,6 @@ func (h *HabContext) Init() error {
 			controller = egress.NewHttpEgressController(h)
 		case bases.ImagesController:
 			controller = images.NewImagesController(h)
-		default:
-			return errors.New("invalid controller name " + string(controllerKey))
-		}
-
-		if controller == nil {
-			return errors.New("iontroller is nil")
 		}
 
 		h.controllers[bases.HabControllers(controllerKey)] = controller
