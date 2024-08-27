@@ -14,6 +14,8 @@ func NewTestContext() *HabContext {
 		log.Fatal(err)
 	}
 
-	return NewHabContext(context.TODO(), map[string]string{}, bases.SetupFile{}, workingFolder)
+	return NewHabContext(context.TODO(), map[string]string{
+		"hab.storage.root": ".hab-tests",
+	}, bases.SetupFile{}, workingFolder)
 
 }

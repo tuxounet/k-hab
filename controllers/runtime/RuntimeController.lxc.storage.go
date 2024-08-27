@@ -3,23 +3,20 @@ package runtime
 import (
 	"os"
 	"path"
-	"path/filepath"
 
 	"github.com/tuxounet/k-hab/utils"
 )
 
 func (r *RuntimeController) getStoragePath() (string, error) {
 
-	storagePathDefinition := r.ctx.GetConfigValue("hab.lxd.lxc.storage.path")
-	var storagePath string
-	isAbsolute := filepath.IsAbs(storagePathDefinition)
-	if !isAbsolute {
-		storagePath = path.Join(r.ctx.Getwd(), storagePathDefinition)
-
-	} else {
-		storagePath = storagePathDefinition
+	storageRoot, err := r.ctx.GetStorageRoot()
+	if err != nil {
+		return "", err
 	}
-	err := os.MkdirAll(storagePath, 0755)
+	storagePathDefinition := r.ctx.GetConfigValue("hab.lxd.lxc.storage.path")
+	storagePath := path.Join(storageRoot, storagePathDefinition)
+
+	err = os.MkdirAll(storagePath, 0755)
 	if err != nil {
 		return "", err
 	}

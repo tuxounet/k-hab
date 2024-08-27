@@ -25,6 +25,7 @@ func NewHabContext(startContext context.Context,
 	logger := logger.NewLogger(startContext, "Hab")
 
 	config := config.NewConfig(logger, defaultConfig)
+
 	setup := setup.NewSetup(logger, config, defaultSetup)
 	return &HabContext{
 		startContext: startContext,

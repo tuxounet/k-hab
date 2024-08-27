@@ -52,3 +52,18 @@ func TestHabContextLogger(t *testing.T) {
 	sub := ctx.GetSubLogger("test", logger)
 	sub.InfoF("Test")
 }
+
+// func TestTTHabLifecycle(t *testing.T) {
+// 	ctx := context.NewTestContext()
+
+// 	err := ctx.Provision()
+// 	if err != nil {
+// 		t.Errorf("Expected nil but got %v", err)
+// 	}
+
+// 	err = ctx.Unprovision()
+// 	if err != nil {
+// 		t.Errorf("Expected nil but got %v", err)
+// 	}
+
+// }

@@ -2,6 +2,8 @@ package context
 
 import (
 	"errors"
+	"path"
+	"path/filepath"
 
 	"github.com/sirupsen/logrus"
 	"github.com/tuxounet/k-hab/bases"
@@ -41,10 +43,6 @@ func (h *HabContext) GetController(controller bases.HabControllers) (bases.ICont
 
 }
 
-func (h *HabContext) Getwd() string {
-	return h.workFolder
-}
-
 func (h *HabContext) SetLogLevel(level string) error {
 	switch level {
 	case "TRACE":
@@ -72,4 +70,18 @@ func (h *HabContext) SetSetup(setup string) error {
 		return h.setup.LoadSetupFromYamlFile(setup)
 	}
 
+}
+
+func (h *HabContext) GetStorageRoot() (string, error) {
+
+	storagePathDefinition := h.GetConfigValue("hab.storage.root")
+	var rootStoragePath string
+	isAbsolute := filepath.IsAbs(storagePathDefinition)
+	if !isAbsolute {
+		rootStoragePath = path.Join(h.workFolder, storagePathDefinition)
+
+	} else {
+		rootStoragePath = storagePathDefinition
+	}
+	return rootStoragePath, nil
 }
