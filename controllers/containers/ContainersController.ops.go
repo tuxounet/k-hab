@@ -14,7 +14,11 @@ func (r *ContainersController) loadContainers() error {
 			}
 		}
 		if !found {
-			container := NewContainerModel(confContainer.Name, r.ctx, confContainer)
+			containersPath, err := r.getContainersPath()
+			if err != nil {
+				return err
+			}
+			container := NewContainerModel(confContainer.Name, r.ctx, confContainer, containersPath)
 			r.containers[container.Name] = *container
 		}
 	}

@@ -1,9 +1,9 @@
 package bases
 
 type IContext interface {
-	Getwd() string
 	GetConfigValue(key string) string
 	SetConfigValue(key string, value string)
+	GetStorageRoot() (string, error)
 	GetCurrentConfig() map[string]string
 	GetSetupContainers() []SetupContainer
 	GetLogger() ILogger

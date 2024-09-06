@@ -12,7 +12,7 @@ import (
 
 func TestTTSetup(t *testing.T) {
 
-	ctx := context.NewTestContext()
+	ctx := context.NewTestContext(t)
 	config := config.NewConfig(ctx.GetLogger(), map[string]string{
 		"setup": "test",
 	})
@@ -31,8 +31,8 @@ func TestTTSetup(t *testing.T) {
 		t.Fatalf("Expected nil, got %v", err)
 	}
 
-	if len(setup.ContainersConfig) != 0 {
-		t.Fatalf("Expected 0, got %d", len(setup.ContainersConfig))
+	if len(setup.SetupContainers) != 0 {
+		t.Fatalf("Expected 0, got %d", len(setup.SetupContainers))
 	}
 
 	os.WriteFile("test.yaml", []byte("config:\n  a: b\ncontainers:\n  - name: test\n    image: test\n"), 0644)
@@ -43,7 +43,7 @@ func TestTTSetup(t *testing.T) {
 }
 
 func TestTTSetupBadFile(t *testing.T) {
-	ctx := context.NewTestContext()
+	ctx := context.NewTestContext(t)
 	config := config.NewConfig(ctx.GetLogger(), map[string]string{
 		"setup": "test",
 	})
@@ -65,7 +65,7 @@ func TestTTSetupBadFile(t *testing.T) {
 }
 
 func TestTTSetupInvalidFile(t *testing.T) {
-	ctx := context.NewTestContext()
+	ctx := context.NewTestContext(t)
 	config := config.NewConfig(ctx.GetLogger(), map[string]string{
 		"setup": "test",
 	})

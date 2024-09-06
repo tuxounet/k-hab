@@ -1,5 +1,10 @@
 package images
 
+import (
+	"github.com/tuxounet/k-hab/bases"
+	"github.com/tuxounet/k-hab/controllers/runtime"
+)
+
 func (h *ImagesController) Provision() error {
 	h.log.TraceF("Provisioning")
 	err := h.loadImages()
@@ -15,18 +20,31 @@ func (h *ImagesController) Provision() error {
 
 func (h *ImagesController) Unprovision() error {
 	h.log.TraceF("Unprovisioning")
-	err := h.loadImages()
+	controller, err := h.ctx.GetController(bases.RuntimeController)
+	if err != nil {
+		return err
+	}
+	runtimeController := controller.(*runtime.RuntimeController)
+	present, err := runtimeController.IsPresent()
 	if err != nil {
 		return err
 	}
 
-	for _, image := range h.images {
-		err := image.unprovision()
+	if present {
+
+		err := h.loadImages()
 		if err != nil {
 			return err
 		}
+
+		for _, image := range h.images {
+			err := image.unprovision()
+			if err != nil {
+				return err
+			}
+		}
+		h.log.DebugF("Unprovisionned %d images", len(h.images))
 	}
-	h.log.DebugF("Unprovisionned %d images", len(h.images))
 	return nil
 }
 

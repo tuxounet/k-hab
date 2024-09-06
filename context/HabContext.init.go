@@ -1,9 +1,6 @@
 package context
 
 import (
-	"errors"
-	"os"
-
 	"github.com/tuxounet/k-hab/bases"
 	"github.com/tuxounet/k-hab/controllers/builder"
 	"github.com/tuxounet/k-hab/controllers/containers"
@@ -15,11 +12,6 @@ import (
 )
 
 func (h *HabContext) Init() error {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return err
-	}
-	h.cwd = cwd
 
 	order := bases.HabControllersLoadOrder()
 	h.controllers = make(map[bases.HabControllers]bases.IController, len(order))
@@ -42,12 +34,6 @@ func (h *HabContext) Init() error {
 			controller = egress.NewHttpEgressController(h)
 		case bases.ImagesController:
 			controller = images.NewImagesController(h)
-		default:
-			return errors.New("invalid controller name " + string(controllerKey))
-		}
-
-		if controller == nil {
-			return errors.New("iontroller is nil")
 		}
 
 		h.controllers[bases.HabControllers(controllerKey)] = controller

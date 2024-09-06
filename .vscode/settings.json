@@ -4,5 +4,6 @@
   "[go]": {
     "editor.defaultFormatter": "golang.go"
   },
-  "go.testTimeout": "120s"
+  "go.testTimeout": "120s",
+  "todo-tree.tree.showBadges": false
 }

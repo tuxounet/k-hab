@@ -9,18 +9,18 @@ import (
 )
 
 type Setup struct {
-	defaultSetup     bases.SetupFile
-	config           *config.Config
-	ContainersConfig []bases.SetupContainer
-	log              bases.ILogger
+	defaultSetup    bases.SetupFile
+	config          *config.Config
+	SetupContainers []bases.SetupContainer
+	log             bases.ILogger
 }
 
 func NewSetup(logger bases.ILogger, config *config.Config, defaultSetup bases.SetupFile) *Setup {
 	return &Setup{
-		log:              logger.CreateSubLogger("Setup", logger),
-		defaultSetup:     defaultSetup,
-		config:           config,
-		ContainersConfig: make([]bases.SetupContainer, 0),
+		log:             logger.CreateSubLogger("Setup", logger),
+		defaultSetup:    defaultSetup,
+		config:          config,
+		SetupContainers: make([]bases.SetupContainer, 0),
 	}
 }
 
@@ -55,6 +55,6 @@ func (s *Setup) loadSetup(setup bases.SetupFile) {
 		}
 	}
 
-	s.ContainersConfig = append(s.ContainersConfig, setup.Containers...)
+	s.SetupContainers = append(s.SetupContainers, setup.Containers...)
 
 }

@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path"
 	"runtime"
 	"time"
 
@@ -15,18 +16,20 @@ import (
 )
 
 type ContainerModel struct {
-	ctx  bases.IContext
-	Name string
-	Arch string
+	ctx            bases.IContext
+	containersPath string
+	Name           string
+	Arch           string
 
 	ContainerConfig bases.SetupContainer
 }
 
-func NewContainerModel(name string, ctx bases.IContext, containerConfig bases.SetupContainer) *ContainerModel {
+func NewContainerModel(name string, ctx bases.IContext, containerConfig bases.SetupContainer, containersPath string) *ContainerModel {
 
 	return &ContainerModel{
-		Name:            name,
 		ctx:             ctx,
+		containersPath:  containersPath,
+		Name:            name,
 		Arch:            runtime.GOARCH,
 		ContainerConfig: containerConfig,
 	}
@@ -136,8 +139,8 @@ func (l *ContainerModel) Provision() error {
 		return err
 	}
 
-	containersPath := l.ctx.GetConfigValue("hab.containers.path")
-	containerFile := fmt.Sprintf("%s/%s", containersPath, l.Name)
+	containerFile := path.Join(l.containersPath, l.Name)
+
 	_, err = os.Stat(containerFile)
 	if err == nil {
 		body, err := os.ReadFile(containerFile)
@@ -169,18 +172,11 @@ func (l *ContainerModel) Provision() error {
 
 	if !containerExists {
 
-		//write commandline to file
 		err = utils.OsExec(lxdCmd)
 		if err != nil {
 			return err
 		}
-		containersPath := l.ctx.GetConfigValue("hab.containers.path")
-		err = os.MkdirAll(containersPath, 0755)
-		if err != nil {
-			return err
-		}
-		containerFile := fmt.Sprintf("%s/%s", containersPath, l.Name)
-
+		//write commandline to file
 		err = os.WriteFile(containerFile, []byte(lxdCmd.String()), 0644)
 		if err != nil {
 			return err
@@ -324,8 +320,17 @@ func (l *ContainerModel) Unprovision() error {
 			if err != nil {
 				return err
 			}
+
 		}
 	}
+	containerFile := path.Join(l.containersPath, l.Name)
+	if _, err := os.Stat(containerFile); err == nil {
+		err = os.Remove(containerFile)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 
 }
