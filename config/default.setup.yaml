@@ -10,14 +10,11 @@ containers:
       gateway: "10.33.0.254"
     proxy:
       port: "58050"
-
-    provision: |
+    deploy: |
       #!/bin/sh
-
       set -x
       touch /root/salut.txt
-
-    unprovision: |
+    undeploy: |
       #!/bin/sh
       set -x
       rm -f /root/salut.txt

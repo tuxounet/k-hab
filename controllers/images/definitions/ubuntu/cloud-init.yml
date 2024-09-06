@@ -12,17 +12,15 @@ write_files:
       cd /home/ubuntu
       /usr/bin/su ubuntu || exit 0
 
-  - path: /etc/provision.sh
+  - path: /etc/deploy.sh
     permissions: "0755"
     content: |
-      #!/bin/sh
-      set -x
+      {{ .container.deploy }}
 
-  - path: /etc/unprovision.sh
+  - path: /etc/undeploy.sh
     permissions: "0755"
     content: |
-      #!/bin/sh
-      set -x
+      {{ .container.undeploy }}
 
 apt:
   primary:

@@ -10,6 +10,17 @@ write_files:
       export HTTP_PROXY=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export NO_PROXY=localhost,.local,.localdomain
       /bin/sh || exit 0
+
+  - path: /etc/deploy.sh
+    encoding: b64
+    permissions: "0755"
+    content: "{{ .container.deploy  }}"
+
+  - path: /etc/undeploy.sh
+    encoding: b64
+    permissions: "0755"
+    content: "{{ .container.undeploy }}"
+
 apk_repos:
   alpine_repo:
     base_url: http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}/os/alpine
