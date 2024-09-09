@@ -10,6 +10,12 @@ func (b *BaseController) Provision() error {
 func (b *BaseController) Start() error {
 	return nil
 }
+func (b *BaseController) Deploy() error {
+	return nil
+}
+func (b *BaseController) Undeploy() error {
+	return nil
+}
 func (b *BaseController) Stop() error {
 	return nil
 }

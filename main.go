@@ -68,8 +68,10 @@ func main() {
 			buildCommand("provision", "provision the hab", habContext.ProvisionVerb),
 			buildCommand("up", "create and/or launch the hab", habContext.UpVerb),
 			buildCommand("start", "create and/or launch the hab", habContext.UpVerb),
+			buildCommand("deploy", "deploy the hab", habContext.DeployVerb),
 			buildCommand("shell", "create and/or launch the hab", habContext.ShellVerb),
 			buildCommand("stop", "stop the hab", habContext.DownVerb),
+			buildCommand("undeploy", "undeploy the hab", habContext.UndeployVerb),
 			buildCommand("down", "stop the hab", habContext.DownVerb),
 			buildCommand("rm", "rm the hab", habContext.RmVerb),
 			buildCommand("unprovision", "unprovision the hab", habContext.UnprovisionVerb),
@@ -119,8 +121,12 @@ func buildCommand(name string, usage string, verb habContext.HabVerbs) *cli.Comm
 				return habCtx.Provision()
 			case habContext.UpVerb:
 				return habCtx.Start()
+			case habContext.DeployVerb:
+				return habCtx.Deploy()
 			case habContext.ShellVerb:
 				return habCtx.Shell()
+			case habContext.UndeployVerb:
+				return habCtx.Undeploy()
 			case habContext.DownVerb:
 				return habCtx.Stop()
 			case habContext.RmVerb:

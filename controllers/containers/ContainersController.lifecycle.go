@@ -43,6 +43,25 @@ func (c *ContainersController) Start() error {
 	return nil
 }
 
+func (c *ContainersController) Deploy() error {
+
+	c.log.TraceF("Deploying containers")
+	err := c.loadContainers()
+	if err != nil {
+		return err
+	}
+
+	for _, container := range c.containers {
+		err = container.Start()
+		if err != nil {
+			return err
+		}
+
+	}
+	c.log.DebugF("deployed %d containers", len(c.containers))
+	return nil
+}
+
 func (c *ContainersController) Stop() error {
 
 	controller, err := c.ctx.GetController(bases.RuntimeController)

@@ -211,6 +211,13 @@ func (l *ContainerModel) Start() error {
 
 }
 
+func (l *ContainerModel) Deploy() error {
+
+	//TODO
+	return nil
+
+}
+
 func (l *ContainerModel) WaitReady() error {
 
 	timeout := 30 * time.Second
@@ -285,6 +292,13 @@ func (l *ContainerModel) Stop() error {
 		}
 	}
 	return nil
+}
+
+func (l *ContainerModel) Undeploy() error {
+
+	//TODO
+	return nil
+
 }
 
 func (l *ContainerModel) Unprovision() error {
