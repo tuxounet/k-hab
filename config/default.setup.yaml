@@ -12,9 +12,9 @@ containers:
       port: "58050"
     deploy: |
       #!/bin/sh
-      set -x
-      touch /root/salut.txt
+      set -e
+      touch /root/hello.txt
     undeploy: |
       #!/bin/sh
-      set -x
-      rm -f /root/salut.txt
+      set -e
+      rm -f /root/hello.txt
