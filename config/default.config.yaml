@@ -1,4 +1,7 @@
 hab.storage.root: ".hab"
+
+hab.logs.level: "INFO"
+hab.logs.path: "./logs"
 hab.snap.command.prefix: "sudo"
 hab.snap.command.name: "snap"
 hab.rm.prefix: "sudo"

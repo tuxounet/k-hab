@@ -52,13 +52,31 @@ func (c *ContainersController) Deploy() error {
 	}
 
 	for _, container := range c.containers {
-		err = container.Start()
+		err = container.Deploy()
 		if err != nil {
 			return err
 		}
 
 	}
 	c.log.DebugF("deployed %d containers", len(c.containers))
+	return nil
+}
+func (c *ContainersController) Undeploy() error {
+
+	c.log.TraceF("Undeploying containers")
+	err := c.loadContainers()
+	if err != nil {
+		return err
+	}
+
+	for _, container := range c.containers {
+		err = container.Undeploy()
+		if err != nil {
+			return err
+		}
+
+	}
+	c.log.DebugF("undeployed %d containers", len(c.containers))
 	return nil
 }
 

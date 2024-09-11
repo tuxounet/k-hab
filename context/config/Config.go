@@ -11,23 +11,29 @@ type Config struct {
 	log    bases.ILogger
 }
 
-func NewConfig(logger bases.ILogger, defaultConfig map[string]string) *Config {
+func NewConfig(defaultConfig map[string]string) *Config {
 	return &Config{
 		values: defaultConfig,
-		log:    logger.CreateSubLogger("Setup", logger),
 	}
+}
+func (c *Config) SetLogger(logger bases.ILogger) {
+	c.log = logger.CreateSubLogger("Setup", logger)
 }
 
 func (c *Config) SetConfigValue(key string, value string) error {
 
 	c.values[key] = value
-
-	c.log.TraceF("Config value %s set to %s", key, value)
+	if c.log != nil {
+		c.log.TraceF("Config value %s set to %s", key, value)
+	}
 	return nil
 }
 
 func (c *Config) GetValue(key string) string {
-	c.log.TraceF("Config value %s requested", key)
+	if c.log != nil {
+		c.log.TraceF("Config value %s requested", key)
+	}
+
 	return c.values[key]
 }
 

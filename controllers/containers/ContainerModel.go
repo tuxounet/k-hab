@@ -213,7 +213,15 @@ func (l *ContainerModel) Start() error {
 
 func (l *ContainerModel) Deploy() error {
 
-	//TODO
+	err := l.Start()
+	if err != nil {
+		return err
+	}
+	err = l.Exec("/etc/deploy.sh")
+	if err != nil {
+		return err
+	}
+
 	return nil
 
 }
@@ -296,9 +304,16 @@ func (l *ContainerModel) Stop() error {
 
 func (l *ContainerModel) Undeploy() error {
 
-	//TODO
-	return nil
+	err := l.Start()
+	if err != nil {
+		return err
+	}
+	err = l.Exec("/etc/undeploy.sh")
+	if err != nil {
+		return err
+	}
 
+	return nil
 }
 
 func (l *ContainerModel) Unprovision() error {

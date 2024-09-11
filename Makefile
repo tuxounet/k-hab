@@ -19,8 +19,12 @@ unprovision:
 	go run ./main.go ${RUN_ARGS} unprovision
 up:
 	go run ./main.go ${RUN_ARGS} up
+deploy:
+	go run ./main.go ${RUN_ARGS} deploy
 shell:
 	go run ./main.go ${RUN_ARGS} shell
+undeploy:
+	go run ./main.go ${RUN_ARGS} undeploy
 down:
 	go run ./main.go ${RUN_ARGS} down
 rm:

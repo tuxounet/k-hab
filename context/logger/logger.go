@@ -15,7 +15,7 @@ type Logger struct {
 	log  *logrus.Entry
 }
 
-func NewLogger(ctx context.Context, name string, workFolder string) *Logger {
+func NewLogger(ctx context.Context, name string, logFolder string) *Logger {
 	rootLogger := logrus.New()
 	rootLogger.SetFormatter(&logrus.TextFormatter{
 		DisableColors: false,
@@ -24,14 +24,21 @@ func NewLogger(ctx context.Context, name string, workFolder string) *Logger {
 	})
 	rootLogger.SetLevel(logrus.TraceLevel)
 
-	// You could set this to any `io.Writer` such as a file
-	file, err := os.OpenFile(path.Join(workFolder, "hab.log"), os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	err := os.MkdirAll(logFolder, 0755)
+	if err != nil {
+		rootLogger.Warnf("Failed to create log folder %s", logFolder)
+	}
+
+	logFile := path.Join(logFolder, "hab.log")
+
+	file, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err == nil {
 		rootLogger.Out = io.MultiWriter(os.Stdout, file)
 	} else {
 		rootLogger.Out = os.Stderr
-		rootLogger.Warn("Failed to log to file, using default stderr")
+		rootLogger.Warnf("Failed to log to file, using default stderr %s", err)
 	}
+
 	return &Logger{
 		name: name,
 		log:  rootLogger.WithContext(ctx),
