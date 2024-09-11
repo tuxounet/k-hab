@@ -22,7 +22,7 @@ type HabContext struct {
 }
 
 func NewHabContext(startContext context.Context, workFolder string) *HabContext {
-	logger := logger.NewLogger(startContext, "Hab")
+	logger := logger.NewLogger(startContext, "Hab", workFolder)
 
 	defaultConfig, err := utils.LoadYamlFromString[map[string]string](embedConfig.DefaultConfig)
 	if err != nil {

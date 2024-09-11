@@ -1,5 +1,6 @@
 # Dev folder exclusions
 .hab/
+hab.log
 out/
 *.coverage
 __debug_bin*

@@ -10,7 +10,7 @@ import (
 
 func TestTTDefaultConfig(t *testing.T) {
 
-	log := logger.NewLogger(context.TODO(), "TEST")
+	log := logger.NewLogger(context.TODO(), "TEST", "/tmp")
 	config := config.NewConfig(log, map[string]string{
 		"a.b.c": "1",
 	})
@@ -27,7 +27,7 @@ func TestTTDefaultConfig(t *testing.T) {
 
 func TestTTSetConfigValue(t *testing.T) {
 
-	log := logger.NewLogger(context.TODO(), "TEST")
+	log := logger.NewLogger(context.TODO(), "TEST", "/tmp")
 	config := config.NewConfig(log, map[string]string{})
 
 	err := config.SetConfigValue("a.b.c", "1")

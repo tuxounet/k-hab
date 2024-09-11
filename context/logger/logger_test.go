@@ -10,7 +10,7 @@ import (
 
 func TestTTLogLevels(t *testing.T) {
 	// Test all log levels
-	log := logger.NewLogger(context.TODO(), "test")
+	log := logger.NewLogger(context.TODO(), "test", "/tmp")
 
 	name := log.GetName()
 	if name != "test" {
@@ -37,7 +37,7 @@ func TestTTLogLevels(t *testing.T) {
 
 func TestTTSubLogger(t *testing.T) {
 	// Test sublogger
-	log := logger.NewLogger(context.TODO(), "test")
+	log := logger.NewLogger(context.TODO(), "test", "/tmp")
 	sublogger := log.CreateSubLogger("sub", log)
 
 	name := sublogger.GetName()
