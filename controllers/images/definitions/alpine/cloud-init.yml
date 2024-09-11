@@ -23,7 +23,7 @@ write_files:
 
 apk_repos:
   alpine_repo:
-    base_url: http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}/os/alpine
+    base_url: https://eu.edge.kernel.org/alpine
     community_enabled: false
     testing_enabled: false
     version: "3.20"

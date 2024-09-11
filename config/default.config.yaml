@@ -24,7 +24,6 @@ hab.distrobuilder.command.name: "distrobuilder"
 hab.distrobuilder.build.path: ./distrobuilder
 hab.containers.path: "./containers"
 hab.egress.listen.port: "58050"
-hab.egress.mirrors.alpine: "https://eu.edge.kernel.org/alpine/v"
 hab.ingress.listen.host: "127.0.0.1"
 hab.ingress.listen.port.http: "58051"
 hab.ingress.listen.port.https: "58052"

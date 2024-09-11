@@ -41,7 +41,15 @@ func (hi *ImageModel) needBuild(definition definitions.HabBaseDefinition) (bool,
 	}
 	builderController := rBuildContainer.(*builder.BuilderController)
 
-	return builderController.ConfigHasChnaged(hi.Name, definition.Builder)
+	sExpectedBuilderConfig, err := utils.UnTemplate(definition.Builder, map[string]interface{}{
+		"config": hi.ctx.GetCurrentConfig(),
+		"image":  hi.Definition,
+	})
+	if err != nil {
+		return false, err
+	}
+
+	return builderController.ConfigHasChanged(hi.Name, sExpectedBuilderConfig)
 
 }
 

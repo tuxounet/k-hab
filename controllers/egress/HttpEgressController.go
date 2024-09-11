@@ -3,9 +3,7 @@ package egress
 import (
 	"fmt"
 	"net/http"
-	"net/url"
 	"os"
-	"strings"
 
 	"github.com/tuxounet/k-hab/bases"
 )
@@ -28,20 +26,8 @@ func NewHttpEgressController(ctx bases.IContext) *HttpEgressController {
 func (h *HttpEgressController) handleProxy(w http.ResponseWriter, r *http.Request) {
 
 	os.Stdout.WriteString(fmt.Sprintf("\nIncoming request to %s\n\r", r.RequestURI))
-	uri, err := url.Parse(r.RequestURI)
-	if err != nil {
-		os.Stderr.WriteString(fmt.Sprintf("\nError with request to %s: %s\n\r", r.RequestURI, err.Error()))
-		http.Error(w, "Server Error", http.StatusInternalServerError)
-	}
-	if uri.IsAbs() {
-		h.handleHttpProxy(w, r)
-	} else {
-		if strings.HasPrefix(uri.Path, "/os/") {
-			h.handleOsMirror(w, r)
-		} else {
-			http.Error(w, "Not Found", http.StatusNotFound)
-		}
-	}
+
+	h.handleHttpProxy(w, r)
 
 }
 
