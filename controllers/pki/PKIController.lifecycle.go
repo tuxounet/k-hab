@@ -19,13 +19,13 @@ func (p *PKIController) Provision() error {
 		}
 	}
 
-	egressPresent, err := p.EgressCertsPresent()
+	ingressPresent, err := p.IngressCertsPresent()
 	if err != nil {
 		return err
 	}
 
-	if !egressPresent {
-		err := p.createEgressCerts()
+	if !ingressPresent {
+		err := p.createIngressCerts()
 		if err != nil {
 			return err
 		}

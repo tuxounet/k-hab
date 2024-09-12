@@ -1,9 +1,9 @@
 package egress
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/tuxounet/k-hab/bases"
 )
@@ -23,14 +23,6 @@ func NewHttpEgressController(ctx bases.IContext) *HttpEgressController {
 	}
 }
 
-func (h *HttpEgressController) handleProxy(w http.ResponseWriter, r *http.Request) {
-
-	os.Stdout.WriteString(fmt.Sprintf("\nIncoming request to %s\n\r", r.RequestURI))
-
-	h.handleHttpProxy(w, r)
-
-}
-
 func (h *HttpEgressController) Start() error {
 
 	egress_host := h.ctx.GetConfigValue("hab.lxd.lxc.host.address")
@@ -39,6 +31,8 @@ func (h *HttpEgressController) Start() error {
 	h.server = &http.Server{
 		Addr:    fmt.Sprintf("%s:%s", egress_host, egress_port),
 		Handler: http.HandlerFunc(h.handleProxy),
+		// Disable HTTP/2.
+		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
 	}
 	go func() {
 		err := h.server.ListenAndServe()

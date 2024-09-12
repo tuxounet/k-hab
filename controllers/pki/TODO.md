@@ -2,9 +2,7 @@
 go get github.com/kairoaraujo/goca
 https://github.com/kairoaraujo/goca?tab=readme-ov-file#goca-http-rest-api
 
-[X] 2. Create egress/proxy ssl keypairs, signed by ca
-
-[ ] 3. use cert in Egress Component
+[ ] 2. use dedicated cert in Ingress Component
 
 [ ] 3. create client certificate pairs for mtls server connection establish, else, 404 in ingress
 

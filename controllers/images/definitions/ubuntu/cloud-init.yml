@@ -6,18 +6,22 @@ write_files:
       #!/bin/sh
       set -x      
       export http_proxy=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
+      export https_proxy=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export no_proxy=localhost,.local,.localdomain
       export HTTP_PROXY=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
+      export HTTPS_PROXY=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export NO_PROXY=localhost,.local,.localdomain
       cd /home/ubuntu
       /usr/bin/su ubuntu || exit 0
 
   - path: /etc/deploy.sh
+    encoding: b64
     permissions: "0755"
     content: |
       {{ .container.deploy }}
 
   - path: /etc/undeploy.sh
+    encoding: b64
     permissions: "0755"
     content: |
       {{ .container.undeploy }}

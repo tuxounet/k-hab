@@ -1,1 +1,1 @@
-- [ ] handle https proxy
+- [x] handle https proxy

@@ -3,6 +3,7 @@ package pki
 import (
 	"os"
 	"path"
+	"strings"
 
 	"github.com/kairoaraujo/goca"
 )
@@ -81,7 +82,7 @@ func (p *PKIController) CAPresent() (bool, error) {
 	return false, nil
 }
 
-func (p *PKIController) EgressCertsPresent() (bool, error) {
+func (p *PKIController) IngressCertsPresent() (bool, error) {
 	pkiPath, err := p.getPKIStoragePath()
 	if err != nil {
 		return false, err
@@ -93,7 +94,7 @@ func (p *PKIController) EgressCertsPresent() (bool, error) {
 	}
 
 	certs := ca.ListCertificates()
-	certCN := p.ctx.GetConfigValue("hab.pki.certs.egress.common_name")
+	certCN := p.ctx.GetConfigValue("hab.pki.certs.ingress.common_name")
 	for _, cert := range certs {
 		if cert == certCN {
 			return true, nil
@@ -103,22 +104,24 @@ func (p *PKIController) EgressCertsPresent() (bool, error) {
 	return false, nil
 }
 
-func (p *PKIController) createEgressCerts() error {
+func (p *PKIController) createIngressCerts() error {
 
 	ca, err := p.loadCA()
 	if err != nil {
 		return err
 	}
-	certCN := p.ctx.GetConfigValue("hab.pki.certs.egress.common_name")
+	certCN := p.ctx.GetConfigValue("hab.pki.certs.ingress.common_name")
+	certsDnsNames := p.ctx.GetConfigValue("hab.pki.certs.ingress.dns_names")
 	egressCertIdentity := goca.Identity{
-		Organization:       p.ctx.GetConfigValue("hab.pki.certs.egress.organization"),
-		OrganizationalUnit: p.ctx.GetConfigValue("hab.pki.certs.egress.organization_unit"),
-		Country:            p.ctx.GetConfigValue("hab.pki.certs.egress.country"),
-		Locality:           p.ctx.GetConfigValue("hab.pki.certs.egress.locality"),
-		Province:           p.ctx.GetConfigValue("hab.pki.certs.egress.province"),
+		Organization:       p.ctx.GetConfigValue("hab.pki.certs.ingress.organization"),
+		OrganizationalUnit: p.ctx.GetConfigValue("hab.pki.certs.ingress.organization_unit"),
+		Country:            p.ctx.GetConfigValue("hab.pki.certs.ingress.country"),
+		Locality:           p.ctx.GetConfigValue("hab.pki.certs.ingress.locality"),
+		Province:           p.ctx.GetConfigValue("hab.pki.certs.ingress.province"),
 		Intermediate:       false,
-		DNSNames:           []string{"w3.intranet.example.com", "www.intranet.example.com"},
+		DNSNames:           strings.Split(certsDnsNames, ","),
 	}
+
 	_, err = ca.IssueCertificate(certCN, egressCertIdentity)
 	if err != nil {
 		return err
