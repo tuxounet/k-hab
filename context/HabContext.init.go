@@ -8,6 +8,7 @@ import (
 	"github.com/tuxounet/k-hab/controllers/egress"
 	"github.com/tuxounet/k-hab/controllers/images"
 	"github.com/tuxounet/k-hab/controllers/ingress"
+	"github.com/tuxounet/k-hab/controllers/pki"
 	"github.com/tuxounet/k-hab/controllers/runtime"
 )
 
@@ -34,6 +35,8 @@ func (h *HabContext) Init() error {
 			controller = egress.NewHttpEgressController(h)
 		case bases.ImagesController:
 			controller = images.NewImagesController(h)
+		case bases.PKIController:
+			controller = pki.NewPKIController(h)
 		}
 
 		h.controllers[bases.HabControllers(controllerKey)] = controller
