@@ -22,7 +22,7 @@ func (l *BuilderController) BuildDistro(name string, builderConfig string) (*Dis
 	distroFolder := path.Join(builderPath, name)
 	os.MkdirAll(distroFolder, 0755)
 	built := false
-	changed, err := l.ConfigHasChnaged(name, builderConfig)
+	changed, err := l.ConfigHasChanged(name, builderConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (l *BuilderController) RemoveCache(name string) error {
 
 }
 
-func (l *BuilderController) ConfigHasChnaged(name string, expectedConfig string) (bool, error) {
+func (l *BuilderController) ConfigHasChanged(name string, expectedConfig string) (bool, error) {
 	builderPath, err := l.getImageBuildPath()
 	if err != nil {
 		return false, err
@@ -101,7 +101,8 @@ func (l *BuilderController) ConfigHasChnaged(name string, expectedConfig string)
 	if err != nil {
 		return false, err
 	}
+	config := string(currentConfig)
 
-	return string(currentConfig) != expectedConfig, nil
+	return config != expectedConfig, nil
 
 }

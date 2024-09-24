@@ -3,6 +3,7 @@ package context
 import (
 	"context"
 	"log"
+	"path"
 
 	"github.com/tuxounet/k-hab/bases"
 	embedConfig "github.com/tuxounet/k-hab/config"
@@ -22,26 +23,35 @@ type HabContext struct {
 }
 
 func NewHabContext(startContext context.Context, workFolder string) *HabContext {
-	logger := logger.NewLogger(startContext, "Hab")
-
 	defaultConfig, err := utils.LoadYamlFromString[map[string]string](embedConfig.DefaultConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
+	config := config.NewConfig(defaultConfig)
+	logFolder := config.GetValue("hab.logs.path")
+
+	newContext := &HabContext{
+		startContext: startContext,
+		config:       config,
+		workFolder:   workFolder,
+	}
+	storageRoot, err := newContext.GetStorageRoot()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	logger := logger.NewLogger(startContext, "Hab", path.Join(storageRoot, logFolder))
+	config.SetLogger(logger)
+	newContext.log = logger
+
 	defaultSetup, err := utils.LoadYamlFromString[bases.SetupFile](embedConfig.DefaultSetup)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	config := config.NewConfig(logger, defaultConfig)
-
 	setup := setup.NewSetup(logger, config, defaultSetup)
 
-	return &HabContext{
-		startContext: startContext,
-		log:          logger,
-		config:       config,
-		setup:        setup,
-		workFolder:   workFolder,
-	}
+	newContext.setup = setup
+
+	return newContext
 }

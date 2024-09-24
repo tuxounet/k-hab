@@ -211,6 +211,21 @@ func (l *ContainerModel) Start() error {
 
 }
 
+func (l *ContainerModel) Deploy() error {
+
+	err := l.Start()
+	if err != nil {
+		return err
+	}
+	err = l.Exec("/etc/deploy.sh")
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
 func (l *ContainerModel) WaitReady() error {
 
 	timeout := 30 * time.Second
@@ -284,6 +299,20 @@ func (l *ContainerModel) Stop() error {
 			return err
 		}
 	}
+	return nil
+}
+
+func (l *ContainerModel) Undeploy() error {
+
+	err := l.Start()
+	if err != nil {
+		return err
+	}
+	err = l.Exec("/etc/undeploy.sh")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

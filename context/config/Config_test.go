@@ -1,17 +1,14 @@
 package config_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/tuxounet/k-hab/context/config"
-	"github.com/tuxounet/k-hab/context/logger"
 )
 
 func TestTTDefaultConfig(t *testing.T) {
 
-	log := logger.NewLogger(context.TODO(), "TEST")
-	config := config.NewConfig(log, map[string]string{
+	config := config.NewConfig(map[string]string{
 		"a.b.c": "1",
 	})
 
@@ -27,8 +24,7 @@ func TestTTDefaultConfig(t *testing.T) {
 
 func TestTTSetConfigValue(t *testing.T) {
 
-	log := logger.NewLogger(context.TODO(), "TEST")
-	config := config.NewConfig(log, map[string]string{})
+	config := config.NewConfig(map[string]string{})
 
 	err := config.SetConfigValue("a.b.c", "1")
 	if err != nil {
