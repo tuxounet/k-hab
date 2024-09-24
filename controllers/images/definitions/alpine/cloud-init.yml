@@ -27,7 +27,7 @@ apk_repos:
   alpine_repo:
     community_enabled: false
     testing_enabled: false
-    version: "3.20"
+    version: "v3.20"
 timezone: Europe/Paris
 runcmd:
   - rc-update add networking boot
