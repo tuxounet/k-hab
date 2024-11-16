@@ -13,7 +13,7 @@ func (r *RuntimeController) getStoragePath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	storagePathDefinition := r.ctx.GetConfigValue("hab.lxd.lxc.storage.path")
+	storagePathDefinition := r.ctx.GetConfigValue("hab.incus.storage.path")
 	storagePath := path.Join(storageRoot, storagePathDefinition)
 
 	err = os.MkdirAll(storagePath, 0755)
@@ -26,8 +26,8 @@ func (r *RuntimeController) getStoragePath() (string, error) {
 
 func (r *RuntimeController) provisionStorage() error {
 
-	storage_pool := r.ctx.GetConfigValue("hab.lxd.lxc.storage.pool")
-	storage_driver := r.ctx.GetConfigValue("hab.lxd.lxc.storage.driver")
+	storage_pool := r.ctx.GetConfigValue("hab.incus.storage.pool")
+	storage_driver := r.ctx.GetConfigValue("hab.incus.storage.driver")
 	storage_path, err := r.getStoragePath()
 	if err != nil {
 		return err
@@ -50,7 +50,7 @@ func (r *RuntimeController) provisionStorage() error {
 
 func (r *RuntimeController) unprovisionStorage() error {
 
-	storage_pool := r.ctx.GetConfigValue("hab.lxd.lxc.storage.pool")
+	storage_pool := r.ctx.GetConfigValue("hab.incus.storage.pool")
 
 	storageExists, err := r.existsStorage(storage_pool)
 	if err != nil {
@@ -85,7 +85,7 @@ func (r *RuntimeController) nukeStorage() error {
 
 func (r *RuntimeController) existsStorage(name string) (bool, error) {
 
-	cmd, err := r.withLxcCmd("storage", "ls", "--format", "json")
+	cmd, err := r.withIncusCmd("storage", "ls", "--format", "json")
 	if err != nil {
 		return false, err
 	}
@@ -121,7 +121,7 @@ func (r *RuntimeController) createStorage(name string, driver string, options ..
 		return err
 	}
 
-	cmd, err := r.withLxcCmd("storage", "create", name, driver)
+	cmd, err := r.withIncusCmd("storage", "create", name, driver)
 	if err != nil {
 		return err
 	}
@@ -134,7 +134,7 @@ func (r *RuntimeController) createStorage(name string, driver string, options ..
 
 func (r *RuntimeController) removeStorage(name string) error {
 
-	cmd, err := r.withLxcCmd("storage", "delete", name)
+	cmd, err := r.withIncusCmd("storage", "delete", name)
 	if err != nil {
 		return err
 	}

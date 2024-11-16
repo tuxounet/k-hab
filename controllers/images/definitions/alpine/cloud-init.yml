@@ -5,11 +5,11 @@ write_files:
     content: |
       #!/bin/sh
       set -x      
-      export http_proxy=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
-      export https_proxy=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
+      export http_proxy=http://{{ index .config "hab.incus.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
+      export https_proxy=http://{{ index .config "hab.incus.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export no_proxy=localhost,.local,.localdomain
-      export HTTP_PROXY=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
-      export HTTPS_PROXY=http://{{ index .config "hab.lxd.lxc.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
+      export HTTP_PROXY=http://{{ index .config "hab.incus.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
+      export HTTPS_PROXY=http://{{ index .config "hab.incus.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export NO_PROXY=localhost,.local,.localdomain
       /bin/sh || exit 0
 

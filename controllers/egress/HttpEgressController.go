@@ -25,7 +25,7 @@ func NewHttpEgressController(ctx bases.IContext) *HttpEgressController {
 
 func (h *HttpEgressController) Start() error {
 
-	egress_host := h.ctx.GetConfigValue("hab.lxd.lxc.host.address")
+	egress_host := h.ctx.GetConfigValue("hab.incus.host.address")
 	egress_port := h.ctx.GetConfigValue("hab.egress.listen.port")
 
 	h.server = &http.Server{

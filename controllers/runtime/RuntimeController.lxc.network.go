@@ -8,10 +8,10 @@ import (
 
 func (r *RuntimeController) provisionNetwork() error {
 
-	host_interface := r.ctx.GetConfigValue("hab.lxd.lxc.host.interface")
-	host_address := r.ctx.GetConfigValue("hab.lxd.lxc.host.address")
-	host_address_mask := r.ctx.GetConfigValue("hab.lxd.lxc.host.netmask")
-	network_nat := r.ctx.GetConfigValue("hab.lxd.lxc.host.nat")
+	host_interface := r.ctx.GetConfigValue("hab.incus.host.interface")
+	host_address := r.ctx.GetConfigValue("hab.incus.host.address")
+	host_address_mask := r.ctx.GetConfigValue("hab.incus.host.netmask")
+	network_nat := r.ctx.GetConfigValue("hab.incus.host.nat")
 
 	ipv4_address := fmt.Sprintf("%s/%s", host_address, host_address_mask)
 	existsNetwork, err := r.existsNetwork(host_interface)
@@ -31,7 +31,7 @@ func (r *RuntimeController) provisionNetwork() error {
 
 func (r *RuntimeController) existsNetwork(name string) (bool, error) {
 
-	cmd, err := r.withLxcCmd("network", "ls", "--format", "json")
+	cmd, err := r.withIncusCmd("network", "ls", "--format", "json")
 	if err != nil {
 		return false, err
 	}
@@ -51,7 +51,7 @@ func (r *RuntimeController) existsNetwork(name string) (bool, error) {
 
 func (r *RuntimeController) createNetwork(name string, driver string, options ...string) error {
 
-	cmd, err := r.withLxcCmd("network", "create", name, "--type", driver)
+	cmd, err := r.withIncusCmd("network", "create", name, "--type", driver)
 	if err != nil {
 		return err
 	}

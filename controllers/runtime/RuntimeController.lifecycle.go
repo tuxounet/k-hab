@@ -13,9 +13,9 @@ func (r *RuntimeController) IsPresent() (bool, error) {
 	}
 	dependencyController := controller.(*dependencies.DependenciesController)
 
-	snapName := r.ctx.GetConfigValue("hab.lxd.snap")
+	aptName := r.ctx.GetConfigValue("hab.incus.apt.client")
 
-	present, err := dependencyController.InstalledSnap(snapName)
+	present, err := dependencyController.InstalledAPT(aptName)
 	if err != nil {
 		return false, err
 	}
@@ -31,19 +31,32 @@ func (r *RuntimeController) Provision() error {
 	}
 	dependencyController := controller.(*dependencies.DependenciesController)
 
-	snapName := r.ctx.GetConfigValue("hab.lxd.snap")
-	snapMode := r.ctx.GetConfigValue("hab.lxd.snap_mode")
-	present, err := dependencyController.InstalledSnap(snapName)
+	aptServerName := r.ctx.GetConfigValue("hab.incus.apt.server")
+	aptClientName := r.ctx.GetConfigValue("hab.incus.apt.client")
+	present, err := dependencyController.InstalledAPT(aptServerName)
 	if err != nil {
 		return err
 	}
 
 	if !present {
-		err := dependencyController.InstallSnap(snapName, snapMode)
+		err := dependencyController.InstallAPT(aptServerName)
 		if err != nil {
 			return err
 		}
-		r.log.DebugF("Provioned")
+		r.log.DebugF("Server Provioned")
+	}
+
+	present, err = dependencyController.InstalledAPT(aptClientName)
+	if err != nil {
+		return err
+	}
+
+	if !present {
+		err := dependencyController.InstallAPT(aptClientName)
+		if err != nil {
+			return err
+		}
+		r.log.DebugF("Client Provioned")
 	}
 	err = r.provisionStorage()
 	if err != nil {
@@ -72,7 +85,7 @@ func (r *RuntimeController) Rm() error {
 	}
 
 	if present {
-		cmd, err := r.withLxdCmd("shutdown")
+		cmd, err := r.withIncusCmd("stop", "--all")
 		if err != nil {
 			return err
 		}
@@ -80,7 +93,7 @@ func (r *RuntimeController) Rm() error {
 		if err != nil {
 			return err
 		}
-		r.log.DebugF("Shutdowned")
+		r.log.DebugF("Stopped")
 
 	}
 	return nil
@@ -112,12 +125,16 @@ func (r *RuntimeController) Unprovision() error {
 			return err
 		}
 		dependencyController := controller.(*dependencies.DependenciesController)
-		snapName := r.ctx.GetConfigValue("hab.lxd.snap")
-		err = dependencyController.RemoveSnap(snapName)
+		aptServerName := r.ctx.GetConfigValue("hab.incus.apt.server")
+		aptClientName := r.ctx.GetConfigValue("hab.incus.apt.server")
+		err = dependencyController.RemoveAPT(aptServerName)
 		if err != nil {
 			return err
 		}
-
+		err = dependencyController.RemoveAPT(aptClientName)
+		if err != nil {
+			return err
+		}
 	}
 
 	r.log.DebugF("Unprovioned")
@@ -126,19 +143,6 @@ func (r *RuntimeController) Unprovision() error {
 func (r *RuntimeController) Nuke() error {
 	r.log.TraceF("Nuking")
 	err := r.nukeStorage()
-	if err != nil {
-		return err
-	}
-
-	controller, err := r.ctx.GetController("DependenciesController")
-	if err != nil {
-		return err
-	}
-	dependencyController := controller.(*dependencies.DependenciesController)
-
-	snapName := r.ctx.GetConfigValue("hab.lxd.snap")
-
-	err = dependencyController.RemoveSnapSnapshots(snapName)
 	if err != nil {
 		return err
 	}

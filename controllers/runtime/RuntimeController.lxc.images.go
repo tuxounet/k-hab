@@ -5,7 +5,7 @@ import (
 )
 
 func (l *RuntimeController) PresentImage(name string) (bool, error) {
-	cmd, err := l.withLxcCmd("image", "list", "--format", "json")
+	cmd, err := l.withIncusCmd("image", "list", "--format", "json")
 	if err != nil {
 		return false, err
 	}
@@ -40,7 +40,7 @@ func (l *RuntimeController) RegisterImage(name string, metadataPackage string, r
 		}
 
 	}
-	cmd, err := l.withLxcCmd("image", "import", metadataPackage, rootfsPackage, "--alias", name)
+	cmd, err := l.withIncusCmd("image", "import", metadataPackage, rootfsPackage, "--alias", name)
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (l *RuntimeController) RemoveImage(name string) error {
 		return err
 	}
 	if present {
-		cmd, err := l.withLxcCmd("image", "delete", name)
+		cmd, err := l.withIncusCmd("image", "delete", name)
 		if err != nil {
 			return err
 		}
