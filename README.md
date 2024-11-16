@@ -4,7 +4,12 @@ A single executable, that spawn or restore a virtual infrastructure, definied by
 
 ## Get Release
 
-** Ubuntu 24.04.1 amd64 **
+### Requirements
+
+- snap
+- sudo access without password
+
+### Get Latest Release
 
 ```bash
 curl -s https://api.github.com/repos/tuxounet/k-hab/releases/tags/24.8.7 \
@@ -17,16 +22,18 @@ curl -s https://api.github.com/repos/tuxounet/k-hab/releases/tags/24.8.7 \
 && ./k-hab shell
 ```
 
+### Tested on
 
-# Based on :
+- Ubuntu 24.04.1 amd64
+
+# Based on:
 
 - Linux
 - snap
-- Incus ecosystem :
-  - IncusD Service
-  - incus client
-  - Distrobuilder
-- Alpine Linux
+- Distrobuilder
+  - Alpine Linux image
+  - Ubuntu Linux Image
+- LXD / LXC (Incus)
 
 # Built with :
 

@@ -7,8 +7,29 @@ hab.commands.snap.prefix: "sudo"
 hab.commands.rm: "rm"
 hab.commands.rm.prefix: "sudo"
 
-  
- 
+hab.distrobuilder.snap: "distrobuilder"
+hab.distrobuilder.snap_mode: "--classic"
+hab.distrobuilder.command.prefix: "sudo"
+hab.distrobuilder.command.name: "distrobuilder"
+hab.distrobuilder.build.path: ./distrobuilder
+
+hab.plateform.snap: "lxd"
+hab.plateform.snap_mode: ""
+hab.plateform.storage.pool: "hab"
+hab.plateform.storage.driver: "dir"
+hab.plateform.storage.path: "./plateform"
+hab.plateform.host.interface: "hab0"
+hab.plateform.host.v4.address: "10.77.0.254"
+hab.plateform.host.v4.netmask: "24"
+hab.plateform.host.v4.nat: "false"
+hab.plateform.host.v6.address: "fd42:73ab:7e08:9d01::ff/64"
+hab.plateform.host.v6.nat: "false"
+hab.plateform.profile: "hab"
+hab.plateform.command.prefix: "sudo"
+hab.plateform.command: "lxc"
+
+hab.containers.path: "./containers"
+
 hab.pki.path: "./pki"
 hab.pki.ca.common_name: "Hab CA"
 hab.pki.ca.organization: "Hab Org"
@@ -24,29 +45,8 @@ hab.pki.certs.ingress.province: "IDF"
 hab.pki.certs.ingress.country: "FR"
 hab.pki.certs.ingress.dns_names: "hab.local"
 
-hab.plateform.snap: "lxd"
-hab.plateform.snap_mode: ""
-hab.plateform.storage.pool: "hab"
-hab.plateform.storage.driver: "dir"
-hab.plateform.storage.path: "./plateform" 
-hab.plateform.host.interface: "hab0"
-hab.plateform.host.v4.address: "10.77.0.254"
-hab.plateform.host.v4.netmask: "24"
-hab.plateform.host.v4.nat: "false"
-hab.plateform.host.v6.address: "fd42:73ab:7e08:9d01::ff/64"
-hab.plateform.host.v6.nat: "false"
-hab.plateform.profile: "hab"
-hab.plateform.command.prefix: "sudo"
-hab.plateform.command: "lxc"
-
-
-hab.distrobuilder.snap: "distrobuilder"
-hab.distrobuilder.snap_mode: "--classic"
-hab.distrobuilder.command.prefix: "sudo"
-hab.distrobuilder.command.name: "distrobuilder"
-hab.distrobuilder.build.path: ./distrobuilder
-hab.containers.path: "./containers"
 hab.egress.listen.port: "58050"
+
 hab.ingress.listen.host: "127.0.0.1"
 hab.ingress.listen.port.http: "58051"
 hab.ingress.listen.port.https: "58052"

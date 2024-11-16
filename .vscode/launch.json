@@ -80,7 +80,11 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "--setup=./config/default.setup.yaml", "unprovision"],
+      "args": [
+        "--loglevel=TRACE",
+        "--setup=./config/default.setup.yaml",
+        "unprovision"
+      ],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
