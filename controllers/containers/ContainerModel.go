@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/tuxounet/k-hab/bases"
-	"github.com/tuxounet/k-hab/controllers/dependencies"
 	"github.com/tuxounet/k-hab/controllers/images"
 
 	"github.com/tuxounet/k-hab/utils"
@@ -268,11 +267,11 @@ func (l *ContainerModel) Undeploy() error {
 }
 
 func (l *ContainerModel) Unprovision() error {
-	controller, err := l.ctx.GetController("DependenciesController")
+
+	dependencyController, err := l.getDependenciesController()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
 	aptName := l.ctx.GetConfigValue("hab.incus.apt.server")
 	present, err := dependencyController.InstalledAPT(aptName)

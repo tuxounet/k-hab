@@ -14,6 +14,6 @@ type ImagesController struct {
 func NewImagesController(ctx bases.IContext) *ImagesController {
 	return &ImagesController{
 		ctx: ctx,
-		log: ctx.GetSubLogger("ImagesController", ctx.GetLogger()),
+		log: ctx.GetSubLogger(string(bases.ImagesController), ctx.GetLogger()),
 	}
 }

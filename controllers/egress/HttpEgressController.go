@@ -19,7 +19,7 @@ func NewHttpEgressController(ctx bases.IContext) *HttpEgressController {
 
 	return &HttpEgressController{
 		ctx: ctx,
-		log: ctx.GetSubLogger("HttpEgressController", ctx.GetLogger()),
+		log: ctx.GetSubLogger(string(bases.EgressController), ctx.GetLogger()),
 	}
 }
 

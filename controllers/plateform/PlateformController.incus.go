@@ -3,16 +3,14 @@ package plateform
 import (
 	"strings"
 
-	"github.com/tuxounet/k-hab/controllers/dependencies"
 	"github.com/tuxounet/k-hab/utils"
 )
 
 func (r *PlateformController) provisionServer() error {
-	controller, err := r.ctx.GetController("DependenciesController")
+	dependencyController, err := r.getDependenciesController()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
 	aptName := r.ctx.GetConfigValue("hab.incus.apt.server")
 
@@ -32,11 +30,10 @@ func (r *PlateformController) provisionServer() error {
 }
 
 func (r *PlateformController) provisionDnsMasq() error {
-	controller, err := r.ctx.GetController("DependenciesController")
+	dependencyController, err := r.getDependenciesController()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
 	aptName := r.ctx.GetConfigValue("hab.incus.apt.dnsmasq")
 
@@ -56,11 +53,10 @@ func (r *PlateformController) provisionDnsMasq() error {
 }
 
 func (r *PlateformController) provisionClient() error {
-	controller, err := r.ctx.GetController("DependenciesController")
+	dependencyController, err := r.getDependenciesController()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
 	aptName := r.ctx.GetConfigValue("hab.incus.apt.client")
 
@@ -103,11 +99,10 @@ func (r *PlateformController) unprovisionServer() error {
 
 	}
 
-	controller, err := r.ctx.GetController("DependenciesController")
+	dependencyController, err := r.getDependenciesController()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 	aptName := r.ctx.GetConfigValue("hab.incus.apt.server")
 
 	present, err := dependencyController.InstalledAPT(aptName)
@@ -128,11 +123,10 @@ func (r *PlateformController) unprovisionServer() error {
 }
 func (r *PlateformController) unprovisionDnsmasq() error {
 
-	controller, err := r.ctx.GetController("DependenciesController")
+	dependencyController, err := r.getDependenciesController()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 	aptName := r.ctx.GetConfigValue("hab.incus.apt.dnsmasq")
 
 	present, err := dependencyController.InstalledAPT(aptName)
@@ -152,11 +146,10 @@ func (r *PlateformController) unprovisionDnsmasq() error {
 
 }
 func (r *PlateformController) unprovisionClient() error {
-	controller, err := r.ctx.GetController("DependenciesController")
+	dependencyController, err := r.getDependenciesController()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
 	aptName := r.ctx.GetConfigValue("hab.incus.apt.client")
 

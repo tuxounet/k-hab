@@ -13,6 +13,6 @@ type DependenciesController struct {
 func NewDependenciesController(ctx bases.IContext) *DependenciesController {
 	return &DependenciesController{
 		ctx: ctx,
-		log: ctx.GetSubLogger("DependenciesController", ctx.GetLogger()),
+		log: ctx.GetSubLogger(string(bases.DependenciesController), ctx.GetLogger()),
 	}
 }

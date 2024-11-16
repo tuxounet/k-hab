@@ -59,8 +59,6 @@ hab.incus.host.v6.nat: "false"
 hab.incus.profile: "hab"
 
 
-
-
 hab.distrobuilder.snap: "distrobuilder"
 hab.distrobuilder.snap_mode: "--classic"
 hab.distrobuilder.command.prefix: "sudo"

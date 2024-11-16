@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/tuxounet/k-hab/bases"
+	"github.com/tuxounet/k-hab/controllers/dependencies"
 	"github.com/tuxounet/k-hab/controllers/images"
 
 	"github.com/tuxounet/k-hab/utils"
@@ -55,4 +56,13 @@ func (l *ContainerModel) getLaunchCmd() (*utils.CmdCall, error) {
 		incusCmd.Args = append(incusCmd.Args, userDataInclude)
 	}
 	return incusCmd, nil
+}
+
+func (l *ContainerModel) getDependenciesController() (*dependencies.DependenciesController, error) {
+	controller, err := l.ctx.GetController(bases.DependenciesController)
+	if err != nil {
+		return nil, err
+	}
+	dependencyController := controller.(*dependencies.DependenciesController)
+	return dependencyController, nil
 }

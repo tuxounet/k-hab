@@ -1,14 +1,20 @@
 # Changelog
 
+## 24.11.0
+
+- [ ] Runtime Controller reference by constant rather than string 
+- [ ] Refactoring Controller getters on Controllers consumer
+
+
 ## 24.9.0
+
 ### Improvment
 
-- [ ] Ubuntu 24.04.1 base testing
-- [ ] Using Incus from APT rather than LXD from SNAP
-- [ ] implement unprovision network for plateform
-- [ ] ensure eveything is clean after unprovision of incus
-
+- [X] Ubuntu 24.04.1 base testing
+- [X] Using Incus from APT rather than LXD from SNAP
+- [X] implement unprovision network for plateform
+- [X] ensure eveything is clean after unprovision of incus
 
 ### Breaking changes
 
-- [ ] default config massively changed
+- [X] default config massively changed

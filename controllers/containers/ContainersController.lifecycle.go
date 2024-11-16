@@ -82,11 +82,10 @@ func (c *ContainersController) Undeploy() error {
 
 func (c *ContainersController) Stop() error {
 
-	controller, err := c.ctx.GetController(bases.PlateformController)
+	plateformController, err := c.getPlateformController()
 	if err != nil {
 		return err
 	}
-	plateformController := controller.(*plateform.PlateformController)
 	present, err := plateformController.IsClientPresent()
 	if err != nil {
 		return err
@@ -133,11 +132,10 @@ func (c *ContainersController) Rm() error {
 		return err
 	}
 
-	controller, err := c.ctx.GetController(bases.PlateformController)
+	plateformController, err := c.getPlateformController()
 	if err != nil {
 		return err
 	}
-	plateformController := controller.(*plateform.PlateformController)
 	present, err := plateformController.IsClientPresent()
 	if err != nil {
 		return err

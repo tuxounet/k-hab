@@ -1,17 +1,15 @@
 package plateform
 
 import (
-	"github.com/tuxounet/k-hab/controllers/dependencies"
 	"github.com/tuxounet/k-hab/utils"
 )
 
 func (r *PlateformController) IsServerPresent() (bool, error) {
 
-	controller, err := r.ctx.GetController("DependenciesController")
+	dependencyController, err := r.getDependenciesController()
 	if err != nil {
 		return false, err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
 	aptName := r.ctx.GetConfigValue("hab.incus.apt.server")
 
@@ -24,11 +22,10 @@ func (r *PlateformController) IsServerPresent() (bool, error) {
 }
 func (r *PlateformController) IsClientPresent() (bool, error) {
 
-	controller, err := r.ctx.GetController("DependenciesController")
+	dependencyController, err := r.getDependenciesController()
 	if err != nil {
 		return false, err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
 	aptName := r.ctx.GetConfigValue("hab.incus.apt.client")
 
