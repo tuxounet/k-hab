@@ -4,7 +4,8 @@ import (
 	"github.com/tuxounet/k-hab/bases"
 	"github.com/tuxounet/k-hab/controllers/builder"
 	"github.com/tuxounet/k-hab/controllers/images/definitions"
-	"github.com/tuxounet/k-hab/controllers/runtime"
+	"github.com/tuxounet/k-hab/controllers/plateform"
+
 	"github.com/tuxounet/k-hab/utils"
 )
 
@@ -24,24 +25,32 @@ func NewImageModel(name string, ctx bases.IContext, definition definitions.HabBa
 }
 
 func (hi *ImageModel) present() (bool, error) {
-	rRunContaner, err := hi.ctx.GetController("RuntimeController")
+	controller, err := hi.ctx.GetController(bases.PlateformController)
 	if err != nil {
 		return false, err
 	}
-	runtimeController := rRunContaner.(*runtime.RuntimeController)
+	plateformController := controller.(*plateform.PlateformController)
 
-	return runtimeController.PresentImage(hi.Name)
+	return plateformController.PresentImage(hi.Name)
 
 }
 
 func (hi *ImageModel) needBuild(definition definitions.HabBaseDefinition) (bool, error) {
-	rBuildContainer, err := hi.ctx.GetController("BuilderController")
+	controller, err := hi.ctx.GetController(bases.BuilderController)
 	if err != nil {
 		return false, err
 	}
-	builderController := rBuildContainer.(*builder.BuilderController)
+	builderController := controller.(*builder.BuilderController)
 
-	return builderController.ConfigHasChnaged(hi.Name, definition.Builder)
+	sExpectedBuilderConfig, err := utils.UnTemplate(definition.Builder, map[string]interface{}{
+		"config": hi.ctx.GetCurrentConfig(),
+		"image":  hi.Definition,
+	})
+	if err != nil {
+		return false, err
+	}
+
+	return builderController.ConfigHasChanged(hi.Name, sExpectedBuilderConfig)
 
 }
 
@@ -55,24 +64,24 @@ func (hi *ImageModel) provision() error {
 		return err
 	}
 
-	rBuildContainer, err := hi.ctx.GetController("BuilderController")
+	controller, err := hi.ctx.GetController(bases.BuilderController)
 	if err != nil {
 		return err
 	}
-	builderController := rBuildContainer.(*builder.BuilderController)
+	builderController := controller.(*builder.BuilderController)
 
-	rRunContaner, err := hi.ctx.GetController("RuntimeController")
+	controller, err = hi.ctx.GetController(bases.PlateformController)
 	if err != nil {
 		return err
 	}
-	runtimeController := rRunContaner.(*runtime.RuntimeController)
+	plateformController := controller.(*plateform.PlateformController)
 
 	buildResult, err := builderController.BuildDistro(hi.Name, sBuilderConfig)
 	if err != nil {
 		return err
 	}
 
-	err = runtimeController.RegisterImage(hi.Name, buildResult.MetadataPackage, buildResult.RootfsPackage, buildResult.Built)
+	err = plateformController.RegisterImage(hi.Name, buildResult.MetadataPackage, buildResult.RootfsPackage, buildResult.Built)
 	if err != nil {
 		return err
 	}
@@ -82,20 +91,20 @@ func (hi *ImageModel) provision() error {
 
 func (hi *ImageModel) unprovision() error {
 
-	controller, err := hi.ctx.GetController("BuilderController")
+	controller, err := hi.ctx.GetController(bases.BuilderController)
 	if err != nil {
 		return err
 	}
 
 	builderController := controller.(*builder.BuilderController)
 
-	rRunContaner, err := hi.ctx.GetController("RuntimeController")
+	controller, err = hi.ctx.GetController(bases.PlateformController)
 	if err != nil {
 		return err
 	}
-	runtimeController := rRunContaner.(*runtime.RuntimeController)
+	plateformController := controller.(*plateform.PlateformController)
 
-	err = runtimeController.RemoveImage(hi.Name)
+	err = plateformController.RemoveImage(hi.Name)
 	if err != nil {
 		return err
 	}
@@ -110,7 +119,7 @@ func (hi *ImageModel) unprovision() error {
 
 func (hi *ImageModel) nuke() error {
 
-	controller, err := hi.ctx.GetController("BuilderController")
+	controller, err := hi.ctx.GetController(bases.BuilderController)
 	if err != nil {
 		return err
 	}

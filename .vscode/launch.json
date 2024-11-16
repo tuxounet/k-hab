@@ -12,7 +12,11 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "provision"],
+      "args": [
+        "--loglevel=TRACE",
+        "--setup=./config/default.setup.yaml",
+        "provision"
+      ],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
@@ -23,7 +27,7 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "up"],
+      "args": ["--loglevel=TRACE", "--setup=./config/default.setup.yaml", "up"],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
@@ -34,7 +38,11 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "shell"],
+      "args": [
+        "--loglevel=TRACE",
+        "--setup=./config/default.setup.yaml",
+        "shell"
+      ],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
@@ -45,7 +53,11 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "down"],
+      "args": [
+        "--loglevel=TRACE",
+        "--setup=./config/default.setup.yaml",
+        "down"
+      ],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
@@ -56,7 +68,19 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "rm"],
+      "args": ["--loglevel=TRACE", "--setup=./config/default.setup.yaml", "rm"],
+      "dlvFlags": ["--check-go-version=false"],
+      "console": "integratedTerminal"
+    },
+
+    {
+      "name": "unprovision",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/main.go",
+      "args": ["--loglevel=TRACE", "--setup=./config/default.setup.yaml", "unprovision"],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
@@ -67,7 +91,11 @@
       "mode": "auto",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/main.go",
-      "args": ["--loglevel=TRACE", "--setup=./default.setup.yaml", "nuke"],
+      "args": [
+        "--loglevel=TRACE",
+        "--setup=./config/default.setup.yaml",
+        "nuke"
+      ],
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     }

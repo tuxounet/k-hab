@@ -1,10 +1,10 @@
-# k-hab
+# k-hab 24.9.0
 
 A single executable, that spawn or restore a virtual infrastructure, definied by plain yaml files.
 
 ## Get Release
 
-** LINUX amd64 **
+** Ubuntu 24.04.1 amd64 **
 
 ```bash
 curl -s https://api.github.com/repos/tuxounet/k-hab/releases/tags/24.8.7 \
@@ -17,15 +17,14 @@ curl -s https://api.github.com/repos/tuxounet/k-hab/releases/tags/24.8.7 \
 && ./k-hab shell
 ```
 
-explore the ".
 
 # Based on :
 
 - Linux
 - snap
-- LXD ecosystem :
-  - LXD Deamon
-  - LXC (from LXD)
+- Incus ecosystem :
+  - IncusD Service
+  - incus client
   - Distrobuilder
 - Alpine Linux
 

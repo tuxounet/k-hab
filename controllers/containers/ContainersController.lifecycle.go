@@ -2,7 +2,7 @@ package containers
 
 import (
 	"github.com/tuxounet/k-hab/bases"
-	"github.com/tuxounet/k-hab/controllers/runtime"
+	"github.com/tuxounet/k-hab/controllers/plateform"
 )
 
 func (c *ContainersController) Provision() error {
@@ -43,20 +43,57 @@ func (c *ContainersController) Start() error {
 	return nil
 }
 
-func (c *ContainersController) Stop() error {
+func (c *ContainersController) Deploy() error {
 
-	controller, err := c.ctx.GetController(bases.RuntimeController)
+	c.log.TraceF("Deploying containers")
+	err := c.loadContainers()
 	if err != nil {
 		return err
 	}
-	runtimeController := controller.(*runtime.RuntimeController)
-	present, err := runtimeController.IsPresent()
+
+	for _, container := range c.containers {
+		err = container.Deploy()
+		if err != nil {
+			return err
+		}
+
+	}
+	c.log.DebugF("deployed %d containers", len(c.containers))
+	return nil
+}
+func (c *ContainersController) Undeploy() error {
+
+	c.log.TraceF("Undeploying containers")
+	err := c.loadContainers()
+	if err != nil {
+		return err
+	}
+
+	for _, container := range c.containers {
+		err = container.Undeploy()
+		if err != nil {
+			return err
+		}
+
+	}
+	c.log.DebugF("undeployed %d containers", len(c.containers))
+	return nil
+}
+
+func (c *ContainersController) Stop() error {
+
+	controller, err := c.ctx.GetController(bases.PlateformController)
+	if err != nil {
+		return err
+	}
+	plateformController := controller.(*plateform.PlateformController)
+	present, err := plateformController.IsClientPresent()
 	if err != nil {
 		return err
 	}
 
 	if present {
-		err := runtimeController.Stop()
+		err := plateformController.Stop()
 		if err != nil {
 			return err
 		}
@@ -96,20 +133,32 @@ func (c *ContainersController) Rm() error {
 		return err
 	}
 
-	c.log.TraceF("Remove containers")
-	err = c.loadContainers()
+	controller, err := c.ctx.GetController(bases.PlateformController)
+	if err != nil {
+		return err
+	}
+	plateformController := controller.(*plateform.PlateformController)
+	present, err := plateformController.IsClientPresent()
 	if err != nil {
 		return err
 	}
 
-	for _, container := range c.containers {
-		err = container.Unprovision()
+	if present {
+		c.log.TraceF("Remove containers")
+		err = c.loadContainers()
 		if err != nil {
 			return err
 		}
 
+		for _, container := range c.containers {
+			err = container.Unprovision()
+			if err != nil {
+				return err
+			}
+
+		}
+		c.log.DebugF("removed %d containers", len(c.containers))
 	}
-	c.log.DebugF("removed %d containers", len(c.containers))
 	return nil
 }
 
@@ -119,20 +168,32 @@ func (c *ContainersController) Unprovision() error {
 	if err != nil {
 		return err
 	}
-
-	c.log.TraceF("Unprovisioning containers")
-	err = c.loadContainers()
+	controller, err := c.ctx.GetController(bases.PlateformController)
+	if err != nil {
+		return err
+	}
+	plateformController := controller.(*plateform.PlateformController)
+	present, err := plateformController.IsClientPresent()
 	if err != nil {
 		return err
 	}
 
-	for _, container := range c.containers {
-		err = container.Unprovision()
+	if present {
+
+		c.log.TraceF("Unprovisioning containers")
+		err = c.loadContainers()
 		if err != nil {
 			return err
 		}
 
+		for _, container := range c.containers {
+			err = container.Unprovision()
+			if err != nil {
+				return err
+			}
+
+		}
+		c.log.DebugF("unprovisioned %d containers", len(c.containers))
 	}
-	c.log.DebugF("unprovisioned %d containers", len(c.containers))
 	return nil
 }

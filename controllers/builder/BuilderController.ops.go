@@ -7,6 +7,11 @@ import (
 	"github.com/tuxounet/k-hab/utils"
 )
 
+const (
+	imageMetadataPackage = "incus.tar.xz"
+	imageRootfsPackage   = "rootfs.squashfs"
+)
+
 type DistroBuilderResult struct {
 	Built           bool
 	MetadataPackage string
@@ -22,7 +27,7 @@ func (l *BuilderController) BuildDistro(name string, builderConfig string) (*Dis
 	distroFolder := path.Join(builderPath, name)
 	os.MkdirAll(distroFolder, 0755)
 	built := false
-	changed, err := l.ConfigHasChnaged(name, builderConfig)
+	changed, err := l.ConfigHasChanged(name, builderConfig)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +40,7 @@ func (l *BuilderController) BuildDistro(name string, builderConfig string) (*Dis
 			return nil, err
 		}
 
-		cmd, err := l.withDistroBuilderCmd("build-lxd", distroBuildFile)
+		cmd, err := l.withDistroBuilderCmd("build-incus", distroBuildFile)
 		if err != nil {
 			return nil, err
 		}
@@ -48,8 +53,8 @@ func (l *BuilderController) BuildDistro(name string, builderConfig string) (*Dis
 
 	}
 
-	metadataPackage := path.Join(distroFolder, "incus.tar.xz")
-	rootfsPackage := path.Join(distroFolder, "rootfs.squashfs")
+	metadataPackage := path.Join(distroFolder, imageMetadataPackage)
+	rootfsPackage := path.Join(distroFolder, imageRootfsPackage)
 
 	return &DistroBuilderResult{
 		MetadataPackage: metadataPackage,
@@ -75,7 +80,7 @@ func (l *BuilderController) RemoveCache(name string) error {
 
 }
 
-func (l *BuilderController) ConfigHasChnaged(name string, expectedConfig string) (bool, error) {
+func (l *BuilderController) ConfigHasChanged(name string, expectedConfig string) (bool, error) {
 	builderPath, err := l.getImageBuildPath()
 	if err != nil {
 		return false, err
@@ -86,8 +91,8 @@ func (l *BuilderController) ConfigHasChnaged(name string, expectedConfig string)
 	if _, err := os.Stat(distroBuildFile); os.IsNotExist(err) {
 		return true, nil
 	}
-	metadataPackage := path.Join(distroFolder, "incus.tar.xz")
-	rootfsPackage := path.Join(distroFolder, "rootfs.squashfs")
+	metadataPackage := path.Join(distroFolder, imageMetadataPackage)
+	rootfsPackage := path.Join(distroFolder, imageRootfsPackage)
 
 	if _, err := os.Stat(metadataPackage); os.IsNotExist(err) {
 		return true, nil
@@ -101,7 +106,8 @@ func (l *BuilderController) ConfigHasChnaged(name string, expectedConfig string)
 	if err != nil {
 		return false, err
 	}
+	config := string(currentConfig)
 
-	return string(currentConfig) != expectedConfig, nil
+	return config != expectedConfig, nil
 
 }

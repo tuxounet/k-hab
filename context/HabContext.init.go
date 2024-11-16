@@ -8,7 +8,8 @@ import (
 	"github.com/tuxounet/k-hab/controllers/egress"
 	"github.com/tuxounet/k-hab/controllers/images"
 	"github.com/tuxounet/k-hab/controllers/ingress"
-	"github.com/tuxounet/k-hab/controllers/runtime"
+	"github.com/tuxounet/k-hab/controllers/pki"
+	"github.com/tuxounet/k-hab/controllers/plateform"
 )
 
 func (h *HabContext) Init() error {
@@ -26,14 +27,16 @@ func (h *HabContext) Init() error {
 			controller = builder.NewBuilderController(h)
 		case bases.IngressController:
 			controller = ingress.NewHttpIngress(h)
-		case bases.RuntimeController:
-			controller = runtime.NewRuntimeController(h)
+		case bases.PlateformController:
+			controller = plateform.NewPlateformController(h)
 		case bases.ContainersController:
 			controller = containers.NewContainersController(h)
 		case bases.EgressController:
 			controller = egress.NewHttpEgressController(h)
 		case bases.ImagesController:
 			controller = images.NewImagesController(h)
+		case bases.PKIController:
+			controller = pki.NewPKIController(h)
 		}
 
 		h.controllers[bases.HabControllers(controllerKey)] = controller

@@ -1,11 +1,9 @@
 package egress
 
 import (
+	"crypto/tls"
 	"fmt"
 	"net/http"
-	"net/url"
-	"os"
-	"strings"
 
 	"github.com/tuxounet/k-hab/bases"
 )
@@ -25,34 +23,16 @@ func NewHttpEgressController(ctx bases.IContext) *HttpEgressController {
 	}
 }
 
-func (h *HttpEgressController) handleProxy(w http.ResponseWriter, r *http.Request) {
-
-	os.Stdout.WriteString(fmt.Sprintf("\nIncoming request to %s\n\r", r.RequestURI))
-	uri, err := url.Parse(r.RequestURI)
-	if err != nil {
-		os.Stderr.WriteString(fmt.Sprintf("\nError with request to %s: %s\n\r", r.RequestURI, err.Error()))
-		http.Error(w, "Server Error", http.StatusInternalServerError)
-	}
-	if uri.IsAbs() {
-		h.handleHttpProxy(w, r)
-	} else {
-		if strings.HasPrefix(uri.Path, "/os/") {
-			h.handleOsMirror(w, r)
-		} else {
-			http.Error(w, "Not Found", http.StatusNotFound)
-		}
-	}
-
-}
-
 func (h *HttpEgressController) Start() error {
 
-	egress_host := h.ctx.GetConfigValue("hab.lxd.lxc.host.address")
+	egress_host := h.ctx.GetConfigValue("hab.incus.host.address")
 	egress_port := h.ctx.GetConfigValue("hab.egress.listen.port")
 
 	h.server = &http.Server{
 		Addr:    fmt.Sprintf("%s:%s", egress_host, egress_port),
 		Handler: http.HandlerFunc(h.handleProxy),
+		// Disable HTTP/2.
+		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler)),
 	}
 	go func() {
 		err := h.server.ListenAndServe()

@@ -43,6 +43,30 @@ func (h *HabContext) Start() error {
 	return nil
 
 }
+func (h *HabContext) Deploy() error {
+
+	//Ensure Provisioning
+	err := h.Start()
+	if err != nil {
+		return err
+	}
+	h.log.DebugF("Hab Deploying...")
+	//Start
+	for _, controllerKey := range bases.HabControllersLoadOrder() {
+		controller, err := h.GetController(controllerKey)
+		if err != nil {
+			return err
+		}
+		err = controller.Deploy()
+		if err != nil {
+			return err
+		}
+	}
+	h.log.InfoF("Hab Deployed")
+
+	return nil
+
+}
 
 func (h *HabContext) Shell() error {
 
@@ -94,7 +118,30 @@ func (h *HabContext) Stop() error {
 	return nil
 
 }
+func (h *HabContext) Undeploy() error {
 
+	//Ensure Provisioning
+	err := h.Start()
+	if err != nil {
+		return err
+	}
+	h.log.DebugF("Hab Undeploying...")
+	//Start
+	for _, controllerKey := range bases.HabControllersLoadOrder() {
+		controller, err := h.GetController(controllerKey)
+		if err != nil {
+			return err
+		}
+		err = controller.Undeploy()
+		if err != nil {
+			return err
+		}
+	}
+	h.log.InfoF("Hab Undeployed")
+
+	return nil
+
+}
 func (h *HabContext) Rm() error {
 	err := h.Stop()
 	if err != nil {

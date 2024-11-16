@@ -5,7 +5,7 @@ image:
   variant: "cloud"
 source:
   downloader: rootfs-http
-  url: https://cdimage.ubuntu.com/ubuntu-base/releases/20.04/release/ubuntu-base-24.04-base-amd64.tar.gz
+  url: https://cdimage.ubuntu.com/ubuntu-base/releases/24.04/release/ubuntu-base-24.04.1-base-amd64.tar.gz
 targets:
   lxc:
     create_message: |-

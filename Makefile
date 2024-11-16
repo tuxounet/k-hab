@@ -1,5 +1,5 @@
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
-RUN_ARGS := --loglevel=TRACE --setup=./default.setup.yaml
+RUN_ARGS := --loglevel=TRACE --setup=./config/default.setup.yaml
 
 test: 
 	go test ./... -timeout 120s -coverpkg=./... -coverprofile=profile.coverage
@@ -19,8 +19,12 @@ unprovision:
 	go run ./main.go ${RUN_ARGS} unprovision
 up:
 	go run ./main.go ${RUN_ARGS} up
+deploy:
+	go run ./main.go ${RUN_ARGS} deploy
 shell:
 	go run ./main.go ${RUN_ARGS} shell
+undeploy:
+	go run ./main.go ${RUN_ARGS} undeploy
 down:
 	go run ./main.go ${RUN_ARGS} down
 rm:

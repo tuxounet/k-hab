@@ -2,6 +2,9 @@ package logger
 
 import (
 	"context"
+	"io"
+	"os"
+	"path"
 
 	"github.com/sirupsen/logrus"
 	"github.com/tuxounet/k-hab/bases"
@@ -12,20 +15,36 @@ type Logger struct {
 	log  *logrus.Entry
 }
 
-func NewLogger(ctx context.Context, name string) *Logger {
+func NewLogger(ctx context.Context, name string, logFolder string) *Logger {
 	rootLogger := logrus.New()
 	rootLogger.SetFormatter(&logrus.TextFormatter{
-		DisableColors:   false,
-		ForceColors:     true,
-		FullTimestamp:   true,
-		TimestampFormat: "15-01-2018 15:04:05.000000",
+		DisableColors: false,
+		ForceColors:   true,
+		FullTimestamp: true,
 	})
 	rootLogger.SetLevel(logrus.TraceLevel)
+
+	err := os.MkdirAll(logFolder, 0755)
+	if err != nil {
+		rootLogger.Warnf("Failed to create log folder %s", logFolder)
+	}
+
+	logFile := path.Join(logFolder, "hab.log")
+
+	file, err := os.OpenFile(logFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err == nil {
+		rootLogger.Out = io.MultiWriter(os.Stdout, file)
+	} else {
+		rootLogger.Out = os.Stderr
+		rootLogger.Warnf("Failed to log to file, using default stderr %s", err)
+	}
+
 	return &Logger{
 		name: name,
 		log:  rootLogger.WithContext(ctx),
 	}
 }
+
 func (l *Logger) GetName() string {
 	return l.name
 }
