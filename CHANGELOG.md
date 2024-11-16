@@ -6,7 +6,7 @@
 ### Refacotring
 - [ ] Runtime Controller reference by constant rather than string 
 - [ ] Refactoring Controller getters on Controllers consumer
-
+- [ ] Grouping commands name and prefix in config
 
 ## 24.9.0
 
