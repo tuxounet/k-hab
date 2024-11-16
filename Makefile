@@ -1,5 +1,5 @@
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
-RUN_ARGS := --loglevel=TRACE --setup=./config/default.setup.yaml
+RUN_ARGS := --loglevel=DEBUG --setup=./config/default.setup.yaml
 
 test: 
 	go test ./... -timeout 120s -coverpkg=./... -coverprofile=profile.coverage

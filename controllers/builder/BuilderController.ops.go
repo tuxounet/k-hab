@@ -71,7 +71,7 @@ func (l *BuilderController) RemoveCache(name string) error {
 	}
 	distroFolder := path.Join(builderPath, name)
 
-	cmd, err := utils.WithCmdCall(l.ctx, "hab.rm.prefix", "hab.rm.name", "-rf", distroFolder)
+	cmd, err := utils.WithCmdCall(l.ctx, "hab.commands.rm.prefix", "hab.commands.rm", "-rf", distroFolder)
 	if err != nil {
 		return err
 	}

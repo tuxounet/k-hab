@@ -13,6 +13,6 @@ type BuilderController struct {
 func NewBuilderController(ctx bases.IContext) *BuilderController {
 	return &BuilderController{
 		ctx: ctx,
-		log: ctx.GetSubLogger("BuilderController", ctx.GetLogger()),
+		log: ctx.GetSubLogger(string(bases.BuilderController), ctx.GetLogger()),
 	}
 }

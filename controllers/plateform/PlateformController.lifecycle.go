@@ -1,53 +1,13 @@
 package plateform
 
 import (
-	"github.com/tuxounet/k-hab/controllers/dependencies"
 	"github.com/tuxounet/k-hab/utils"
 )
 
-func (r *PlateformController) IsServerPresent() (bool, error) {
-
-	controller, err := r.ctx.GetController("DependenciesController")
-	if err != nil {
-		return false, err
-	}
-	dependencyController := controller.(*dependencies.DependenciesController)
-
-	aptName := r.ctx.GetConfigValue("hab.incus.apt.server")
-
-	present, err := dependencyController.InstalledAPT(aptName)
-	if err != nil {
-		return false, err
-	}
-	return present, nil
-
-}
-func (r *PlateformController) IsClientPresent() (bool, error) {
-
-	controller, err := r.ctx.GetController("DependenciesController")
-	if err != nil {
-		return false, err
-	}
-	dependencyController := controller.(*dependencies.DependenciesController)
-
-	aptName := r.ctx.GetConfigValue("hab.incus.apt.client")
-
-	present, err := dependencyController.InstalledAPT(aptName)
-	if err != nil {
-		return false, err
-	}
-	return present, nil
-
-}
 func (r *PlateformController) Provision() error {
 	r.log.TraceF("Provisioning")
 
-	err := r.provisionServer()
-	if err != nil {
-		return err
-	}
-
-	err = r.provisionClient()
+	err := r.provisionService()
 	if err != nil {
 		return err
 	}
@@ -73,13 +33,13 @@ func (r *PlateformController) Provision() error {
 
 func (r *PlateformController) Rm() error {
 
-	present, err := r.IsClientPresent()
+	present, err := r.presentService()
 	if err != nil {
 		return err
 	}
 
 	if present {
-		cmd, err := r.withIncusCmd("stop", "--all")
+		cmd, err := r.withLxcCmd("stop", "--all")
 		if err != nil {
 			return err
 		}
@@ -97,7 +57,7 @@ func (r *PlateformController) Rm() error {
 func (r *PlateformController) Unprovision() error {
 	r.log.TraceF("Unprovisioning")
 
-	present, err := r.IsClientPresent()
+	present, err := r.presentService()
 	if err != nil {
 		return err
 	}
@@ -116,16 +76,11 @@ func (r *PlateformController) Unprovision() error {
 		if err != nil {
 			return err
 		}
-	}
+		err = r.unprovisionService()
+		if err != nil {
+			return err
+		}
 
-	err = r.unprovisionClient()
-	if err != nil {
-		return err
-	}
-
-	err = r.unprovisionServer()
-	if err != nil {
-		return err
 	}
 
 	r.log.DebugF("Unprovioned")
@@ -133,7 +88,13 @@ func (r *PlateformController) Unprovision() error {
 }
 func (r *PlateformController) Nuke() error {
 	r.log.TraceF("Nuking")
-	err := r.nukeStorage()
+
+	err := r.nukeService()
+	if err != nil {
+		return err
+	}
+
+	err = r.nukeStorage()
 	if err != nil {
 		return err
 	}

@@ -13,7 +13,7 @@ func (r *PlateformController) getStoragePath() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	storagePathDefinition := r.ctx.GetConfigValue("hab.incus.storage.path")
+	storagePathDefinition := r.ctx.GetConfigValue("hab.plateform.storage.path")
 	storagePath := path.Join(storageRoot, storagePathDefinition)
 
 	err = os.MkdirAll(storagePath, 0755)
@@ -26,8 +26,8 @@ func (r *PlateformController) getStoragePath() (string, error) {
 
 func (r *PlateformController) provisionStorage() error {
 
-	storage_pool := r.ctx.GetConfigValue("hab.incus.storage.pool")
-	storage_driver := r.ctx.GetConfigValue("hab.incus.storage.driver")
+	storage_pool := r.ctx.GetConfigValue("hab.plateform.storage.pool")
+	storage_driver := r.ctx.GetConfigValue("hab.plateform.storage.driver")
 	storage_path, err := r.getStoragePath()
 	if err != nil {
 		return err
@@ -50,7 +50,7 @@ func (r *PlateformController) provisionStorage() error {
 
 func (r *PlateformController) unprovisionStorage() error {
 
-	storage_pool := r.ctx.GetConfigValue("hab.incus.storage.pool")
+	storage_pool := r.ctx.GetConfigValue("hab.plateform.storage.pool")
 
 	storageExists, err := r.existsStorage(storage_pool)
 	if err != nil {
@@ -74,7 +74,7 @@ func (r *PlateformController) nukeStorage() error {
 		return err
 	}
 
-	cmd, err := utils.WithCmdCall(r.ctx, "hab.rm.prefix", "hab.rm.name", "-rf", stroagePath)
+	cmd, err := utils.WithCmdCall(r.ctx, "hab.commands.rm.prefix", "hab.commands.rm", "-rf", stroagePath)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,7 @@ func (r *PlateformController) nukeStorage() error {
 
 func (r *PlateformController) existsStorage(name string) (bool, error) {
 
-	cmd, err := r.withIncusCmd("storage", "ls", "--format", "json")
+	cmd, err := r.withLxcCmd("storage", "ls", "--format", "json")
 	if err != nil {
 		return false, err
 	}
@@ -121,7 +121,7 @@ func (r *PlateformController) createStorage(name string, driver string, options 
 		return err
 	}
 
-	cmd, err := r.withIncusCmd("storage", "create", name, driver)
+	cmd, err := r.withLxcCmd("storage", "create", name, driver)
 	if err != nil {
 		return err
 	}
@@ -134,7 +134,7 @@ func (r *PlateformController) createStorage(name string, driver string, options 
 
 func (r *PlateformController) removeStorage(name string) error {
 
-	cmd, err := r.withIncusCmd("storage", "delete", name)
+	cmd, err := r.withLxcCmd("storage", "delete", name)
 	if err != nil {
 		return err
 	}

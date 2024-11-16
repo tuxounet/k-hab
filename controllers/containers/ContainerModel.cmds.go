@@ -5,13 +5,14 @@ import (
 
 	"github.com/tuxounet/k-hab/bases"
 	"github.com/tuxounet/k-hab/controllers/images"
+	"github.com/tuxounet/k-hab/controllers/plateform"
 
 	"github.com/tuxounet/k-hab/utils"
 )
 
-func (l *ContainerModel) withIncusCmd(args ...string) (*utils.CmdCall, error) {
+func (l *ContainerModel) withLxcCmd(args ...string) (*utils.CmdCall, error) {
 
-	return utils.WithCmdCall(l.ctx, "hab.incus.command.prefix", "hab.incus.command.name", args...)
+	return utils.WithCmdCall(l.ctx, "hab.plateform.command.prefix", "hab.plateform.command", args...)
 
 }
 
@@ -25,8 +26,8 @@ func (l *ContainerModel) getLaunchCmd() (*utils.CmdCall, error) {
 	if err != nil {
 		return nil, err
 	}
-	incusProfile := l.ctx.GetConfigValue("hab.incus.profile")
-	incusCmd, err := l.withIncusCmd("init", l.ContainerConfig.Base, l.Name, "--profile", incusProfile)
+	pfProfile := l.ctx.GetConfigValue("hab.plateform.profile")
+	pfCmd, err := l.withLxcCmd("init", l.ContainerConfig.Base, l.Name, "--profile", pfProfile)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +41,7 @@ func (l *ContainerModel) getLaunchCmd() (*utils.CmdCall, error) {
 			return nil, err
 		}
 		userDataInclude := fmt.Sprintf(`--config=user.user-data=%s`, sCloudInit)
-		incusCmd.Args = append(incusCmd.Args, userDataInclude)
+		pfCmd.Args = append(pfCmd.Args, userDataInclude)
 	}
 
 	if image.Definition.NetworkConfig != "" {
@@ -52,7 +53,16 @@ func (l *ContainerModel) getLaunchCmd() (*utils.CmdCall, error) {
 			return nil, err
 		}
 		userDataInclude := fmt.Sprintf(`--config=user.network-config=%s`, sNetworkConfig)
-		incusCmd.Args = append(incusCmd.Args, userDataInclude)
+		pfCmd.Args = append(pfCmd.Args, userDataInclude)
 	}
-	return incusCmd, nil
+	return pfCmd, nil
+}
+
+func (l *ContainerModel) getPlateformController() (*plateform.PlateformController, error) {
+	controller, err := l.ctx.GetController(bases.PlateformController)
+	if err != nil {
+		return nil, err
+	}
+	plateformController := controller.(*plateform.PlateformController)
+	return plateformController, nil
 }

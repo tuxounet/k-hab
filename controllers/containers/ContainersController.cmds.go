@@ -3,6 +3,9 @@ package containers
 import (
 	"os"
 	"path"
+
+	"github.com/tuxounet/k-hab/bases"
+	"github.com/tuxounet/k-hab/controllers/plateform"
 )
 
 func (b *ContainersController) getContainersPath() (string, error) {
@@ -20,5 +23,15 @@ func (b *ContainersController) getContainersPath() (string, error) {
 	}
 
 	return containersPath, nil
+
+}
+
+func (c *ContainersController) getPlateformController() (*plateform.PlateformController, error) {
+	controller, err := c.ctx.GetController(bases.PlateformController)
+	if err != nil {
+		return nil, err
+	}
+	plateformController := controller.(*plateform.PlateformController)
+	return plateformController, nil
 
 }

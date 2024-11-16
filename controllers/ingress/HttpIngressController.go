@@ -19,7 +19,7 @@ type HttpIngressController struct {
 func NewHttpIngress(ctx bases.IContext) *HttpIngressController {
 	return &HttpIngressController{
 		ctx: ctx,
-		log: ctx.GetSubLogger("HttpIngressController", ctx.GetLogger()),
+		log: ctx.GetSubLogger(string(bases.IngressController), ctx.GetLogger()),
 	}
 }
 

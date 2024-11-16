@@ -16,3 +16,7 @@ func NewPlateformController(ctx bases.IContext) *PlateformController {
 		log: ctx.GetSubLogger(string(bases.PlateformController), ctx.GetLogger()),
 	}
 }
+
+func (c *PlateformController) IsPresent() (bool, error) {
+	return c.presentService()
+}

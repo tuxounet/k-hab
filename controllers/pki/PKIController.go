@@ -13,6 +13,6 @@ type PKIController struct {
 func NewPKIController(ctx bases.IContext) *PKIController {
 	return &PKIController{
 		ctx: ctx,
-		log: ctx.GetSubLogger("PKIController", ctx.GetLogger()),
+		log: ctx.GetSubLogger(string(bases.PKIController), ctx.GetLogger()),
 	}
 }

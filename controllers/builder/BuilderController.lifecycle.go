@@ -1,17 +1,15 @@
 package builder
 
 import (
-	"github.com/tuxounet/k-hab/controllers/dependencies"
 	"github.com/tuxounet/k-hab/utils"
 )
 
 func (b *BuilderController) Provision() error {
 	b.log.TraceF("Provisioning")
-	controller, err := b.ctx.GetController("DependenciesController")
+	dependencyController, err := b.getDependenciesController()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
 	snapName := b.ctx.GetConfigValue("hab.distrobuilder.snap")
 	snapMode := b.ctx.GetConfigValue("hab.distrobuilder.snap_mode")
@@ -31,11 +29,11 @@ func (b *BuilderController) Provision() error {
 }
 
 func (b *BuilderController) Unprovision() error {
-	controller, err := b.ctx.GetController("DependenciesController")
+
+	dependencyController, err := b.getDependenciesController()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
 	snapName := b.ctx.GetConfigValue("hab.distrobuilder.snap")
 	err = dependencyController.RemoveSnap(snapName)
@@ -49,11 +47,10 @@ func (b *BuilderController) Unprovision() error {
 }
 
 func (b *BuilderController) Nuke() error {
-	controller, err := b.ctx.GetController("DependenciesController")
+	dependencyController, err := b.getDependenciesController()
 	if err != nil {
 		return err
 	}
-	dependencyController := controller.(*dependencies.DependenciesController)
 
 	snapName := b.ctx.GetConfigValue("hab.distrobuilder.snap")
 
@@ -67,7 +64,7 @@ func (b *BuilderController) Nuke() error {
 		return err
 	}
 
-	cmd, err := utils.WithCmdCall(b.ctx, "hab.rm.prefix", "hab.rm.name", "-rf", buildPath)
+	cmd, err := utils.WithCmdCall(b.ctx, "hab.commands.rm.prefix", "hab.commands.rm", "-rf", buildPath)
 	if err != nil {
 		return err
 	}
