@@ -25,8 +25,8 @@ func (l *ContainerModel) getLaunchCmd() (*utils.CmdCall, error) {
 	if err != nil {
 		return nil, err
 	}
-	lxcProfile := l.ctx.GetConfigValue("hab.incus.profile")
-	lxdCmd, err := l.withIncusCmd("init", l.ContainerConfig.Base, l.Name, "--profile", lxcProfile)
+	incusProfile := l.ctx.GetConfigValue("hab.incus.profile")
+	incusCmd, err := l.withIncusCmd("init", l.ContainerConfig.Base, l.Name, "--profile", incusProfile)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (l *ContainerModel) getLaunchCmd() (*utils.CmdCall, error) {
 			return nil, err
 		}
 		userDataInclude := fmt.Sprintf(`--config=user.user-data=%s`, sCloudInit)
-		lxdCmd.Args = append(lxdCmd.Args, userDataInclude)
+		incusCmd.Args = append(incusCmd.Args, userDataInclude)
 	}
 
 	if image.Definition.NetworkConfig != "" {
@@ -52,7 +52,7 @@ func (l *ContainerModel) getLaunchCmd() (*utils.CmdCall, error) {
 			return nil, err
 		}
 		userDataInclude := fmt.Sprintf(`--config=user.network-config=%s`, sNetworkConfig)
-		lxdCmd.Args = append(lxdCmd.Args, userDataInclude)
+		incusCmd.Args = append(incusCmd.Args, userDataInclude)
 	}
-	return lxdCmd, nil
+	return incusCmd, nil
 }

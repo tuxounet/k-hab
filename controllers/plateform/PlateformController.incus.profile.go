@@ -28,7 +28,6 @@ func (r *PlateformController) provisionProfile() error {
 		return err
 	}
 	if !networkDeviceExists {
-		//lxc --debug  profile device add plop eth0 nic  nictype=bridged parent=lxbr0 name=eth0
 		err = r.addDeviceProfile(profile, "eth0", "nic", "nictype=bridged", "parent="+network_bridge, "name=eth0")
 		if err != nil {
 			return err

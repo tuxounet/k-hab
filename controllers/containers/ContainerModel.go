@@ -85,7 +85,7 @@ func (l *ContainerModel) Provision() error {
 		return err
 	}
 
-	lxdCmd, err := l.getLaunchCmd()
+	incusCmd, err := l.getLaunchCmd()
 	if err != nil {
 		return err
 	}
@@ -98,7 +98,7 @@ func (l *ContainerModel) Provision() error {
 		if err != nil {
 			return err
 		}
-		if lxdCmd.String() != string(body) {
+		if incusCmd.String() != string(body) {
 			//Change
 			baseChanged = true
 		}
@@ -123,12 +123,12 @@ func (l *ContainerModel) Provision() error {
 
 	if !containerExists {
 
-		err = utils.OsExec(lxdCmd)
+		err = utils.OsExec(incusCmd)
 		if err != nil {
 			return err
 		}
 		//write commandline to file
-		err = os.WriteFile(containerFile, []byte(lxdCmd.String()), 0644)
+		err = os.WriteFile(containerFile, []byte(incusCmd.String()), 0644)
 		if err != nil {
 			return err
 		}

@@ -82,12 +82,12 @@ func (c *ContainersController) Undeploy() error {
 
 func (c *ContainersController) Stop() error {
 
-	controller, err := c.ctx.GetController(bases.RuntimeController)
+	controller, err := c.ctx.GetController(bases.PlateformController)
 	if err != nil {
 		return err
 	}
 	plateformController := controller.(*plateform.PlateformController)
-	present, err := plateformController.IsPresent()
+	present, err := plateformController.IsClientPresent()
 	if err != nil {
 		return err
 	}
@@ -133,20 +133,32 @@ func (c *ContainersController) Rm() error {
 		return err
 	}
 
-	c.log.TraceF("Remove containers")
-	err = c.loadContainers()
+	controller, err := c.ctx.GetController(bases.PlateformController)
+	if err != nil {
+		return err
+	}
+	plateformController := controller.(*plateform.PlateformController)
+	present, err := plateformController.IsClientPresent()
 	if err != nil {
 		return err
 	}
 
-	for _, container := range c.containers {
-		err = container.Unprovision()
+	if present {
+		c.log.TraceF("Remove containers")
+		err = c.loadContainers()
 		if err != nil {
 			return err
 		}
 
+		for _, container := range c.containers {
+			err = container.Unprovision()
+			if err != nil {
+				return err
+			}
+
+		}
+		c.log.DebugF("removed %d containers", len(c.containers))
 	}
-	c.log.DebugF("removed %d containers", len(c.containers))
 	return nil
 }
 
@@ -156,20 +168,32 @@ func (c *ContainersController) Unprovision() error {
 	if err != nil {
 		return err
 	}
-
-	c.log.TraceF("Unprovisioning containers")
-	err = c.loadContainers()
+	controller, err := c.ctx.GetController(bases.PlateformController)
+	if err != nil {
+		return err
+	}
+	plateformController := controller.(*plateform.PlateformController)
+	present, err := plateformController.IsClientPresent()
 	if err != nil {
 		return err
 	}
 
-	for _, container := range c.containers {
-		err = container.Unprovision()
+	if present {
+
+		c.log.TraceF("Unprovisioning containers")
+		err = c.loadContainers()
 		if err != nil {
 			return err
 		}
 
+		for _, container := range c.containers {
+			err = container.Unprovision()
+			if err != nil {
+				return err
+			}
+
+		}
+		c.log.DebugF("unprovisioned %d containers", len(c.containers))
 	}
-	c.log.DebugF("unprovisioned %d containers", len(c.containers))
 	return nil
 }

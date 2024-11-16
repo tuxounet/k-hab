@@ -20,12 +20,12 @@ func (h *ImagesController) Provision() error {
 
 func (h *ImagesController) Unprovision() error {
 	h.log.TraceF("Unprovisioning")
-	controller, err := h.ctx.GetController(bases.RuntimeController)
+	controller, err := h.ctx.GetController(bases.PlateformController)
 	if err != nil {
 		return err
 	}
 	plateformController := controller.(*plateform.PlateformController)
-	present, err := plateformController.IsPresent()
+	present, err := plateformController.IsClientPresent()
 	if err != nil {
 		return err
 	}

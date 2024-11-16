@@ -5,7 +5,24 @@ import (
 	"github.com/tuxounet/k-hab/utils"
 )
 
-func (r *PlateformController) IsPresent() (bool, error) {
+func (r *PlateformController) IsServerPresent() (bool, error) {
+
+	controller, err := r.ctx.GetController("DependenciesController")
+	if err != nil {
+		return false, err
+	}
+	dependencyController := controller.(*dependencies.DependenciesController)
+
+	aptName := r.ctx.GetConfigValue("hab.incus.apt.server")
+
+	present, err := dependencyController.InstalledAPT(aptName)
+	if err != nil {
+		return false, err
+	}
+	return present, nil
+
+}
+func (r *PlateformController) IsClientPresent() (bool, error) {
 
 	controller, err := r.ctx.GetController("DependenciesController")
 	if err != nil {
@@ -25,39 +42,16 @@ func (r *PlateformController) IsPresent() (bool, error) {
 func (r *PlateformController) Provision() error {
 	r.log.TraceF("Provisioning")
 
-	controller, err := r.ctx.GetController("DependenciesController")
-	if err != nil {
-		return err
-	}
-	dependencyController := controller.(*dependencies.DependenciesController)
-
-	aptServerName := r.ctx.GetConfigValue("hab.incus.apt.server")
-	aptClientName := r.ctx.GetConfigValue("hab.incus.apt.client")
-	present, err := dependencyController.InstalledAPT(aptServerName)
+	err := r.provisionServer()
 	if err != nil {
 		return err
 	}
 
-	if !present {
-		err := dependencyController.InstallAPT(aptServerName)
-		if err != nil {
-			return err
-		}
-		r.log.DebugF("Server Provioned")
-	}
-
-	present, err = dependencyController.InstalledAPT(aptClientName)
+	err = r.provisionClient()
 	if err != nil {
 		return err
 	}
 
-	if !present {
-		err := dependencyController.InstallAPT(aptClientName)
-		if err != nil {
-			return err
-		}
-		r.log.DebugF("Client Provioned")
-	}
 	err = r.provisionStorage()
 	if err != nil {
 		return err
@@ -79,7 +73,7 @@ func (r *PlateformController) Provision() error {
 
 func (r *PlateformController) Rm() error {
 
-	present, err := r.IsPresent()
+	present, err := r.IsClientPresent()
 	if err != nil {
 		return err
 	}
@@ -103,14 +97,17 @@ func (r *PlateformController) Rm() error {
 func (r *PlateformController) Unprovision() error {
 	r.log.TraceF("Unprovisioning")
 
-	present, err := r.IsPresent()
+	present, err := r.IsClientPresent()
 	if err != nil {
 		return err
 	}
 
 	if present {
-
 		err = r.unprovisionProfile()
+		if err != nil {
+			return err
+		}
+		err = r.unprovisionNetwork()
 		if err != nil {
 			return err
 		}
@@ -119,22 +116,16 @@ func (r *PlateformController) Unprovision() error {
 		if err != nil {
 			return err
 		}
+	}
 
-		controller, err := r.ctx.GetController("DependenciesController")
-		if err != nil {
-			return err
-		}
-		dependencyController := controller.(*dependencies.DependenciesController)
-		aptServerName := r.ctx.GetConfigValue("hab.incus.apt.server")
-		aptClientName := r.ctx.GetConfigValue("hab.incus.apt.server")
-		err = dependencyController.RemoveAPT(aptServerName)
-		if err != nil {
-			return err
-		}
-		err = dependencyController.RemoveAPT(aptClientName)
-		if err != nil {
-			return err
-		}
+	err = r.unprovisionClient()
+	if err != nil {
+		return err
+	}
+
+	err = r.unprovisionServer()
+	if err != nil {
+		return err
 	}
 
 	r.log.DebugF("Unprovioned")

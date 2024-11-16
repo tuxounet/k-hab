@@ -27,7 +27,7 @@ func (h *HabContext) Init() error {
 			controller = builder.NewBuilderController(h)
 		case bases.IngressController:
 			controller = ingress.NewHttpIngress(h)
-		case bases.RuntimeController:
+		case bases.PlateformController:
 			controller = plateform.NewPlateformController(h)
 		case bases.ContainersController:
 			controller = containers.NewContainersController(h)

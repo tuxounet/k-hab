@@ -1,6 +1,7 @@
 package dependencies
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/tuxounet/k-hab/utils"
@@ -16,7 +17,7 @@ func (h *DependenciesController) InstalledAPT(name string) (bool, error) {
 	if err != nil {
 		return false, nil
 	}
-	return strings.Contains(out, name), nil
+	return strings.Contains(out, fmt.Sprintf("ii  %s", name)), nil
 }
 
 func (h *DependenciesController) InstalledSnap(name string) (bool, error) {
@@ -60,7 +61,7 @@ func (h *DependenciesController) InstallSnap(name string, mode string) error {
 
 func (h *DependenciesController) InstallAPT(name string) error {
 	h.log.TraceF("Installing apt %s", name)
-	cmd, err := h.withAptCmd("install", name, "-y")
+	cmd, err := h.withAptCmd("install", name, "-y", "--no-install-recommends")
 	if err != nil {
 		return err
 	}

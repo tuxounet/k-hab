@@ -72,6 +72,18 @@
       "dlvFlags": ["--check-go-version=false"],
       "console": "integratedTerminal"
     },
+
+    {
+      "name": "unprovision",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/main.go",
+      "args": ["--loglevel=TRACE", "--setup=./config/default.setup.yaml", "unprovision"],
+      "dlvFlags": ["--check-go-version=false"],
+      "console": "integratedTerminal"
+    },
     {
       "name": "nuke",
       "type": "go",

@@ -8,7 +8,7 @@ const (
 	ContainersController   HabControllers = "ContainersController"
 	BuilderController      HabControllers = "BuilderController"
 	DependenciesController HabControllers = "DependenciesController"
-	RuntimeController      HabControllers = "RuntimeController"
+	PlateformController    HabControllers = "PlateformController"
 	ImagesController       HabControllers = "ImagesController"
 	PKIController          HabControllers = "PKIController"
 )
@@ -16,7 +16,7 @@ const (
 func HabControllersLoadOrder() []HabControllers {
 	return []HabControllers{
 		DependenciesController,
-		RuntimeController,
+		PlateformController,
 		BuilderController,
 		ImagesController,
 		ContainersController,
@@ -34,7 +34,7 @@ func HabControllersUnloadOrder() []HabControllers {
 		ContainersController,
 		ImagesController,
 		BuilderController,
-		RuntimeController,
+		PlateformController,
 		DependenciesController,
 	}
 

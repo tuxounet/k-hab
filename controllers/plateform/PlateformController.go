@@ -13,6 +13,6 @@ type PlateformController struct {
 func NewPlateformController(ctx bases.IContext) *PlateformController {
 	return &PlateformController{
 		ctx: ctx,
-		log: ctx.GetSubLogger("RuntimeController", ctx.GetLogger()),
+		log: ctx.GetSubLogger(string(bases.PlateformController), ctx.GetLogger()),
 	}
 }
