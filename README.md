@@ -4,7 +4,7 @@ A single executable, that spawn or restore a virtual infrastructure, definied by
 
 ## Get Release
 
-** LINUX amd64 **
+** Ubuntu 24.04.1 amd64 **
 
 ```bash
 curl -s https://api.github.com/repos/tuxounet/k-hab/releases/tags/24.8.7 \
