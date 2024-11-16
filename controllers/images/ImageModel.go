@@ -2,7 +2,6 @@ package images
 
 import (
 	"github.com/tuxounet/k-hab/bases"
-	"github.com/tuxounet/k-hab/controllers/builder"
 	"github.com/tuxounet/k-hab/controllers/images/definitions"
 	"github.com/tuxounet/k-hab/controllers/plateform"
 
@@ -36,11 +35,11 @@ func (hi *ImageModel) present() (bool, error) {
 }
 
 func (hi *ImageModel) needBuild(definition definitions.HabBaseDefinition) (bool, error) {
-	controller, err := hi.ctx.GetController(bases.BuilderController)
+
+	builderController, err := hi.getBuilderController()
 	if err != nil {
 		return false, err
 	}
-	builderController := controller.(*builder.BuilderController)
 
 	sExpectedBuilderConfig, err := utils.UnTemplate(definition.Builder, map[string]interface{}{
 		"config": hi.ctx.GetCurrentConfig(),
@@ -64,17 +63,15 @@ func (hi *ImageModel) provision() error {
 		return err
 	}
 
-	controller, err := hi.ctx.GetController(bases.BuilderController)
+	builderController, err := hi.getBuilderController()
 	if err != nil {
 		return err
 	}
-	builderController := controller.(*builder.BuilderController)
 
-	controller, err = hi.ctx.GetController(bases.PlateformController)
+	plateformController, err := hi.getPlateformController()
 	if err != nil {
 		return err
 	}
-	plateformController := controller.(*plateform.PlateformController)
 
 	buildResult, err := builderController.BuildDistro(hi.Name, sBuilderConfig)
 	if err != nil {
@@ -91,18 +88,15 @@ func (hi *ImageModel) provision() error {
 
 func (hi *ImageModel) unprovision() error {
 
-	controller, err := hi.ctx.GetController(bases.BuilderController)
+	builderController, err := hi.getBuilderController()
 	if err != nil {
 		return err
 	}
 
-	builderController := controller.(*builder.BuilderController)
-
-	controller, err = hi.ctx.GetController(bases.PlateformController)
+	plateformController, err := hi.getPlateformController()
 	if err != nil {
 		return err
 	}
-	plateformController := controller.(*plateform.PlateformController)
 
 	err = plateformController.RemoveImage(hi.Name)
 	if err != nil {
@@ -119,11 +113,11 @@ func (hi *ImageModel) unprovision() error {
 
 func (hi *ImageModel) nuke() error {
 
-	controller, err := hi.ctx.GetController(bases.BuilderController)
+	builderController, err := hi.getBuilderController()
 	if err != nil {
 		return err
 	}
-	builderController := controller.(*builder.BuilderController)
+
 	err = builderController.RemoveCache(hi.Name)
 	if err != nil {
 		return err

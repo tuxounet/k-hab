@@ -8,9 +8,9 @@ import (
 
 func (r *PlateformController) provisionProfile() error {
 
-	profile := r.ctx.GetConfigValue("hab.incus.profile")
-	storage_pool := r.ctx.GetConfigValue("hab.incus.storage.pool")
-	network_bridge := r.ctx.GetConfigValue("hab.incus.host.interface")
+	profile := r.ctx.GetConfigValue("hab.plateform.profile")
+	storage_pool := r.ctx.GetConfigValue("hab.plateform.storage.pool")
+	if_name := r.ctx.GetConfigValue("hab.plateform.host.interface")
 
 	profileExists, err := r.existsProfile(profile)
 	if err != nil {
@@ -28,7 +28,7 @@ func (r *PlateformController) provisionProfile() error {
 		return err
 	}
 	if !networkDeviceExists {
-		err = r.addDeviceProfile(profile, "eth0", "nic", "nictype=bridged", "parent="+network_bridge, "name=eth0")
+		err = r.addDeviceProfile(profile, "eth0", "nic", "nictype=bridged", "parent="+if_name, "name=eth0")
 		if err != nil {
 			return err
 		}
@@ -50,7 +50,7 @@ func (r *PlateformController) provisionProfile() error {
 
 func (r *PlateformController) unprovisionProfile() error {
 
-	profile := r.ctx.GetConfigValue("hab.incus.profile")
+	profile := r.ctx.GetConfigValue("hab.plateform.profile")
 	profileExists, err := r.existsProfile(profile)
 	if err != nil {
 		return err
@@ -66,7 +66,7 @@ func (r *PlateformController) unprovisionProfile() error {
 
 func (r *PlateformController) existsProfile(name string) (bool, error) {
 
-	cmd, err := r.withIncusCmd("profile", "ls", "--format", "json")
+	cmd, err := r.withLxcCmd("profile", "ls", "--format", "json")
 	if err != nil {
 		return false, err
 	}
@@ -86,7 +86,7 @@ func (r *PlateformController) existsProfile(name string) (bool, error) {
 }
 
 func (r *PlateformController) createProfile(name string) error {
-	cmd, err := r.withIncusCmd("profile", "create", name)
+	cmd, err := r.withLxcCmd("profile", "create", name)
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func (r *PlateformController) createProfile(name string) error {
 
 }
 func (r *PlateformController) deleteProfile(name string) error {
-	cmd, err := r.withIncusCmd("profile", "delete", name)
+	cmd, err := r.withLxcCmd("profile", "delete", name)
 
 	if err != nil {
 		return err
@@ -106,7 +106,7 @@ func (r *PlateformController) deleteProfile(name string) error {
 
 func (r *PlateformController) existsDeviceProfile(profileName string, deviceName string) (bool, error) {
 
-	cmd, err := r.withIncusCmd("profile", "device", "list", profileName)
+	cmd, err := r.withLxcCmd("profile", "device", "list", profileName)
 
 	if err != nil {
 		return false, err
@@ -130,7 +130,7 @@ func (r *PlateformController) existsDeviceProfile(profileName string, deviceName
 
 func (r *PlateformController) addDeviceProfile(profileName string, deviceName string, deviceType string, options ...string) error {
 
-	cmd, err := r.withIncusCmd("profile", "device", "add", profileName, deviceName, deviceType)
+	cmd, err := r.withLxcCmd("profile", "device", "add", profileName, deviceName, deviceType)
 	if err != nil {
 		return err
 	}

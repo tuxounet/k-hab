@@ -1,24 +1,10 @@
 package dependencies
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/tuxounet/k-hab/utils"
 )
-
-func (h *DependenciesController) InstalledAPT(name string) (bool, error) {
-
-	cmd, err := h.withDpkgCommand("-l", name)
-	if err != nil {
-		return false, err
-	}
-	out, err := utils.RawCommandOutput(cmd)
-	if err != nil {
-		return false, nil
-	}
-	return strings.Contains(out, fmt.Sprintf("ii  %s", name)), nil
-}
 
 func (h *DependenciesController) InstalledSnap(name string) (bool, error) {
 
@@ -59,21 +45,6 @@ func (h *DependenciesController) InstallSnap(name string, mode string) error {
 	return nil
 }
 
-func (h *DependenciesController) InstallAPT(name string) error {
-	h.log.TraceF("Installing apt %s", name)
-	cmd, err := h.withAptCmd("install", name, "-y", "--no-install-recommends")
-	if err != nil {
-		return err
-	}
-
-	err = utils.OsExec(cmd)
-	if err != nil {
-		return err
-	}
-	h.log.DebugF("Installed apt %s", name)
-	return nil
-}
-
 func (h *DependenciesController) RemoveSnap(name string) error {
 
 	installed, err := h.InstalledSnap(name)
@@ -94,29 +65,6 @@ func (h *DependenciesController) RemoveSnap(name string) error {
 			return err
 		}
 		h.log.DebugF("Removed snap %s", name)
-	}
-	return nil
-}
-
-func (h *DependenciesController) RemoveAPT(name string) error {
-
-	installed, err := h.InstalledAPT(name)
-	if err != nil {
-		return err
-	}
-	if installed {
-		h.log.TraceF("Removing apt %s", name)
-
-		cmd, err := h.withAptCmd("remove", name, "-y")
-		if err != nil {
-			return err
-		}
-
-		err = utils.OsExec(cmd)
-		if err != nil {
-			return err
-		}
-		h.log.DebugF("Removed apt %s", name)
 	}
 	return nil
 }

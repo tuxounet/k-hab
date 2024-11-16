@@ -35,7 +35,7 @@ func NewContainerModel(name string, ctx bases.IContext, containerConfig bases.Se
 
 func (l *ContainerModel) Present() (bool, error) {
 
-	cmd, err := l.withIncusCmd("list", "--format", "json")
+	cmd, err := l.withLxcCmd("list", "--format", "json")
 	if err != nil {
 		return false, err
 	}
@@ -54,7 +54,7 @@ func (l *ContainerModel) Present() (bool, error) {
 }
 
 func (l *ContainerModel) Status() (string, error) {
-	cmd, err := l.withIncusCmd("list", "--format", "json")
+	cmd, err := l.withLxcCmd("list", "--format", "json")
 	if err != nil {
 		return "", err
 	}
@@ -84,7 +84,7 @@ func (l *ContainerModel) Provision() error {
 		return err
 	}
 
-	incusCmd, err := l.getLaunchCmd()
+	pfCmd, err := l.getLaunchCmd()
 	if err != nil {
 		return err
 	}
@@ -97,7 +97,7 @@ func (l *ContainerModel) Provision() error {
 		if err != nil {
 			return err
 		}
-		if incusCmd.String() != string(body) {
+		if pfCmd.String() != string(body) {
 			//Change
 			baseChanged = true
 		}
@@ -122,12 +122,12 @@ func (l *ContainerModel) Provision() error {
 
 	if !containerExists {
 
-		err = utils.OsExec(incusCmd)
+		err = utils.OsExec(pfCmd)
 		if err != nil {
 			return err
 		}
 		//write commandline to file
-		err = os.WriteFile(containerFile, []byte(incusCmd.String()), 0644)
+		err = os.WriteFile(containerFile, []byte(pfCmd.String()), 0644)
 		if err != nil {
 			return err
 		}
@@ -146,7 +146,7 @@ func (l *ContainerModel) Start() error {
 	}
 
 	if status != "Running" {
-		cmd, err := l.withIncusCmd("start", l.Name)
+		cmd, err := l.withLxcCmd("start", l.Name)
 		if err != nil {
 			return err
 		}
@@ -191,7 +191,7 @@ func (l *ContainerModel) WaitReady() error {
 			return err
 		}
 		if status == "Running" {
-			cmd, err := l.withIncusCmd("exec", l.Name, "--", "cloud-init", "status", "--wait")
+			cmd, err := l.withLxcCmd("exec", l.Name, "--", "cloud-init", "status", "--wait")
 			if err != nil {
 				return err
 			}
@@ -211,7 +211,7 @@ func (l *ContainerModel) WaitReady() error {
 
 func (l *ContainerModel) Exec(command ...string) error {
 
-	cmd, err := l.withIncusCmd("exec", l.Name, "--")
+	cmd, err := l.withLxcCmd("exec", l.Name, "--")
 	if err != nil {
 		return err
 	}
@@ -240,7 +240,7 @@ func (l *ContainerModel) Stop() error {
 		return err
 	}
 	if status == "Running" {
-		cmd, err := l.withIncusCmd("stop", l.Name)
+		cmd, err := l.withLxcCmd("stop", l.Name)
 		if err != nil {
 			return err
 		}
@@ -268,13 +268,11 @@ func (l *ContainerModel) Undeploy() error {
 
 func (l *ContainerModel) Unprovision() error {
 
-	dependencyController, err := l.getDependenciesController()
+	plateformController, err := l.getPlateformController()
 	if err != nil {
 		return err
 	}
-
-	aptName := l.ctx.GetConfigValue("hab.incus.apt.server")
-	present, err := dependencyController.InstalledAPT(aptName)
+	present, err := plateformController.IsPresent()
 	if err != nil {
 		return err
 	}
@@ -291,7 +289,7 @@ func (l *ContainerModel) Unprovision() error {
 			if err != nil {
 				return err
 			}
-			cmd, err := l.withIncusCmd("delete", l.Name)
+			cmd, err := l.withLxcCmd("delete", l.Name)
 			if err != nil {
 				return err
 			}

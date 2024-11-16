@@ -2,11 +2,14 @@
 
 ## 24.11.0
 
+## Improvements
+- [ ] Back to LXD Snap distribution for better package managements
 
 ### Refacotring
 - [ ] Runtime Controller reference by constant rather than string 
 - [ ] Refactoring Controller getters on Controllers consumer
 - [ ] Grouping commands name and prefix in config
+- [ ] Agnosticity for plateform runtime
 
 ## 24.9.0
 

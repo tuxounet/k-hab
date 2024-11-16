@@ -1,10 +1,5 @@
 package containers
 
-import (
-	"github.com/tuxounet/k-hab/bases"
-	"github.com/tuxounet/k-hab/controllers/plateform"
-)
-
 func (c *ContainersController) Provision() error {
 
 	c.log.TraceF("Provisioning containers")
@@ -86,7 +81,7 @@ func (c *ContainersController) Stop() error {
 	if err != nil {
 		return err
 	}
-	present, err := plateformController.IsClientPresent()
+	present, err := plateformController.IsPresent()
 	if err != nil {
 		return err
 	}
@@ -136,7 +131,7 @@ func (c *ContainersController) Rm() error {
 	if err != nil {
 		return err
 	}
-	present, err := plateformController.IsClientPresent()
+	present, err := plateformController.IsPresent()
 	if err != nil {
 		return err
 	}
@@ -166,12 +161,11 @@ func (c *ContainersController) Unprovision() error {
 	if err != nil {
 		return err
 	}
-	controller, err := c.ctx.GetController(bases.PlateformController)
+	plateformController, err := c.getPlateformController()
 	if err != nil {
 		return err
 	}
-	plateformController := controller.(*plateform.PlateformController)
-	present, err := plateformController.IsClientPresent()
+	present, err := plateformController.IsPresent()
 	if err != nil {
 		return err
 	}

@@ -4,24 +4,10 @@ hab.logs.path: "./logs"
 
 hab.commands.snap: "snap"
 hab.commands.snap.prefix: "sudo"
-hab.commands.apt: "apt-get"
-hab.commands.apt.prefix: "sudo"
-hab.commands.dpkg: "dpkg-query"
-hab.commands.dpkg.prefix: ""
-hab.commands.systemctl: "systemctl"
-hab.commands.systemctl.prefix: "sudo"
-
-hab.commands.ps: "ps"
-hab.commands.ps.prefix: "sudo"
-
-
 hab.commands.rm: "rm"
 hab.commands.rm.prefix: "sudo"
 
- 
-
-hab.apt.command.prefix: "sudo"
-hab.apt.command.name: "apt-get"
+  
  
 hab.pki.path: "./pki"
 hab.pki.ca.common_name: "Hab CA"
@@ -37,25 +23,21 @@ hab.pki.certs.ingress.locality: "Paris"
 hab.pki.certs.ingress.province: "IDF"
 hab.pki.certs.ingress.country: "FR"
 hab.pki.certs.ingress.dns_names: "hab.local"
-hab.incus.apt.server: "incus"
-hab.incus.apt.client: "incus-client"
-hab.incus.apt.dnsmasq: "dnsmasq-base"
-hab.incus.command.prefix: "sudo"
-hab.incus.command.name: "incus"
 
-hab.incus.storage.pool: "hab"
-hab.incus.storage.driver: "dir"
-hab.incus.storage.path: "./incus"
-
-hab.incus.host.interface: "hab0"
-hab.incus.host.v4.address: "10.77.0.254"
-hab.incus.host.v4.netmask: "24"
-hab.incus.host.v4.nat: "false"
-
-hab.incus.host.v6.address: "fd42:73ab:7e08:9d01::ff/64"
-hab.incus.host.v6.nat: "false"
-
-hab.incus.profile: "hab"
+hab.plateform.snap: "lxd"
+hab.plateform.snap_mode: ""
+hab.plateform.storage.pool: "hab"
+hab.plateform.storage.driver: "dir"
+hab.plateform.storage.path: "./plateform" 
+hab.plateform.host.interface: "hab0"
+hab.plateform.host.v4.address: "10.77.0.254"
+hab.plateform.host.v4.netmask: "24"
+hab.plateform.host.v4.nat: "false"
+hab.plateform.host.v6.address: "fd42:73ab:7e08:9d01::ff/64"
+hab.plateform.host.v6.nat: "false"
+hab.plateform.profile: "hab"
+hab.plateform.command.prefix: "sudo"
+hab.plateform.command: "lxc"
 
 
 hab.distrobuilder.snap: "distrobuilder"

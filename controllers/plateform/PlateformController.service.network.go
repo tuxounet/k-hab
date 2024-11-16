@@ -8,12 +8,12 @@ import (
 
 func (r *PlateformController) provisionNetwork() error {
 
-	host_interface := r.ctx.GetConfigValue("hab.incus.host.interface")
-	host_v4_address := r.ctx.GetConfigValue("hab.incus.host.v4.address")
-	host_v4_address_mask := r.ctx.GetConfigValue("hab.incus.host.v4.netmask")
-	host_v4_nat := r.ctx.GetConfigValue("hab.incus.host.v4.nat")
-	host_v6_address := r.ctx.GetConfigValue("hab.incus.host.v6.address")
-	host_v6_nat := r.ctx.GetConfigValue("hab.incus.host.v6.nat")
+	host_interface := r.ctx.GetConfigValue("hab.plateform.host.interface")
+	host_v4_address := r.ctx.GetConfigValue("hab.plateform.host.v4.address")
+	host_v4_address_mask := r.ctx.GetConfigValue("hab.plateform.host.v4.netmask")
+	host_v4_nat := r.ctx.GetConfigValue("hab.plateform.host.v4.nat")
+	host_v6_address := r.ctx.GetConfigValue("hab.plateform.host.v6.address")
+	host_v6_nat := r.ctx.GetConfigValue("hab.plateform.host.v6.nat")
 
 	ipv4_address := fmt.Sprintf("%s/%s", host_v4_address, host_v4_address_mask)
 	existsNetwork, err := r.existsNetwork(host_interface)
@@ -33,7 +33,7 @@ func (r *PlateformController) provisionNetwork() error {
 
 func (r *PlateformController) unprovisionNetwork() error {
 
-	host_interface := r.ctx.GetConfigValue("hab.incus.host.interface")
+	host_interface := r.ctx.GetConfigValue("hab.plateform.host.interface")
 	existsNetwork, err := r.existsNetwork(host_interface)
 	if err != nil {
 		return err
@@ -50,7 +50,7 @@ func (r *PlateformController) unprovisionNetwork() error {
 
 func (r *PlateformController) existsNetwork(name string) (bool, error) {
 
-	cmd, err := r.withIncusCmd("network", "ls", "--format", "json")
+	cmd, err := r.withLxcCmd("network", "ls", "--format", "json")
 	if err != nil {
 		return false, err
 	}
@@ -70,7 +70,7 @@ func (r *PlateformController) existsNetwork(name string) (bool, error) {
 
 func (r *PlateformController) createNetwork(name string, driver string, options ...string) error {
 
-	cmd, err := r.withIncusCmd("network", "create", name, "--type", driver)
+	cmd, err := r.withLxcCmd("network", "create", name, "--type", driver)
 	if err != nil {
 		return err
 	}
@@ -82,7 +82,7 @@ func (r *PlateformController) createNetwork(name string, driver string, options 
 
 func (r *PlateformController) deleteNetwork(name string) error {
 
-	cmd, err := r.withIncusCmd("network", "delete", name)
+	cmd, err := r.withLxcCmd("network", "delete", name)
 
 	if err != nil {
 		return err

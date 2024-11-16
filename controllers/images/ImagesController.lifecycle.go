@@ -25,7 +25,7 @@ func (h *ImagesController) Unprovision() error {
 		return err
 	}
 	plateformController := controller.(*plateform.PlateformController)
-	present, err := plateformController.IsClientPresent()
+	present, err := plateformController.IsPresent()
 	if err != nil {
 		return err
 	}
