@@ -7,7 +7,7 @@
 - [x] A little bit more docs
 - [x] Back to LXD Snap distribution for better package managements
 
-### Refacotring
+## Refacotring
 
 - [x] Runtime Controller reference by constant rather than string
 - [x] Refactoring Controller getters on Controllers consumer
