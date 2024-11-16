@@ -64,7 +64,7 @@ func (b *BuilderController) Nuke() error {
 		return err
 	}
 
-	cmd, err := utils.WithCmdCall(b.ctx, "hab.rm.prefix", "hab.rm.name", "-rf", buildPath)
+	cmd, err := utils.WithCmdCall(b.ctx, "hab.commands.rm.prefix", "hab.commands.rm", "-rf", buildPath)
 	if err != nil {
 		return err
 	}

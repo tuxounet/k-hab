@@ -74,7 +74,7 @@ func (r *PlateformController) nukeStorage() error {
 		return err
 	}
 
-	cmd, err := utils.WithCmdCall(r.ctx, "hab.rm.prefix", "hab.rm.name", "-rf", stroagePath)
+	cmd, err := utils.WithCmdCall(r.ctx, "hab.commands.rm.prefix", "hab.commands.rm", "-rf", stroagePath)
 	if err != nil {
 		return err
 	}

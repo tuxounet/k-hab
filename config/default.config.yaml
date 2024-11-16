@@ -18,12 +18,11 @@ hab.commands.ps.prefix: "sudo"
 hab.commands.rm: "rm"
 hab.commands.rm.prefix: "sudo"
 
-hab.snap.command.prefix: "sudo"
-hab.snap.command.name: "snap"
+ 
+
 hab.apt.command.prefix: "sudo"
 hab.apt.command.name: "apt-get"
-hab.rm.prefix: "sudo"
-hab.rm.name: "rm"
+ 
 hab.pki.path: "./pki"
 hab.pki.ca.common_name: "Hab CA"
 hab.pki.ca.organization: "Hab Org"
