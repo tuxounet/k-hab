@@ -2,7 +2,7 @@ package images
 
 import (
 	"github.com/tuxounet/k-hab/bases"
-	"github.com/tuxounet/k-hab/controllers/runtime"
+	"github.com/tuxounet/k-hab/controllers/plateform"
 )
 
 func (h *ImagesController) Provision() error {
@@ -24,8 +24,8 @@ func (h *ImagesController) Unprovision() error {
 	if err != nil {
 		return err
 	}
-	runtimeController := controller.(*runtime.RuntimeController)
-	present, err := runtimeController.IsPresent()
+	plateformController := controller.(*plateform.PlateformController)
+	present, err := plateformController.IsPresent()
 	if err != nil {
 		return err
 	}

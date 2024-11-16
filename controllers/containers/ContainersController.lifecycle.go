@@ -2,7 +2,7 @@ package containers
 
 import (
 	"github.com/tuxounet/k-hab/bases"
-	"github.com/tuxounet/k-hab/controllers/runtime"
+	"github.com/tuxounet/k-hab/controllers/plateform"
 )
 
 func (c *ContainersController) Provision() error {
@@ -86,14 +86,14 @@ func (c *ContainersController) Stop() error {
 	if err != nil {
 		return err
 	}
-	runtimeController := controller.(*runtime.RuntimeController)
-	present, err := runtimeController.IsPresent()
+	plateformController := controller.(*plateform.PlateformController)
+	present, err := plateformController.IsPresent()
 	if err != nil {
 		return err
 	}
 
 	if present {
-		err := runtimeController.Stop()
+		err := plateformController.Stop()
 		if err != nil {
 			return err
 		}

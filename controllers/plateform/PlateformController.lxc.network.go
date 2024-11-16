@@ -1,4 +1,4 @@
-package runtime
+package plateform
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/tuxounet/k-hab/utils"
 )
 
-func (r *RuntimeController) provisionNetwork() error {
+func (r *PlateformController) provisionNetwork() error {
 
 	host_interface := r.ctx.GetConfigValue("hab.incus.host.interface")
 	host_address := r.ctx.GetConfigValue("hab.incus.host.address")
@@ -29,7 +29,7 @@ func (r *RuntimeController) provisionNetwork() error {
 
 }
 
-func (r *RuntimeController) existsNetwork(name string) (bool, error) {
+func (r *PlateformController) existsNetwork(name string) (bool, error) {
 
 	cmd, err := r.withIncusCmd("network", "ls", "--format", "json")
 	if err != nil {
@@ -49,7 +49,7 @@ func (r *RuntimeController) existsNetwork(name string) (bool, error) {
 
 }
 
-func (r *RuntimeController) createNetwork(name string, driver string, options ...string) error {
+func (r *PlateformController) createNetwork(name string, driver string, options ...string) error {
 
 	cmd, err := r.withIncusCmd("network", "create", name, "--type", driver)
 	if err != nil {

@@ -4,7 +4,8 @@ import (
 	"github.com/tuxounet/k-hab/bases"
 	"github.com/tuxounet/k-hab/controllers/builder"
 	"github.com/tuxounet/k-hab/controllers/images/definitions"
-	"github.com/tuxounet/k-hab/controllers/runtime"
+	"github.com/tuxounet/k-hab/controllers/plateform"
+
 	"github.com/tuxounet/k-hab/utils"
 )
 
@@ -28,9 +29,9 @@ func (hi *ImageModel) present() (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	runtimeController := rRunContaner.(*runtime.RuntimeController)
+	plateformController := rRunContaner.(*plateform.PlateformController)
 
-	return runtimeController.PresentImage(hi.Name)
+	return plateformController.PresentImage(hi.Name)
 
 }
 
@@ -73,14 +74,14 @@ func (hi *ImageModel) provision() error {
 	if err != nil {
 		return err
 	}
-	runtimeController := rRunContaner.(*runtime.RuntimeController)
+	plateformController := rRunContaner.(*plateform.PlateformController)
 
 	buildResult, err := builderController.BuildDistro(hi.Name, sBuilderConfig)
 	if err != nil {
 		return err
 	}
 
-	err = runtimeController.RegisterImage(hi.Name, buildResult.MetadataPackage, buildResult.RootfsPackage, buildResult.Built)
+	err = plateformController.RegisterImage(hi.Name, buildResult.MetadataPackage, buildResult.RootfsPackage, buildResult.Built)
 	if err != nil {
 		return err
 	}
@@ -101,9 +102,9 @@ func (hi *ImageModel) unprovision() error {
 	if err != nil {
 		return err
 	}
-	runtimeController := rRunContaner.(*runtime.RuntimeController)
+	plateformController := rRunContaner.(*plateform.PlateformController)
 
-	err = runtimeController.RemoveImage(hi.Name)
+	err = plateformController.RemoveImage(hi.Name)
 	if err != nil {
 		return err
 	}

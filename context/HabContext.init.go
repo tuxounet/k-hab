@@ -9,7 +9,7 @@ import (
 	"github.com/tuxounet/k-hab/controllers/images"
 	"github.com/tuxounet/k-hab/controllers/ingress"
 	"github.com/tuxounet/k-hab/controllers/pki"
-	"github.com/tuxounet/k-hab/controllers/runtime"
+	"github.com/tuxounet/k-hab/controllers/plateform"
 )
 
 func (h *HabContext) Init() error {
@@ -28,7 +28,7 @@ func (h *HabContext) Init() error {
 		case bases.IngressController:
 			controller = ingress.NewHttpIngress(h)
 		case bases.RuntimeController:
-			controller = runtime.NewRuntimeController(h)
+			controller = plateform.NewPlateformController(h)
 		case bases.ContainersController:
 			controller = containers.NewContainersController(h)
 		case bases.EgressController:

@@ -1,4 +1,4 @@
-package runtime
+package plateform
 
 import (
 	"strings"
@@ -6,7 +6,7 @@ import (
 	"github.com/tuxounet/k-hab/utils"
 )
 
-func (r *RuntimeController) provisionProfile() error {
+func (r *PlateformController) provisionProfile() error {
 
 	profile := r.ctx.GetConfigValue("hab.incus.profile")
 	storage_pool := r.ctx.GetConfigValue("hab.incus.storage.pool")
@@ -49,7 +49,7 @@ func (r *RuntimeController) provisionProfile() error {
 
 }
 
-func (r *RuntimeController) unprovisionProfile() error {
+func (r *PlateformController) unprovisionProfile() error {
 
 	profile := r.ctx.GetConfigValue("hab.incus.profile")
 	profileExists, err := r.existsProfile(profile)
@@ -65,7 +65,7 @@ func (r *RuntimeController) unprovisionProfile() error {
 	return nil
 }
 
-func (r *RuntimeController) existsProfile(name string) (bool, error) {
+func (r *PlateformController) existsProfile(name string) (bool, error) {
 
 	cmd, err := r.withIncusCmd("profile", "ls", "--format", "json")
 	if err != nil {
@@ -86,7 +86,7 @@ func (r *RuntimeController) existsProfile(name string) (bool, error) {
 
 }
 
-func (r *RuntimeController) createProfile(name string) error {
+func (r *PlateformController) createProfile(name string) error {
 	cmd, err := r.withIncusCmd("profile", "create", name)
 	if err != nil {
 		return err
@@ -94,7 +94,7 @@ func (r *RuntimeController) createProfile(name string) error {
 	return utils.OsExec(cmd)
 
 }
-func (r *RuntimeController) deleteProfile(name string) error {
+func (r *PlateformController) deleteProfile(name string) error {
 	cmd, err := r.withIncusCmd("profile", "delete", name)
 
 	if err != nil {
@@ -105,7 +105,7 @@ func (r *RuntimeController) deleteProfile(name string) error {
 
 }
 
-func (r *RuntimeController) existsDeviceProfile(profileName string, deviceName string) (bool, error) {
+func (r *PlateformController) existsDeviceProfile(profileName string, deviceName string) (bool, error) {
 
 	cmd, err := r.withIncusCmd("profile", "device", "list", profileName)
 
@@ -129,7 +129,7 @@ func (r *RuntimeController) existsDeviceProfile(profileName string, deviceName s
 
 }
 
-func (r *RuntimeController) addDeviceProfile(profileName string, deviceName string, deviceType string, options ...string) error {
+func (r *PlateformController) addDeviceProfile(profileName string, deviceName string, deviceType string, options ...string) error {
 
 	cmd, err := r.withIncusCmd("profile", "device", "add", profileName, deviceName, deviceType)
 	if err != nil {

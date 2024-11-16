@@ -1,10 +1,10 @@
-package runtime
+package plateform
 
 import (
 	"github.com/tuxounet/k-hab/utils"
 )
 
-func (l *RuntimeController) PresentImage(name string) (bool, error) {
+func (l *PlateformController) PresentImage(name string) (bool, error) {
 	cmd, err := l.withIncusCmd("image", "list", "--format", "json")
 	if err != nil {
 		return false, err
@@ -27,7 +27,7 @@ func (l *RuntimeController) PresentImage(name string) (bool, error) {
 
 }
 
-func (l *RuntimeController) RegisterImage(name string, metadataPackage string, rootfsPackage string, force bool) error {
+func (l *PlateformController) RegisterImage(name string, metadataPackage string, rootfsPackage string, force bool) error {
 
 	present, err := l.PresentImage(name)
 	if err != nil {
@@ -49,7 +49,7 @@ func (l *RuntimeController) RegisterImage(name string, metadataPackage string, r
 
 }
 
-func (l *RuntimeController) RemoveImage(name string) error {
+func (l *PlateformController) RemoveImage(name string) error {
 
 	present, err := l.PresentImage(name)
 	if err != nil {

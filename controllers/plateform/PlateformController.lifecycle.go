@@ -1,11 +1,11 @@
-package runtime
+package plateform
 
 import (
 	"github.com/tuxounet/k-hab/controllers/dependencies"
 	"github.com/tuxounet/k-hab/utils"
 )
 
-func (r *RuntimeController) IsPresent() (bool, error) {
+func (r *PlateformController) IsPresent() (bool, error) {
 
 	controller, err := r.ctx.GetController("DependenciesController")
 	if err != nil {
@@ -22,7 +22,7 @@ func (r *RuntimeController) IsPresent() (bool, error) {
 	return present, nil
 
 }
-func (r *RuntimeController) Provision() error {
+func (r *PlateformController) Provision() error {
 	r.log.TraceF("Provisioning")
 
 	controller, err := r.ctx.GetController("DependenciesController")
@@ -77,7 +77,7 @@ func (r *RuntimeController) Provision() error {
 	return nil
 }
 
-func (r *RuntimeController) Rm() error {
+func (r *PlateformController) Rm() error {
 
 	present, err := r.IsPresent()
 	if err != nil {
@@ -100,7 +100,7 @@ func (r *RuntimeController) Rm() error {
 
 }
 
-func (r *RuntimeController) Unprovision() error {
+func (r *PlateformController) Unprovision() error {
 	r.log.TraceF("Unprovisioning")
 
 	present, err := r.IsPresent()
@@ -140,7 +140,7 @@ func (r *RuntimeController) Unprovision() error {
 	r.log.DebugF("Unprovioned")
 	return nil
 }
-func (r *RuntimeController) Nuke() error {
+func (r *PlateformController) Nuke() error {
 	r.log.TraceF("Nuking")
 	err := r.nukeStorage()
 	if err != nil {

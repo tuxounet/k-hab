@@ -1,4 +1,4 @@
-package runtime
+package plateform
 
 import (
 	"os"
@@ -7,7 +7,7 @@ import (
 	"github.com/tuxounet/k-hab/utils"
 )
 
-func (r *RuntimeController) getStoragePath() (string, error) {
+func (r *PlateformController) getStoragePath() (string, error) {
 
 	storageRoot, err := r.ctx.GetStorageRoot()
 	if err != nil {
@@ -24,7 +24,7 @@ func (r *RuntimeController) getStoragePath() (string, error) {
 
 }
 
-func (r *RuntimeController) provisionStorage() error {
+func (r *PlateformController) provisionStorage() error {
 
 	storage_pool := r.ctx.GetConfigValue("hab.incus.storage.pool")
 	storage_driver := r.ctx.GetConfigValue("hab.incus.storage.driver")
@@ -48,7 +48,7 @@ func (r *RuntimeController) provisionStorage() error {
 	return nil
 }
 
-func (r *RuntimeController) unprovisionStorage() error {
+func (r *PlateformController) unprovisionStorage() error {
 
 	storage_pool := r.ctx.GetConfigValue("hab.incus.storage.pool")
 
@@ -67,7 +67,7 @@ func (r *RuntimeController) unprovisionStorage() error {
 
 }
 
-func (r *RuntimeController) nukeStorage() error {
+func (r *PlateformController) nukeStorage() error {
 
 	stroagePath, err := r.getStoragePath()
 	if err != nil {
@@ -83,7 +83,7 @@ func (r *RuntimeController) nukeStorage() error {
 
 }
 
-func (r *RuntimeController) existsStorage(name string) (bool, error) {
+func (r *PlateformController) existsStorage(name string) (bool, error) {
 
 	cmd, err := r.withIncusCmd("storage", "ls", "--format", "json")
 	if err != nil {
@@ -104,7 +104,7 @@ func (r *RuntimeController) existsStorage(name string) (bool, error) {
 
 }
 
-func (r *RuntimeController) createStorage(name string, driver string, options ...string) error {
+func (r *PlateformController) createStorage(name string, driver string, options ...string) error {
 
 	err := r.nukeStorage()
 	if err != nil {
@@ -132,7 +132,7 @@ func (r *RuntimeController) createStorage(name string, driver string, options ..
 
 }
 
-func (r *RuntimeController) removeStorage(name string) error {
+func (r *PlateformController) removeStorage(name string) error {
 
 	cmd, err := r.withIncusCmd("storage", "delete", name)
 	if err != nil {
