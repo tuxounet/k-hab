@@ -1,5 +1,11 @@
 # Changelog
 
+## 24.11.1
+
+## Improvements
+
+- [x] IPv6 support in setup definition
+
 ## 24.11.0
 
 ## Improvements

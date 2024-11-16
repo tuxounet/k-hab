@@ -5,6 +5,9 @@ network:
     eth0:
       auto: eth0
       dhcp4: no
+      dhcp6: no
       addresses:
-        - "{{ .container.network.host }}"
-      gateway4: "{{ .container.network.gateway }}"
+        - "{{ .container.network.v4.host }}/{{ .container.network.v4.mask }}"
+        - "{{ .container.network.v6.host }}/{{ .container.network.v6.mask }}"
+      gateway4: "{{ .container.network.v4.gateway }}"
+      gateway6: "{{ .container.network.v6.gateway }}"

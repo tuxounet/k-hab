@@ -1,6 +1,8 @@
-# k-hab 24.9.0
+# k-hab
 
 A single executable, that spawn or restore a virtual infrastructure, definied by plain yaml files.
+
+> [ChangeLog](./CHANGELOG.md)
 
 ## Get Release
 
@@ -9,10 +11,11 @@ A single executable, that spawn or restore a virtual infrastructure, definied by
 - snap
 - sudo access without password
 
-### Get Latest Release
+### Get A Release
 
 ```bash
-curl -s https://api.github.com/repos/tuxounet/k-hab/releases/tags/24.8.7 \
+RELEASE=24.11.0
+curl -s https://api.github.com/repos/tuxounet/k-hab/releases/tags/${RELEASE} \
 | grep "browser_download_url.*" \
 | cut -d : -f 2,3 \
 | tr -d '"' \
