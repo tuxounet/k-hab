@@ -11,6 +11,9 @@ write_files:
       export HTTP_PROXY=http://{{ index .config "hab.plateform.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export HTTPS_PROXY=http://{{ index .config "hab.plateform.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export NO_PROXY=localhost,.local,.localdomain
+      if [ -f /etc/motd ]; then
+        cat /etc/motd
+      fi      
       cd /home/ubuntu
       /usr/bin/su ubuntu || exit 0
 

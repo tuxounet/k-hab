@@ -1,6 +1,8 @@
 package context
 
-import "github.com/tuxounet/k-hab/bases"
+import (
+	"github.com/tuxounet/k-hab/bases"
+)
 
 func (h *HabContext) Provision() error {
 	h.log.DebugF("Hab provisionning...")
@@ -26,6 +28,7 @@ func (h *HabContext) Start() error {
 	if err != nil {
 		return err
 	}
+
 	h.log.DebugF("Hab starting...")
 	//Start
 	for _, controllerKey := range bases.HabControllersLoadOrder() {
@@ -38,6 +41,7 @@ func (h *HabContext) Start() error {
 			return err
 		}
 	}
+
 	h.log.InfoF("Hab Started")
 
 	return nil
@@ -101,6 +105,7 @@ func (h *HabContext) Shell() error {
 }
 
 func (h *HabContext) Stop() error {
+
 	h.log.TraceF("Hab Stopping...")
 	for _, controllerKey := range bases.HabControllersUnloadOrder() {
 		controller, err := h.GetController(controllerKey)
@@ -120,11 +125,6 @@ func (h *HabContext) Stop() error {
 }
 func (h *HabContext) Undeploy() error {
 
-	//Ensure Provisioning
-	err := h.Start()
-	if err != nil {
-		return err
-	}
 	h.log.DebugF("Hab Undeploying...")
 	//Start
 	for _, controllerKey := range bases.HabControllersLoadOrder() {

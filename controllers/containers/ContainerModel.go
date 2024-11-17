@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/tuxounet/k-hab/bases"
-	"github.com/tuxounet/k-hab/controllers/images"
 
 	"github.com/tuxounet/k-hab/utils"
 )
@@ -74,11 +73,11 @@ func (l *ContainerModel) Status() (string, error) {
 }
 
 func (l *ContainerModel) Provision() error {
-	imgcontroller, err := l.ctx.GetController(bases.ImagesController)
+	imagesController, err := l.getImagesController()
 	if err != nil {
 		return err
 	}
-	imagesController := imgcontroller.(*images.ImagesController)
+
 	baseChanged, err := imagesController.EnsureImage(l.ContainerConfig.Base)
 	if err != nil {
 		return err

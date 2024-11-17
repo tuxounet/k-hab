@@ -4,13 +4,15 @@ write_files:
     permissions: "0755"
     content: |
       #!/bin/sh
-      set -x      
       export http_proxy=http://{{ index .config "hab.plateform.host.v4.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export https_proxy=http://{{ index .config "hab.plateform.host.v4.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export no_proxy=localhost,.local,.localdomain
       export HTTP_PROXY=http://{{ index .config "hab.plateform.host.v4.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export HTTPS_PROXY=http://{{ index .config "hab.plateform.host.v4.address"  }}:{{ index .config "hab.egress.listen.port" }}
       export NO_PROXY=localhost,.local,.localdomain
+      if [ -f /etc/motd ]; then
+        cat /etc/motd
+      fi
       /bin/sh || exit 0
 
   - path: /etc/deploy.sh

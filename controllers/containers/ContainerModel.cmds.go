@@ -66,3 +66,12 @@ func (l *ContainerModel) getPlateformController() (*plateform.PlateformControlle
 	plateformController := controller.(*plateform.PlateformController)
 	return plateformController, nil
 }
+
+func (l *ContainerModel) getImagesController() (*images.ImagesController, error) {
+	controller, err := l.ctx.GetController(bases.ImagesController)
+	if err != nil {
+		return nil, err
+	}
+	imagesController := controller.(*images.ImagesController)
+	return imagesController, nil
+}
