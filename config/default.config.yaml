@@ -37,8 +37,8 @@ hab.pki.certs.country: "FR"
 hab.pki.certs.organization: "k-hab setup"
 hab.pki.certs.organization_unit: "k-hab setup"
 
-hab.pki.ca.common_name: ".hab.k"
-hab.pki.ingress.common_name: ".ingress.hab.k"
+hab.pki.ca.common_name: "hab.k"
+hab.pki.ingress.common_name: "ingress.hab.k"
 hab.pki.ingress.dns_names: "hab.local"
 
 hab.egress.listen.port: "58050"

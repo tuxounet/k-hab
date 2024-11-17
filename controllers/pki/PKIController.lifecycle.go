@@ -4,8 +4,8 @@ import (
 	"os"
 )
 
-func (p *PKIController) Install() error {
-	p.log.TraceF("Installing")
+func (p *PKIController) Provision() error {
+	p.log.TraceF("Provisionning")
 
 	caPresent, err := p.CAPresent()
 	if err != nil {
@@ -31,12 +31,12 @@ func (p *PKIController) Install() error {
 		}
 	}
 
-	p.log.DebugF("Installed")
+	p.log.DebugF("Provisionned")
 	return nil
 }
 
-func (p *PKIController) Unintall() error {
-	p.log.TraceF("Uninstalling")
+func (p *PKIController) Unprovision() error {
+	p.log.TraceF("Unprovisioning")
 
 	pkiPath, err := p.getPKIStoragePath()
 	if err != nil {
@@ -48,6 +48,6 @@ func (p *PKIController) Unintall() error {
 		return err
 	}
 
-	p.log.DebugF("Uninstalled")
+	p.log.DebugF("Unprovisioned")
 	return nil
 }

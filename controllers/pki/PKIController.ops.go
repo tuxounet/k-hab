@@ -160,3 +160,30 @@ func (p *PKIController) createIngressCerts() error {
 	return nil
 
 }
+
+func (p *PKIController) GetIngressCertFile() (string, error) {
+	pkiPath, err := p.getPKIStoragePath()
+	if err != nil {
+		return "", err
+	}
+
+	profileName := p.ctx.GetConfigValue("hab.name")
+	configCACommonName := fmt.Sprintf("%s.%s", profileName, p.ctx.GetConfigValue("hab.pki.ca.common_name"))
+	configIngressCommonName := fmt.Sprintf("%s.%s", profileName, p.ctx.GetConfigValue("hab.pki.ingress.common_name"))
+
+	return path.Join(pkiPath, configCACommonName, "certs", configIngressCommonName, fmt.Sprintf("%s.crt", configIngressCommonName)), nil
+}
+
+func (p *PKIController) GetIngressKeyFile() (string, error) {
+	pkiPath, err := p.getPKIStoragePath()
+	if err != nil {
+		return "", err
+	}
+
+	profileName := p.ctx.GetConfigValue("hab.name")
+	configCACommonName := fmt.Sprintf("%s.%s", profileName, p.ctx.GetConfigValue("hab.pki.ca.common_name"))
+
+	configIngressCommonName := fmt.Sprintf("%s.%s", profileName, p.ctx.GetConfigValue("hab.pki.ingress.common_name"))
+
+	return path.Join(pkiPath, configCACommonName, "certs", configIngressCommonName, "key.pem"), nil
+}
