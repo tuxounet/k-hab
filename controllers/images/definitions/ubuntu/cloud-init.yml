@@ -34,7 +34,7 @@ apt:
   primary:
     - arches: [default]
       uri: http://fr.archive.ubuntu.com/ubuntu/
-  http_proxy: http://{{ index .config "hab.plateform.host.address"  }}:{{ index .config "hab.egress.listen.port" }}
+  http_proxy: "{{ .container.proxy.scheme }}://{{ .container.proxy.host }}:{{ .container.proxy.port }}"
 timezone: Europe/Paris
 runcmd:
   - systemctl daemon-reload

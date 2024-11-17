@@ -5,6 +5,9 @@
 ## Improvements
 
 - [x] IPv6 support in setup definition
+- [x] customizable egress proxy in setup definition
+- [x] introduce examples
+- [x] review some cmd lifecyle
 
 ## 24.11.0
 
