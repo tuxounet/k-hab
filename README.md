@@ -14,7 +14,7 @@ A single executable, that spawn or restore a virtual infrastructure, definied by
 ### Get A Release
 
 ```bash
-RELEASE=24.11.0
+RELEASE=24.11.1
 curl -s https://api.github.com/repos/tuxounet/k-hab/releases/tags/${RELEASE} \
 | grep "browser_download_url.*" \
 | cut -d : -f 2,3 \
@@ -24,6 +24,10 @@ curl -s https://api.github.com/repos/tuxounet/k-hab/releases/tags/${RELEASE} \
 && mv k-hab-linux-amd64 k-hab \
 && ./k-hab shell
 ```
+
+## Usage example
+
+> [Examples](./examples/README.md)
 
 ### Tested on
 

@@ -1,6 +1,6 @@
 config:
   hab.name: "two"
-  hab.entry.container: "one"
+  hab.entry.container: "two"
   hab.plateform.host.v4.address: "10.99.1.254"
   hab.plateform.host.v4.netmask: "24"
   hab.plateform.host.v4.nat: "false"
@@ -37,7 +37,7 @@ containers:
       set -e
       rm -f /etc/motd
   - name: "two"
-    base: alpine
+    base: ubuntu
     shell: "/etc/start.sh"
     network:
       v4:
