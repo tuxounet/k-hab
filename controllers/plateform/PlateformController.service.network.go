@@ -8,7 +8,8 @@ import (
 
 func (r *PlateformController) provisionNetwork() error {
 
-	host_interface := r.ctx.GetConfigValue("hab.plateform.host.interface")
+	profile := r.ctx.GetConfigValue("hab.name")
+	host_interface := fmt.Sprintf("%s0", profile)
 	host_v4_address := r.ctx.GetConfigValue("hab.plateform.host.v4.address")
 	host_v4_address_mask := r.ctx.GetConfigValue("hab.plateform.host.v4.netmask")
 	host_v4_nat := r.ctx.GetConfigValue("hab.plateform.host.v4.nat")
@@ -33,7 +34,8 @@ func (r *PlateformController) provisionNetwork() error {
 
 func (r *PlateformController) unprovisionNetwork() error {
 
-	host_interface := r.ctx.GetConfigValue("hab.plateform.host.interface")
+	profile := r.ctx.GetConfigValue("hab.name")
+	host_interface := fmt.Sprintf("%s0", profile)
 	existsNetwork, err := r.existsNetwork(host_interface)
 	if err != nil {
 		return err

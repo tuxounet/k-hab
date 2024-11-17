@@ -1,6 +1,7 @@
 package plateform
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/tuxounet/k-hab/utils"
@@ -8,9 +9,9 @@ import (
 
 func (r *PlateformController) provisionProfile() error {
 
-	profile := r.ctx.GetConfigValue("hab.plateform.profile")
-	storage_pool := r.ctx.GetConfigValue("hab.plateform.storage.pool")
-	if_name := r.ctx.GetConfigValue("hab.plateform.host.interface")
+	profile := r.ctx.GetConfigValue("hab.name")
+
+	if_name := fmt.Sprintf("%s0", profile)
 
 	profileExists, err := r.existsProfile(profile)
 	if err != nil {
@@ -39,7 +40,7 @@ func (r *PlateformController) provisionProfile() error {
 		return err
 	}
 	if !rootStorageExists {
-		err = r.addDeviceProfile(profile, "root", "disk", "path=/", "pool="+storage_pool)
+		err = r.addDeviceProfile(profile, "root", "disk", "path=/", "pool="+profile)
 		if err != nil {
 			return err
 		}
@@ -50,7 +51,7 @@ func (r *PlateformController) provisionProfile() error {
 
 func (r *PlateformController) unprovisionProfile() error {
 
-	profile := r.ctx.GetConfigValue("hab.plateform.profile")
+	profile := r.ctx.GetConfigValue("hab.name")
 	profileExists, err := r.existsProfile(profile)
 	if err != nil {
 		return err

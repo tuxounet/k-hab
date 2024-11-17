@@ -26,7 +26,7 @@ func (l *ContainerModel) getLaunchCmd() (*utils.CmdCall, error) {
 	if err != nil {
 		return nil, err
 	}
-	pfProfile := l.ctx.GetConfigValue("hab.plateform.profile")
+	pfProfile := l.ctx.GetConfigValue("hab.name")
 	pfCmd, err := l.withLxcCmd("init", l.ContainerConfig.Base, l.Name, "--profile", pfProfile)
 	if err != nil {
 		return nil, err

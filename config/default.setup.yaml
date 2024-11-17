@@ -1,4 +1,5 @@
 config:
+  hab.name: "dev"
   hab.entry.container: "bastion"
 
 containers:

@@ -1,7 +1,6 @@
 config:
+  hab.name: "single"
   hab.entry.container: "single"
-  hab.plateform.profile: "example"
-  hab.plateform.host.interface: "example0"
   hab.plateform.host.v4.address: "10.99.0.254"
   hab.plateform.host.v4.netmask: "24"
   hab.plateform.host.v4.nat: "false"
