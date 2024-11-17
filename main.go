@@ -67,10 +67,10 @@ func main() {
 		Commands: []*cli.Command{
 			buildCommand("provision", "provision the hab", habContext.ProvisionVerb),
 			buildCommand("up", "create and/or launch the hab", habContext.UpVerb),
-			buildCommand("start", "create and/or launch the hab", habContext.UpVerb),
+			buildCommand("start", "create and/or launch the hab", habContext.StartVerb),
 			buildCommand("deploy", "deploy the hab", habContext.DeployVerb),
 			buildCommand("shell", "create and/or launch the hab", habContext.ShellVerb),
-			buildCommand("stop", "stop the hab", habContext.DownVerb),
+			buildCommand("stop", "stop the hab", habContext.StopVerb),
 			buildCommand("undeploy", "undeploy the hab", habContext.UndeployVerb),
 			buildCommand("down", "stop the hab", habContext.DownVerb),
 			buildCommand("rm", "rm the hab", habContext.RmVerb),
@@ -119,20 +119,29 @@ func buildCommand(name string, usage string, verb habContext.HabVerbs) *cli.Comm
 			switch verb {
 			case habContext.ProvisionVerb:
 				return habCtx.Provision()
-			case habContext.UpVerb:
+			case habContext.StartVerb:
 				return habCtx.Start()
 			case habContext.DeployVerb:
 				return habCtx.Deploy()
+
+			case habContext.UpVerb:
+				return habCtx.Deploy()
+
 			case habContext.ShellVerb:
 				return habCtx.Shell()
-			case habContext.UndeployVerb:
-				return habCtx.Undeploy()
+
 			case habContext.DownVerb:
 				return habCtx.Stop()
+			case habContext.StopVerb:
+				return habCtx.Stop()
+			case habContext.UndeployVerb:
+				return habCtx.Undeploy()
+
 			case habContext.RmVerb:
 				return habCtx.Rm()
 			case habContext.UnprovisionVerb:
 				return habCtx.Unprovision()
+
 			case habContext.NukeVerb:
 				return habCtx.Nuke()
 			default:
