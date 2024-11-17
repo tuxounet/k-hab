@@ -4,12 +4,14 @@ write_files:
     permissions: "0755"
     content: |
       #!/bin/sh
-      export http_proxy=http://{{ index .config "hab.plateform.host.v4.address"  }}:{{ index .config "hab.egress.listen.port" }}
-      export https_proxy=http://{{ index .config "hab.plateform.host.v4.address"  }}:{{ index .config "hab.egress.listen.port" }}
-      export no_proxy=localhost,.local,.localdomain
-      export HTTP_PROXY=http://{{ index .config "hab.plateform.host.v4.address"  }}:{{ index .config "hab.egress.listen.port" }}
-      export HTTPS_PROXY=http://{{ index .config "hab.plateform.host.v4.address"  }}:{{ index .config "hab.egress.listen.port" }}
-      export NO_PROXY=localhost,.local,.localdomain
+      PROXY_URL={{ .container.proxy.scheme }}://{{ .container.proxy.host }}:{{ .container.proxy.port }}
+      PROXY_BYPASS={{or .container.proxy.bypass "localhost,.local,.localdomain" }}
+      export http_proxy=${PROXY_URL}
+      export https_proxy=${PROXY_URL}
+      export no_proxy=${PROXY_BYPASS}
+      export HTTP_PROXY=${PROXY_URL}
+      export HTTPS_PROXY=${PROXY_URL}
+      export NO_PROXY=${PROXY_BYPASS}
       if [ -f /etc/motd ]; then
         cat /etc/motd
       fi

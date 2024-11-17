@@ -15,7 +15,10 @@ containers:
         mask: "64"
         gateway: "fd42:73ab:7e08:9d01::ff"
     proxy:
+      scheme: "http"
+      host: "10.77.0.254"
       port: "58050"
+      bypass: "localhost,.local,.localdomain"
     deploy: |
       #!/bin/sh
       set -e
