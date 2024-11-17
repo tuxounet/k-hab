@@ -11,6 +11,7 @@ const (
 	DeployVerb      HabVerbs = "Deploy"
 	UpVerb          HabVerbs = "Up"
 	ShellVerb       HabVerbs = "Shell"
+	RunVerb         HabVerbs = "Run"
 	UndeployVerb    HabVerbs = "Undeploy"
 	StopVerb        HabVerbs = "Stop"
 	DownVerb        HabVerbs = "Down"

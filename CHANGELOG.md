@@ -8,6 +8,7 @@
 - [x] customizable egress proxy in setup definition
 - [x] introduce examples
 - [x] install uninstall verb and config to have multiple hab on same host
+- [x] add Run verbs to run as daemon
 
 ## 24.11.0
 

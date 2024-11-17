@@ -72,6 +72,7 @@ func main() {
 			buildCommand("start", "create and/or launch the hab", habContext.StartVerb),
 			buildCommand("deploy", "deploy the hab", habContext.DeployVerb),
 			buildCommand("shell", "create and/or launch the hab", habContext.ShellVerb),
+			buildCommand("run", "run the hab and wait for kill signal, started and ready for ingress/egress operation", habContext.RunVerb),
 			buildCommand("stop", "stop the hab", habContext.StopVerb),
 			buildCommand("undeploy", "undeploy the hab", habContext.UndeployVerb),
 			buildCommand("down", "stop the hab", habContext.DownVerb),
@@ -137,7 +138,8 @@ func buildCommand(name string, usage string, verb habContext.HabVerbs) *cli.Comm
 
 			case habContext.ShellVerb:
 				return habCtx.Shell()
-
+			case habContext.RunVerb:
+				return habCtx.Run()
 			case habContext.DownVerb:
 				return habCtx.Stop()
 			case habContext.StopVerb:

@@ -1,6 +1,10 @@
 package context
 
 import (
+	"os"
+	"os/signal"
+	"syscall"
+
 	"github.com/tuxounet/k-hab/bases"
 )
 
@@ -146,6 +150,27 @@ func (h *HabContext) Shell() error {
 	h.log.InfoF("Hab Shell completed")
 	return nil
 
+}
+
+func (h *HabContext) Run() error {
+
+	err := h.Deploy()
+	if err != nil {
+		return err
+	}
+
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+
+	h.log.InfoF("Hab Running...")
+	<-signalChan
+
+	h.log.InfoF("Kill signal received, stopping...")
+	err = h.Stop()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (h *HabContext) Stop() error {

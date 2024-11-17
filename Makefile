@@ -29,6 +29,8 @@ deploy:
 	go run ./main.go ${RUN_ARGS} deploy
 shell:
 	go run ./main.go ${RUN_ARGS} shell
+run:
+	go run ./main.go ${RUN_ARGS} run
 undeploy:
 	go run ./main.go ${RUN_ARGS} undeploy
 down:
