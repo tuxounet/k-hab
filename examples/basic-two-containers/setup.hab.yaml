@@ -1,0 +1,68 @@
+config:
+  hab.entry.container: "one"
+  hab.plateform.profile: "example2"
+  hab.plateform.host.interface: "example0"
+  hab.plateform.host.v4.address: "10.99.1.254"
+  hab.plateform.host.v4.netmask: "24"
+  hab.plateform.host.v4.nat: "false"
+  hab.plateform.host.v6.address: "fd42:73ab:7e08:1aa1::ff/64"
+  hab.plateform.host.v6.nat: "false"
+containers:
+  - name: "one"
+    base: alpine
+    shell: "/etc/start.sh"
+    network:
+      v4:
+        host: "10.99.1.1"
+        mask: "24"
+        gateway: "10.99.1.254"
+      v6:
+        host: "fd42:73ab:7e08:1aa2::1"
+        mask: "64"
+        gateway: "fd42:73ab:7e08:1aa2::ff"
+    proxy:
+      scheme: "http"
+      host: "10.99.1.254"
+      port: "58050"
+      bypass: "localhost,.local,.localdomain"
+    deploy: |
+      #!/bin/sh
+      set -e
+      cat <<EOF > /etc/motd
+      ---
+      Machine Numero 1
+      ---
+      EOF
+    undeploy: |
+      #!/bin/sh
+      set -e
+      rm -f /etc/motd
+  - name: "two"
+    base: alpine
+    shell: "/etc/start.sh"
+    network:
+      v4:
+        host: "10.99.1.2"
+        mask: "24"
+        gateway: "10.99.1.254"
+      v6:
+        host: "fd42:73ab:7e08:1aa2::2"
+        mask: "64"
+        gateway: "fd42:73ab:7e08:1aa2::ff"
+    proxy:
+      scheme: "http"
+      host: "10.99.1.254"
+      port: "58050"
+      bypass: "localhost,.local,.localdomain"
+    deploy: |
+      #!/bin/sh
+      set -e
+      cat <<EOF > /etc/motd
+      ---
+      Machine Numero 2
+      ---
+      EOF
+    undeploy: |
+      #!/bin/sh
+      set -e
+      rm -f /etc/motd

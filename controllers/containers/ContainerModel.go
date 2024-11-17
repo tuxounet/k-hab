@@ -166,6 +166,12 @@ func (l *ContainerModel) Deploy() error {
 	if err != nil {
 		return err
 	}
+
+	err = l.WaitReady()
+	if err != nil {
+		return err
+	}
+
 	err = l.Exec("/etc/deploy.sh")
 	if err != nil {
 		return err
@@ -257,6 +263,12 @@ func (l *ContainerModel) Undeploy() error {
 	if err != nil {
 		return err
 	}
+
+	err = l.WaitReady()
+	if err != nil {
+		return err
+	}
+
 	err = l.Exec("/etc/undeploy.sh")
 	if err != nil {
 		return err

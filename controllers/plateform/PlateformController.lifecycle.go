@@ -49,6 +49,20 @@ func (r *PlateformController) Rm() error {
 		}
 		r.log.DebugF("Stopped")
 
+		err = r.unprovisionProfile()
+		if err != nil {
+			return err
+		}
+		err = r.unprovisionNetwork()
+		if err != nil {
+			return err
+		}
+
+		err = r.unprovisionStorage()
+		if err != nil {
+			return err
+		}
+
 	}
 	return nil
 
@@ -63,19 +77,7 @@ func (r *PlateformController) Unprovision() error {
 	}
 
 	if present {
-		err = r.unprovisionProfile()
-		if err != nil {
-			return err
-		}
-		err = r.unprovisionNetwork()
-		if err != nil {
-			return err
-		}
 
-		err = r.unprovisionStorage()
-		if err != nil {
-			return err
-		}
 		err = r.unprovisionService()
 		if err != nil {
 			return err
