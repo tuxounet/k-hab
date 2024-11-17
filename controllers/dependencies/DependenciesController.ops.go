@@ -7,7 +7,7 @@ import (
 )
 
 func (h *DependenciesController) InstalledSnap(name string) (bool, error) {
-
+	h.log.TraceF("Check if snap %s is installed", name)
 	cmd, err := h.withSnapCmd("list")
 	if err != nil {
 		return false, err
@@ -19,15 +19,17 @@ func (h *DependenciesController) InstalledSnap(name string) (bool, error) {
 
 	//parse out to array of strings for each line
 	lines := strings.Split(strings.TrimSpace(out), "\n")
-
+	found := false
 	for i := 1; i < len(lines); i++ {
 		line := lines[i]
 		if strings.HasPrefix(line, name+" ") {
-			return true, nil
+			found = true
+			break
 		}
 	}
-	return false, nil
 
+	h.log.DebugF("Snap %s is installed: %v", name, found)
+	return found, nil
 }
 
 func (h *DependenciesController) InstallSnap(name string, mode string) error {
@@ -86,7 +88,6 @@ func (h *DependenciesController) TakeSnapSnapshots(name string) error {
 }
 
 func (h *DependenciesController) RemoveSnapSnapshots(name string) error {
-
 	h.log.TraceF("Removing snapshots for snap %s", name)
 	snapshots, err := h.ListSnapshots(name)
 	if err != nil {
@@ -120,7 +121,7 @@ func (h *DependenciesController) ListSnapshots(name string) ([]string, error) {
 	}
 
 	snapshots := make([]string, 0)
-	//parse out to array of strings for each line
+
 	lines := strings.Split(strings.TrimSpace(out), "\n")
 
 	for i := 1; i < len(lines); i++ {
@@ -153,5 +154,4 @@ func (h *DependenciesController) ForgetSnapshot(name string, id string) error {
 	}
 	h.log.DebugF("Forgotten snapshot %s for snap %s", id, name)
 	return nil
-
 }
