@@ -4,15 +4,34 @@ import (
 	"github.com/tuxounet/k-hab/utils"
 )
 
-func (r *PlateformController) Provision() error {
-	r.log.TraceF("Provisioning")
+func (r *PlateformController) Install() error {
+	r.log.TraceF("Installing")
 
-	err := r.provisionService()
+	err := r.installService()
 	if err != nil {
 		return err
 	}
 
-	err = r.provisionStorage()
+	r.log.DebugF("Installed")
+	return nil
+}
+
+func (r *PlateformController) Uninstall() error {
+	r.log.TraceF("Uninstalling")
+
+	err := r.uninstallService()
+	if err != nil {
+		return err
+	}
+
+	r.log.DebugF("Uninstalled")
+	return nil
+}
+
+func (r *PlateformController) Provision() error {
+	r.log.TraceF("Provisioning")
+
+	err := r.provisionStorage()
 	if err != nil {
 		return err
 	}
@@ -71,18 +90,9 @@ func (r *PlateformController) Rm() error {
 func (r *PlateformController) Unprovision() error {
 	r.log.TraceF("Unprovisioning")
 
-	present, err := r.presentService()
+	err := r.Rm()
 	if err != nil {
 		return err
-	}
-
-	if present {
-
-		err = r.unprovisionService()
-		if err != nil {
-			return err
-		}
-
 	}
 
 	r.log.DebugF("Unprovioned")
@@ -90,8 +100,12 @@ func (r *PlateformController) Unprovision() error {
 }
 func (r *PlateformController) Nuke() error {
 	r.log.TraceF("Nuking")
+	err := r.uninstallService()
+	if err != nil {
+		return err
+	}
 
-	err := r.nukeService()
+	err = r.nukeService()
 	if err != nil {
 		return err
 	}

@@ -15,7 +15,7 @@ func (r *PlateformController) presentService() (bool, error) {
 	return present, nil
 }
 
-func (r *PlateformController) provisionService() error {
+func (r *PlateformController) installService() error {
 	dependencyController, err := r.getDependenciesController()
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (r *PlateformController) provisionService() error {
 	return nil
 }
 
-func (r *PlateformController) unprovisionService() error {
+func (r *PlateformController) uninstallService() error {
 
 	dependencyController, err := r.getDependenciesController()
 	if err != nil {
@@ -58,6 +58,7 @@ func (r *PlateformController) unprovisionService() error {
 }
 
 func (r *PlateformController) nukeService() error {
+
 	dependencyController, err := r.getDependenciesController()
 	if err != nil {
 		return err

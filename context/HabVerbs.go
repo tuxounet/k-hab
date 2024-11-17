@@ -3,6 +3,9 @@ package context
 type HabVerbs string
 
 const (
+	InstallVerb   HabVerbs = "Install"
+	UninstallVerb HabVerbs = "Uninstall"
+
 	ProvisionVerb   HabVerbs = "Provision"
 	StartVerb       HabVerbs = "Start"
 	DeployVerb      HabVerbs = "Deploy"

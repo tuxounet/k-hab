@@ -4,6 +4,44 @@ import (
 	"github.com/tuxounet/k-hab/bases"
 )
 
+func (h *HabContext) Install() error {
+	h.log.DebugF("Hab installing...")
+	//Start
+	for _, controllerKey := range bases.HabControllersLoadOrder() {
+		controller, err := h.GetController(controllerKey)
+		if err != nil {
+			return err
+		}
+		err = controller.Install()
+		if err != nil {
+			return err
+		}
+	}
+
+	h.log.InfoF("Hab Installed")
+	return nil
+}
+
+func (h *HabContext) Uninstall() error {
+
+	h.log.DebugF("Hab uninstalling...")
+	//Start
+	for _, controllerKey := range bases.HabControllersUnloadOrder() {
+		controller, err := h.GetController(controllerKey)
+		if err != nil {
+			return err
+		}
+		err = controller.Uninstall()
+		if err != nil {
+			return err
+		}
+	}
+	h.log.InfoF("Hab Uninstalled")
+
+	return nil
+
+}
+
 func (h *HabContext) Provision() error {
 	h.log.DebugF("Hab provisionning...")
 
@@ -12,6 +50,12 @@ func (h *HabContext) Provision() error {
 		if err != nil {
 			return err
 		}
+
+		err = controller.Install()
+		if err != nil {
+			return err
+		}
+
 		err = controller.Provision()
 		if err != nil {
 			return err
@@ -189,7 +233,7 @@ func (h *HabContext) Unprovision() error {
 }
 
 func (h *HabContext) Nuke() error {
-	err := h.Unprovision()
+	err := h.Uninstall()
 	if err != nil {
 		return err
 	}

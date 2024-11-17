@@ -65,6 +65,8 @@ func main() {
 			},
 		},
 		Commands: []*cli.Command{
+			buildCommand("install", "install global hab requirements", habContext.InstallVerb),
+			buildCommand("uninstall", "uninstall global hab requirements", habContext.UninstallVerb),
 			buildCommand("provision", "provision the hab", habContext.ProvisionVerb),
 			buildCommand("up", "create and/or launch the hab", habContext.UpVerb),
 			buildCommand("start", "create and/or launch the hab", habContext.StartVerb),
@@ -117,6 +119,12 @@ func buildCommand(name string, usage string, verb habContext.HabVerbs) *cli.Comm
 			}
 
 			switch verb {
+
+			case habContext.InstallVerb:
+				return habCtx.Install()
+			case habContext.UninstallVerb:
+				return habCtx.Uninstall()
+
 			case habContext.ProvisionVerb:
 				return habCtx.Provision()
 			case habContext.StartVerb:

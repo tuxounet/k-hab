@@ -7,7 +7,7 @@
 - [x] IPv6 support in setup definition
 - [x] customizable egress proxy in setup definition
 - [x] introduce examples
-- [x] review some cmd lifecyle
+- [x] introduce install uninstall verb to have multiple hab on same host
 
 ## 24.11.0
 
