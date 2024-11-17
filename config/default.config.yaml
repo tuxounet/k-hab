@@ -16,7 +16,6 @@ hab.distrobuilder.build.path: ./distrobuilder
 
 hab.plateform.snap: "lxd"
 hab.plateform.snap_mode: ""
-
 hab.plateform.storage.driver: "dir"
 hab.plateform.storage.path: "./plateform"
 
@@ -32,19 +31,15 @@ hab.plateform.command: "lxc"
 hab.containers.path: "./containers"
 
 hab.pki.path: "./pki"
-hab.pki.ca.common_name: "Hab CA"
-hab.pki.ca.organization: "Hab Org"
-hab.pki.ca.organization_unit: "Hab PKI Unit"
-hab.pki.ca.locality: "Paris"
-hab.pki.ca.province: "IDF"
-hab.pki.ca.country: "FR"
-hab.pki.certs.ingress.common_name: "Hab Ingress"
-hab.pki.certs.ingress.organization: "Hab Org"
-hab.pki.certs.ingress.organization_unit: "Hab PKI Unit"
-hab.pki.certs.ingress.locality: "Paris"
-hab.pki.certs.ingress.province: "IDF"
-hab.pki.certs.ingress.country: "FR"
-hab.pki.certs.ingress.dns_names: "hab.local"
+hab.pki.certs.locality: "Paris"
+hab.pki.certs.province: "Ile de France"
+hab.pki.certs.country: "FR"
+hab.pki.certs.organization: "k-hab setup"
+hab.pki.certs.organization_unit: "k-hab setup"
+
+hab.pki.ca.common_name: ".hab.k"
+hab.pki.ingress.common_name: ".ingress.hab.k"
+hab.pki.ingress.dns_names: "hab.local"
 
 hab.egress.listen.port: "58050"
 
