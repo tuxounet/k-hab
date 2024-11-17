@@ -10,6 +10,7 @@ import (
 const (
 	imageMetadataPackage = "incus.tar.xz"
 	imageRootfsPackage   = "rootfs.squashfs"
+	distroStateFile      = "distro.yaml"
 )
 
 type DistroBuilderResult struct {
@@ -19,6 +20,7 @@ type DistroBuilderResult struct {
 }
 
 func (l *BuilderController) BuildDistro(name string, builderConfig string) (*DistroBuilderResult, error) {
+	l.log.TraceF("Build distro %s", name)
 
 	builderPath, err := l.getImageBuildPath()
 	if err != nil {
@@ -34,7 +36,7 @@ func (l *BuilderController) BuildDistro(name string, builderConfig string) (*Dis
 
 	if changed {
 
-		distroBuildFile := path.Join(distroFolder, "distro.yaml")
+		distroBuildFile := path.Join(distroFolder, distroStateFile)
 		err = os.WriteFile(distroBuildFile, []byte(builderConfig), 0644)
 		if err != nil {
 			return nil, err
@@ -56,6 +58,8 @@ func (l *BuilderController) BuildDistro(name string, builderConfig string) (*Dis
 	metadataPackage := path.Join(distroFolder, imageMetadataPackage)
 	rootfsPackage := path.Join(distroFolder, imageRootfsPackage)
 
+	l.log.DebugF("disto built : %v", built)
+
 	return &DistroBuilderResult{
 		MetadataPackage: metadataPackage,
 		RootfsPackage:   rootfsPackage,
@@ -65,6 +69,7 @@ func (l *BuilderController) BuildDistro(name string, builderConfig string) (*Dis
 }
 
 func (l *BuilderController) RemoveCache(name string) error {
+	l.log.TraceF("Remove cache for distro %s", name)
 	builderPath, err := l.getImageBuildPath()
 	if err != nil {
 		return err
@@ -76,29 +81,38 @@ func (l *BuilderController) RemoveCache(name string) error {
 		return err
 	}
 
-	return utils.OsExec(cmd)
-
+	err = utils.OsExec(cmd)
+	if err != nil {
+		return err
+	}
+	l.log.DebugF("Cache removed for distro %s", name)
+	return nil
 }
 
 func (l *BuilderController) ConfigHasChanged(name string, expectedConfig string) (bool, error) {
+	l.log.TraceF("Check if config has changed for distro %s", name)
+
 	builderPath, err := l.getImageBuildPath()
 	if err != nil {
 		return false, err
 	}
 	distroFolder := path.Join(builderPath, name)
-	distroBuildFile := path.Join(distroFolder, "distro.yaml")
+	distroBuildFile := path.Join(distroFolder, distroStateFile)
 
 	if _, err := os.Stat(distroBuildFile); os.IsNotExist(err) {
+		l.log.DebugF("No previous build for distro %s, changed", name)
 		return true, nil
 	}
 	metadataPackage := path.Join(distroFolder, imageMetadataPackage)
 	rootfsPackage := path.Join(distroFolder, imageRootfsPackage)
 
 	if _, err := os.Stat(metadataPackage); os.IsNotExist(err) {
+		l.log.DebugF("No previous metadata package for distro %s, changed", name)
 		return true, nil
 	}
 
 	if _, err := os.Stat(rootfsPackage); os.IsNotExist(err) {
+		l.log.DebugF("No previous rootfsPackage for distro %s, changed", name)
 		return true, nil
 	}
 
@@ -108,6 +122,8 @@ func (l *BuilderController) ConfigHasChanged(name string, expectedConfig string)
 	}
 	config := string(currentConfig)
 
-	return config != expectedConfig, nil
+	changed := config != expectedConfig
+	l.log.DebugF("Config has changed for distro %s: %v", name, changed)
+	return changed, nil
 
 }

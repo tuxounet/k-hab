@@ -26,7 +26,7 @@ func (l *ContainerModel) getLaunchCmd() (*utils.CmdCall, error) {
 	if err != nil {
 		return nil, err
 	}
-	pfProfile := l.ctx.GetConfigValue("hab.plateform.profile")
+	pfProfile := l.ctx.GetConfigValue("hab.name")
 	pfCmd, err := l.withLxcCmd("init", l.ContainerConfig.Base, l.Name, "--profile", pfProfile)
 	if err != nil {
 		return nil, err
@@ -65,4 +65,13 @@ func (l *ContainerModel) getPlateformController() (*plateform.PlateformControlle
 	}
 	plateformController := controller.(*plateform.PlateformController)
 	return plateformController, nil
+}
+
+func (l *ContainerModel) getImagesController() (*images.ImagesController, error) {
+	controller, err := l.ctx.GetController(bases.ImagesController)
+	if err != nil {
+		return nil, err
+	}
+	imagesController := controller.(*images.ImagesController)
+	return imagesController, nil
 }

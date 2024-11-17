@@ -4,8 +4,8 @@ import (
 	"github.com/tuxounet/k-hab/utils"
 )
 
-func (b *BuilderController) Provision() error {
-	b.log.TraceF("Provisioning")
+func (b *BuilderController) Install() error {
+	b.log.TraceF("Installing")
 	dependencyController, err := b.getDependenciesController()
 	if err != nil {
 		return err
@@ -24,12 +24,11 @@ func (b *BuilderController) Provision() error {
 			return err
 		}
 	}
-	b.log.DebugF("Provisioned")
+	b.log.DebugF("Installed")
 	return nil
 }
 
-func (b *BuilderController) Unprovision() error {
-
+func (b *BuilderController) Uninstall() error {
 	dependencyController, err := b.getDependenciesController()
 	if err != nil {
 		return err
@@ -43,7 +42,6 @@ func (b *BuilderController) Unprovision() error {
 	}
 
 	return nil
-
 }
 
 func (b *BuilderController) Nuke() error {

@@ -4,6 +4,14 @@ type BaseController struct {
 	Ctx *IContext
 }
 
+func (b *BaseController) Install() error {
+	return nil
+}
+
+func (b *BaseController) Uninstall() error {
+	return nil
+}
+
 func (b *BaseController) Provision() error {
 	return nil
 }

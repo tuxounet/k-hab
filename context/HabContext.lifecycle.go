@@ -1,6 +1,50 @@
 package context
 
-import "github.com/tuxounet/k-hab/bases"
+import (
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/tuxounet/k-hab/bases"
+)
+
+func (h *HabContext) Install() error {
+	h.log.DebugF("Hab installing...")
+	//Start
+	for _, controllerKey := range bases.HabControllersLoadOrder() {
+		controller, err := h.GetController(controllerKey)
+		if err != nil {
+			return err
+		}
+		err = controller.Install()
+		if err != nil {
+			return err
+		}
+	}
+
+	h.log.InfoF("Hab Installed")
+	return nil
+}
+
+func (h *HabContext) Uninstall() error {
+
+	h.log.DebugF("Hab uninstalling...")
+	//Start
+	for _, controllerKey := range bases.HabControllersUnloadOrder() {
+		controller, err := h.GetController(controllerKey)
+		if err != nil {
+			return err
+		}
+		err = controller.Uninstall()
+		if err != nil {
+			return err
+		}
+	}
+	h.log.InfoF("Hab Uninstalled")
+
+	return nil
+
+}
 
 func (h *HabContext) Provision() error {
 	h.log.DebugF("Hab provisionning...")
@@ -10,6 +54,12 @@ func (h *HabContext) Provision() error {
 		if err != nil {
 			return err
 		}
+
+		err = controller.Install()
+		if err != nil {
+			return err
+		}
+
 		err = controller.Provision()
 		if err != nil {
 			return err
@@ -26,6 +76,7 @@ func (h *HabContext) Start() error {
 	if err != nil {
 		return err
 	}
+
 	h.log.DebugF("Hab starting...")
 	//Start
 	for _, controllerKey := range bases.HabControllersLoadOrder() {
@@ -38,6 +89,7 @@ func (h *HabContext) Start() error {
 			return err
 		}
 	}
+
 	h.log.InfoF("Hab Started")
 
 	return nil
@@ -100,7 +152,29 @@ func (h *HabContext) Shell() error {
 
 }
 
+func (h *HabContext) Run() error {
+
+	err := h.Deploy()
+	if err != nil {
+		return err
+	}
+
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGINT, syscall.SIGTERM)
+
+	h.log.InfoF("Hab Running...")
+	<-signalChan
+
+	h.log.InfoF("Kill signal received, stopping...")
+	err = h.Stop()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (h *HabContext) Stop() error {
+
 	h.log.TraceF("Hab Stopping...")
 	for _, controllerKey := range bases.HabControllersUnloadOrder() {
 		controller, err := h.GetController(controllerKey)
@@ -120,11 +194,6 @@ func (h *HabContext) Stop() error {
 }
 func (h *HabContext) Undeploy() error {
 
-	//Ensure Provisioning
-	err := h.Start()
-	if err != nil {
-		return err
-	}
 	h.log.DebugF("Hab Undeploying...")
 	//Start
 	for _, controllerKey := range bases.HabControllersLoadOrder() {
@@ -189,7 +258,7 @@ func (h *HabContext) Unprovision() error {
 }
 
 func (h *HabContext) Nuke() error {
-	err := h.Unprovision()
+	err := h.Uninstall()
 	if err != nil {
 		return err
 	}

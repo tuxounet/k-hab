@@ -15,7 +15,7 @@ func NewContainersController(ctx bases.IContext) *ContainersController {
 
 	return &ContainersController{
 		ctx:        ctx,
-		log:        ctx.GetSubLogger(string(bases.DependenciesController), ctx.GetLogger()),
+		log:        ctx.GetSubLogger(string(bases.ContainersController), ctx.GetLogger()),
 		containers: make(map[string]ContainerModel),
 	}
 }

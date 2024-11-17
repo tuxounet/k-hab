@@ -1,15 +1,25 @@
 config:
+  hab.name: "dev"
   hab.entry.container: "bastion"
+
 containers:
   - name: "bastion"
     base: alpine
     shell: "/etc/start.sh"
     network:
-      host: "10.77.0.1"
-      mask: "24"
-      gateway: "10.77.0.254"
+      v4:
+        host: "10.77.0.1"
+        mask: "24"
+        gateway: "10.77.0.254"
+      v6:
+        host: "fd42:73ab:7e08:9d01::1"
+        mask: "64"
+        gateway: "fd42:73ab:7e08:9d01::ff"
     proxy:
+      scheme: "http"
+      host: "10.77.0.254"
       port: "58050"
+      bypass: "localhost,.local,.localdomain"
     deploy: |
       #!/bin/sh
       set -e

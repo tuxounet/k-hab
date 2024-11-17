@@ -26,20 +26,21 @@ func (r *PlateformController) getStoragePath() (string, error) {
 
 func (r *PlateformController) provisionStorage() error {
 
-	storage_pool := r.ctx.GetConfigValue("hab.plateform.storage.pool")
+	profile := r.ctx.GetConfigValue("hab.name")
+
 	storage_driver := r.ctx.GetConfigValue("hab.plateform.storage.driver")
 	storage_path, err := r.getStoragePath()
 	if err != nil {
 		return err
 	}
 
-	storageExists, err := r.existsStorage(storage_pool)
+	storageExists, err := r.existsStorage(profile)
 	if err != nil {
 		return err
 	}
 
 	if !storageExists {
-		err = r.createStorage(storage_pool, storage_driver, "source="+storage_path)
+		err = r.createStorage(profile, storage_driver, "source="+storage_path)
 		if err != nil {
 			return err
 		}
@@ -49,15 +50,14 @@ func (r *PlateformController) provisionStorage() error {
 }
 
 func (r *PlateformController) unprovisionStorage() error {
+	profile := r.ctx.GetConfigValue("hab.name")
 
-	storage_pool := r.ctx.GetConfigValue("hab.plateform.storage.pool")
-
-	storageExists, err := r.existsStorage(storage_pool)
+	storageExists, err := r.existsStorage(profile)
 	if err != nil {
 		return err
 	}
 	if storageExists {
-		err = r.removeStorage(storage_pool)
+		err = r.removeStorage(profile)
 		if err != nil {
 
 			return err

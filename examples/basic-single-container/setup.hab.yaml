@@ -1,0 +1,41 @@
+config:
+  hab.name: "single"
+  hab.entry.container: "single"
+  hab.plateform.host.v4.address: "10.99.0.254"
+  hab.plateform.host.v4.netmask: "24"
+  hab.plateform.host.v4.nat: "false"
+  hab.plateform.host.v6.address: "fd42:73ab:7e08:1aa1::ff/64"
+  hab.plateform.host.v6.nat: "false"
+containers:
+  - name: "single"
+    base: alpine
+    shell: "/etc/start.sh"
+    network:
+      v4:
+        host: "10.99.0.1"
+        mask: "24"
+        gateway: "10.99.0.254"
+      v6:
+        host: "fd42:73ab:7e08:1aa1::1"
+        mask: "64"
+        gateway: "fd42:73ab:7e08:1aa1::ff"
+    proxy:
+      scheme: "http"
+      host: "10.99.0.254"
+      port: "58050"
+      bypass: "localhost,.local,.localdomain"
+    deploy: |
+      #!/bin/sh
+      set -e
+      cat <<EOF > /etc/motd
+                                    __ 
+                                  |  |
+        ___ ___ _ _ ___ ___ _ _   |  |
+        |  _| . | | |  _| . | | |  |__|
+        |___|___|___|___|___|___|  |__|
+
+      EOF
+    undeploy: |
+      #!/bin/sh
+      set -e
+      rm -f /etc/motd
