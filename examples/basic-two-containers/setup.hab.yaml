@@ -4,7 +4,7 @@ config:
   hab.plateform.host.v4.address: "10.99.1.254"
   hab.plateform.host.v4.netmask: "24"
   hab.plateform.host.v4.nat: "false"
-  hab.plateform.host.v6.address: "fd42:73ab:7e08:1aa1::ff/64"
+  hab.plateform.host.v6.address: "fd42:73ab:7e08:1aa2::ff/64"
   hab.plateform.host.v6.nat: "false"
 containers:
   - name: "one"
