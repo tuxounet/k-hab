@@ -1,13 +1,19 @@
 package context
 
 import (
+	"errors"
+
 	"github.com/tuxounet/k-hab/bases"
 	"github.com/tuxounet/k-hab/controllers/containers"
 )
 
 func (h *HabContext) getEntryContainer() (*containers.ContainerModel, error) {
-
-	entrypoint := h.config.GetValue("hab.entry.container")
+	setupContainers := h.GetSetupContainers()
+	if len(setupContainers) == 0 {
+		return nil, errors.New("no container found in setup")
+	}
+	entryContainer := setupContainers[0]
+	entrypoint := entryContainer.Name
 
 	containersController, err := h.GetController(bases.ContainersController)
 

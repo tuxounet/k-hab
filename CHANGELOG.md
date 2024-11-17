@@ -1,5 +1,11 @@
 # Changelog
 
+## 24.11.2
+
+## Breaking changes
+
+- [x] revome entrypoint from config, shell will only on the first container of the setup
+
 ## 24.11.1
 
 ## Improvements
