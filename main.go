@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	_ "embed"
 	"errors"
 	"log"
 	"os"
@@ -94,6 +93,7 @@ func buildCommand(name string, usage string, verb habContext.HabVerbs) *cli.Comm
 		Name:  name,
 		Usage: usage,
 		Action: func(ctx context.Context, ocmd *cli.Command) error {
+
 			workingFolder, err := os.Getwd()
 			if err != nil {
 				return err

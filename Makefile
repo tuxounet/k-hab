@@ -7,11 +7,11 @@ test:
 
 build:
 	mkdir -p ./out
-	go build -ldflags="-X 'main.version=v${GIT_BRANCH}'" -o ./out/k-hab main.go
+	go build -ldflags="-X 'main.version=${GIT_BRANCH}'" -o ./out/k-hab main.go
 
-release:
+release-linux-amd64:
 	mkdir -p ./out
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./out/k-hab-linux-amd64 ./main.go
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-X 'main.version=${GIT_BRANCH}'" -o ./out/k-hab-linux-amd64 ./main.go
 
 install:
 	go run ./main.go ${RUN_ARGS} install 
