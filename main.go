@@ -13,11 +13,6 @@ import (
 
 var version = "DEVELOPEMENT"
 
-type Author struct {
-	Name    string
-	Contact string
-}
-
 func main() {
 
 	cmd := &cli.Command{

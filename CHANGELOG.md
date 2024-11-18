@@ -5,10 +5,11 @@
 ## Improvements
 
 - [x] using ingress certificate for TLS Ingress Endpoint
+- [x] passing release version during build
 
 ## Breaking changes
 
-- [x] revome entrypoint from config, shell will only on the first container of the setup
+- [x] remove entrypoint from config, shell will only on the first container of the setup
 
 ## 24.11.1
 
