@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	_ "embed"
 	"errors"
 	"log"
 	"os"
@@ -13,11 +12,6 @@ import (
 )
 
 var version = "DEVELOPEMENT"
-
-type Author struct {
-	Name    string
-	Contact string
-}
 
 func main() {
 
@@ -43,6 +37,7 @@ func main() {
 					}
 				},
 			},
+
 			&cli.StringFlag{
 				Name:  "setup",
 				Value: "",
@@ -93,6 +88,7 @@ func buildCommand(name string, usage string, verb habContext.HabVerbs) *cli.Comm
 		Name:  name,
 		Usage: usage,
 		Action: func(ctx context.Context, ocmd *cli.Command) error {
+
 			workingFolder, err := os.Getwd()
 			if err != nil {
 				return err

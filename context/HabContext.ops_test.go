@@ -28,11 +28,4 @@ func TestHabContextPropsSetup(t *testing.T) {
 		t.Errorf("Expected not nil but got nil")
 	}
 
-	ctx.SetConfigValue("hab.entry.container", "test")
-
-	_, err = ctx.getEntryContainer()
-	if err == nil {
-		t.Errorf("Expected error but got nil")
-	}
-
 }

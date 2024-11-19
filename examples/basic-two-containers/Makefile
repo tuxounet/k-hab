@@ -2,6 +2,12 @@ ROOT_FOLDER := $(shell  git rev-parse --show-toplevel )
 RUN_ARGS := --loglevel=TRACE --setup=setup.hab.yaml
 CMD := go run ${ROOT_FOLDER}/main.go 
 
+install:
+	$(CMD) install ${RUN_ARGS}
+
+uninstall:
+	$(CMD) uninstall ${RUN_ARGS}
+
 
 provision: 
 	$(CMD) provision  ${RUN_ARGS}
@@ -14,6 +20,8 @@ deploy:
 	$(CMD) deploy ${RUN_ARGS}
 shell:
 	$(CMD) shell ${RUN_ARGS}
+run:
+	$(CMD) run ${RUN_ARGS}
 undeploy:
 	$(CMD) undeploy ${RUN_ARGS}
 down:

@@ -1,6 +1,5 @@
 config:
   hab.name: "two"
-  hab.entry.container: "two"
   hab.plateform.host.v4.address: "10.99.1.254"
   hab.plateform.host.v4.netmask: "24"
   hab.plateform.host.v4.nat: "false"
